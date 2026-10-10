@@ -1,7 +1,9 @@
 // The local side of the hub: the environment, repo specs, what a checkpoint
 // directory is, what the cache holds, companions on disk, and removal.
+#ifndef _WIN32
 #include <sys/stat.h>
 #include <unistd.h>
+#endif
 
 #include <algorithm>
 #include <cctype>
@@ -15,6 +17,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include "lse/core/platform.hpp"
 #include "lse/hub/hub.hpp"
 #include "lse/model/dflash2_convert.hpp"
 #include "lse/model/inspect.hpp"
@@ -136,17 +139,24 @@ std::map<std::string, std::vector<std::string>> repo_refs(const fs::path& repo) 
   return out;
 }
 
+// FileStamp, not stat: the UCRT reports st_ino as 0, which would collapse
+// every hard link onto one identity; the shim answers with the real volume
+// serial + file index on Windows and plain stat fields elsewhere.
 std::uintmax_t tree_bytes(const fs::path& root) {
-  std::set<std::pair<dev_t, ino_t>> seen;
+  std::set<std::pair<std::uint64_t, std::uint64_t>> seen;
   std::uintmax_t total = 0;
   std::error_code ec;
-  struct stat st {};
-  if (::stat(root.c_str(), &st) == 0 && S_ISREG(st.st_mode)) return static_cast<std::uintmax_t>(st.st_size);
+  if (platform::is_reg(root.string())) {
+    const platform::FileStamp st = platform::file_stamp_of_path(root.string());
+    if (st.valid) return static_cast<std::uintmax_t>(st.size);
+  }
   for (fs::recursive_directory_iterator it(root, fs::directory_options::skip_permission_denied, ec), end;
        !ec && it != end; it.increment(ec)) {
-    if (::stat(it->path().c_str(), &st) != 0 || !S_ISREG(st.st_mode)) continue;
-    if (!seen.emplace(st.st_dev, st.st_ino).second) continue;
-    total += static_cast<std::uintmax_t>(st.st_size);
+    if (!platform::is_reg(it->path().string())) continue;
+    const platform::FileStamp st = platform::file_stamp_of_path(it->path().string());
+    if (!st.valid) continue;
+    if (!seen.emplace(st.dev, st.ino).second) continue;
+    total += static_cast<std::uintmax_t>(st.size);
   }
   return total;
 }
@@ -206,7 +216,7 @@ bool offline() {
   return s == "1" || s == "true" || s == "yes" || s == "on";
 }
 
-void set_offline() { ::setenv("HF_HUB_OFFLINE", "1", 1); }
+void set_offline() { platform::set_env("HF_HUB_OFFLINE", "1"); }
 
 Result<RepoSpec> parse_repo_spec(std::string_view text) {
   RepoSpec spec;
@@ -409,11 +419,12 @@ Result<Removal> plan_removal(const RepoSpec& spec) {
   // Files stored in the snapshot itself (an LSE conversion cache, a
   // symlink-free download) go with it.
   {
-    std::set<std::pair<dev_t, ino_t>> counted;
-    struct stat st {};
+    std::set<std::pair<std::uint64_t, std::uint64_t>> counted;
     for (fs::recursive_directory_iterator it(snap, ec), end; !ec && it != end; it.increment(ec)) {
-      if (it->is_symlink(ec) || ::lstat(it->path().c_str(), &st) != 0 || !S_ISREG(st.st_mode)) continue;
-      if (counted.emplace(st.st_dev, st.st_ino).second) plan.bytes += static_cast<std::uint64_t>(st.st_size);
+      if (it->is_symlink(ec) || !platform::is_reg(it->path().string())) continue;
+      const platform::FileStamp st = platform::file_stamp_of_path(it->path().string());
+      if (!st.valid) continue;
+      if (counted.emplace(st.dev, st.ino).second) plan.bytes += static_cast<std::uint64_t>(st.size);
     }
   }
   for (const std::string& b : mine) {

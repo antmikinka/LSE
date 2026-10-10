@@ -10,7 +10,12 @@
 // well over a thousand descriptors, so the listening socket and every
 // connection land above that line and are closed without a reply. poll()
 // has no such ceiling.
+// Windows keeps httplib's own default (select): poll(2) does not exist there,
+// and Windows' FD_SETSIZE counts sockets in the set rather than bounding
+// descriptor values, so the ceiling this define removes is a POSIX one.
+#ifndef _WIN32
 #define CPPHTTPLIB_USE_POLL
+#endif
 #include "httplib.h"
 
 namespace lse::server {

@@ -8,13 +8,19 @@
 #if TARGET_OS_IOS
 #include <os/proc.h>
 #endif
-#else
+#elif !defined(_WIN32)
 #include <malloc.h>
 #endif
 #include "lse/dispatch/arch/tuning.hpp"
 #include "lse/lse.h"
 
+#ifndef _WIN32
 #include <unistd.h>
+#else
+// UCRT's POSIX-named descriptor functions: LogCapture's read/write/close/
+// pipe/dup/dup2 exist under these exact names on Windows too.
+#include <io.h>
+#endif
 #if defined(__APPLE__)
 #include <TargetConditionals.h>
 #endif
@@ -40,6 +46,7 @@
 #include <nlohmann/json.hpp>
 
 #include "lse/backend/backend.hpp"
+#include "lse/core/platform.hpp"
 #include "lse/core/progress.hpp"
 #include "lse/graph/graph.hpp"
 #include "lse/model/layer.hpp"
@@ -121,7 +128,7 @@ struct LogCapture {
     std::string pending;
     char buf[4096];
     for (;;) {
-      const ssize_t n = ::read(fd, buf, sizeof buf);
+      const lse::platform::ssize_t n = ::read(fd, buf, sizeof buf);
       if (n <= 0) break;
       if (echo >= 0) (void)!::write(echo, buf, static_cast<std::size_t>(n));
       pending.append(buf, static_cast<std::size_t>(n));
@@ -145,7 +152,8 @@ struct LogCapture {
     std::unique_lock held(lock);
     if (f != nullptr && saved_stderr < 0) {
       int fds[2];
-      if (::pipe(fds) != 0) return;
+      // UCRT's io.h has _pipe but no POSIX-named pipe; the shim names it once.
+      if (!lse::platform::make_pipe(fds)) return;
       std::fflush(stderr);
       saved_stderr = ::dup(STDERR_FILENO);
       ::dup2(fds[1], STDERR_FILENO);
@@ -183,7 +191,9 @@ std::atomic<bool> g_engine_open{false};
 
 // The process's physical footprint: what iOS counts against an app's limit.
 std::uint64_t host_footprint() {
-#if !defined(__APPLE__)
+#if defined(_WIN32)
+  return lse::platform::process_rss_bytes();
+#elif !defined(__APPLE__)
   // Resident set size from /proc/self/statm, in pages.
   unsigned long size = 0, resident = 0;
   if (FILE* f = std::fopen("/proc/self/statm", "r")) {
@@ -207,6 +217,11 @@ json host_memory_json() {
   malloc_statistics_t heap{};
   malloc_zone_statistics(nullptr, &heap);
   const std::uint64_t in_use = heap.size_in_use, allocated = heap.size_allocated;
+#elif defined(_WIN32)
+  // The UCRT has no mallinfo2. The shim answers zeros rather than change the
+  // shape of the JSON: the keys stay, the numbers say "not measurable here".
+  const lse::platform::HeapStats heap = lse::platform::heap_stats();
+  const std::uint64_t in_use = heap.in_use, allocated = heap.allocated;
 #else
   const struct mallinfo2 mi = mallinfo2();
   const std::uint64_t in_use = mi.uordblks + mi.hblkhd, allocated = mi.arena + mi.hblkhd;
@@ -739,6 +754,9 @@ std::optional<OpenError> open_engine(const lse_config& c, lse_engine& e) {
     const std::size_t mapped = e.weights ? e.weights->release_pages() : 0;
 #if defined(__APPLE__)
     const std::size_t relieved = malloc_zone_pressure_relief(nullptr, 0);
+#elif defined(_WIN32)
+    // The UCRT heap decommits on its own schedule; it has no malloc_trim.
+    const std::size_t relieved = 0;
 #else
     const std::size_t relieved = 0;
     malloc_trim(0);

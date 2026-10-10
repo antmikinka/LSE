@@ -1,12 +1,16 @@
 #include "lse/probe/profile_store.hpp"
 
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #include <cstdio>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+
+#include "lse/core/platform.hpp"
 
 namespace lse::probe {
 
@@ -154,7 +158,7 @@ bool read_path_line(std::istringstream& in, ComputePath* p) {
 }
 
 void write_text_atomic(const fs::path& path, std::string_view text) {
-  const fs::path tmp = path.string() + ".tmp" + std::to_string(::getpid());
+  const fs::path tmp = path.string() + ".tmp" + std::to_string(platform::pid());
   {
     std::ofstream out(tmp);
     if (!out) return;
@@ -175,8 +179,11 @@ std::string default_profile_dir() {
   if (const char* xdg = std::getenv("XDG_CACHE_HOME")) {
     return std::string(xdg) + "/lse/profiles";
   }
-  if (const char* home = std::getenv("HOME")) {
-    return std::string(home) + "/.cache/lse/profiles";
+  // home_dir() is HOME, falling back to USERPROFILE on Windows where HOME is
+  // not usually set.
+  const std::string home = platform::home_dir();
+  if (!home.empty()) {
+    return home + "/.cache/lse/profiles";
   }
   return ".lse-profiles";
 }

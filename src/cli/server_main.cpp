@@ -15,6 +15,16 @@
 #include <string>
 #include <thread>
 
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
+
 #include "lse/lse.h"
 #include "nlohmann/json.hpp"
 #include "lse/graph/jit.hpp"
@@ -497,6 +507,17 @@ int main(int argc, char** argv) {
 
   std::signal(SIGINT, on_signal);
   std::signal(SIGTERM, on_signal);
+#ifdef _WIN32
+  // The console control event is Windows' SIGTERM: the CRT's SIGINT handler
+  // only covers Ctrl+C, while this also covers Ctrl+Break and the close
+  // button. SIGTERM above never fires on Windows and stays harmless.
+  ::SetConsoleCtrlHandler(
+      [](DWORD) -> BOOL {
+        g_stopping.store(true, std::memory_order_relaxed);
+        return TRUE;
+      },
+      TRUE);
+#endif
   server::detail::ShutdownWatch shutdown(
       g_stopping, std::chrono::seconds(shutdown_grace_seconds), [&] { lse_http_stop(engine); });
 

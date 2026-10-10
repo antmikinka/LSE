@@ -5,12 +5,14 @@
 // streamed into blobs/<etag>.incomplete, resumed with a Range request when one
 // is already there, hashed while it arrives and renamed into place only when
 // the hash matches.
+#ifndef _WIN32
 #include <fcntl.h>
 #include <fnmatch.h>
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <unistd.h>
+#endif
 
 #include <algorithm>
 #include <array>
@@ -25,6 +27,7 @@
 
 #include "http.hpp"
 #include "sha1.hpp"
+#include "lse/core/platform.hpp"
 #include "lse/core/sha256.hpp"
 #include "lse/hub/hub.hpp"
 #include "lse/model/weights.hpp"
@@ -197,7 +200,7 @@ std::string resolve_url(const RepoInfo& info, const std::string& path) {
 bool matches(const std::string& path, const std::vector<std::string>& globs) {
   for (std::string g : globs) {
     if (g.ends_with("/")) g += "*";
-    if (::fnmatch(g.c_str(), path.c_str(), 0) == 0) return true;
+    if (platform::glob_match(g, path)) return true;
   }
   return false;
 }
@@ -238,7 +241,7 @@ struct TempDir {
   TempDir() {
     static std::atomic<int> n{0};
     path = fs::temp_directory_path() /
-           ("lse-hub-probe-" + std::to_string(::getpid()) + "-" + std::to_string(n++));
+           ("lse-hub-probe-" + std::to_string(platform::pid()) + "-" + std::to_string(n++));
     std::error_code ec;
     fs::remove_all(path, ec);
     fs::create_directories(path, ec);
@@ -311,7 +314,7 @@ Result<Checkpoint> probe(const RepoInfo& info, const RepoSpec& spec) {
       o << head;
       if (!o) return LSE_ERROR(kIoError, "cannot write ", out.string());
     }
-    if (::truncate(out.c_str(), static_cast<off_t>(f.size)) != 0) {
+    if (!platform::truncate_path(out.string(), static_cast<std::int64_t>(f.size))) {
       return LSE_ERROR(kIoError, "cannot size ", out.string(), ": ", std::strerror(errno));
     }
   }
@@ -327,12 +330,12 @@ class BlobLock {
   static Result<BlobLock> take(const fs::path& path, const std::string& label) {
     std::error_code ec;
     fs::create_directories(path.parent_path(), ec);
-    const int fd = ::open(path.c_str(), O_RDWR | O_CREAT | O_CLOEXEC, 0644);
+    const int fd = platform::open_read_write_create(path.string(), 0644);
     if (fd < 0) return LSE_ERROR(kIoError, "cannot open the lock ", path.string(), ": ", std::strerror(errno));
-    if (::flock(fd, LOCK_EX | LOCK_NB) != 0) {
+    if (!platform::try_lock_exclusive(fd)) {
       std::fprintf(stderr, "lse: waiting for another download of %s\n", label.c_str());
-      if (::flock(fd, LOCK_EX) != 0) {
-        ::close(fd);
+      if (!platform::lock_exclusive(fd)) {
+        platform::close_fd(fd);
         return LSE_ERROR(kIoError, "cannot lock ", path.string(), ": ", std::strerror(errno));
       }
     }
@@ -345,8 +348,8 @@ class BlobLock {
   BlobLock& operator=(BlobLock&&) = delete;
   ~BlobLock() {
     if (fd_ >= 0) {
-      ::flock(fd_, LOCK_UN);
-      ::close(fd_);
+      platform::unlock_exclusive(fd_);
+      platform::close_fd(fd_);
     }
   }
 
@@ -369,11 +372,12 @@ Status download_blob(const RepoInfo& info, const RepoSpec& spec, const File& f, 
     fs::remove(part, ec);
     offset = 0;
   }
-  const int fd = ::open(part.c_str(), O_WRONLY | O_CREAT | O_CLOEXEC, 0644);
+  const int fd = platform::open_write_create(part.string(), /*exclusive=*/false,
+                                             /*truncate=*/false, 0644);
   if (fd < 0) return LSE_ERROR(kIoError, "cannot open ", part.string(), ": ", std::strerror(errno));
   struct Closer {
     int fd;
-    ~Closer() { ::close(fd); }
+    ~Closer() { platform::close_fd(fd); }
   } closer{fd};
 
   Hasher hash(f.lfs(), f.size);
@@ -394,7 +398,8 @@ Status download_blob(const RepoInfo& info, const RepoSpec& spec, const File& f, 
     std::fprintf(stderr, "lse: resuming %s at %s of %s\n", f.path.c_str(), human(offset).c_str(),
                  human(f.size).c_str());
   }
-  if (::lseek(fd, static_cast<off_t>(offset), SEEK_SET) < 0 || ::ftruncate(fd, static_cast<off_t>(offset)) != 0)
+  if (platform::seek_fd(fd, static_cast<std::int64_t>(offset)) < 0 ||
+      !platform::truncate_fd(fd, static_cast<std::int64_t>(offset)))
     return LSE_ERROR(kIoError, "cannot position ", part.string(), ": ", std::strerror(errno));
   tally.done += offset;
 
@@ -448,7 +453,7 @@ Status download_blob(const RepoInfo& info, const RepoSpec& spec, const File& f, 
               tally.done -= offset;
               offset = written = 0;
               hash = Hasher(f.lfs(), f.size);
-              if (::lseek(fd, 0, SEEK_SET) < 0 || ::ftruncate(fd, 0) != 0) {
+              if (platform::seek_fd(fd, 0) < 0 || !platform::truncate_fd(fd, 0)) {
                 failed = LSE_ERROR(kIoError, "cannot truncate ", part.string());
                 return false;
               }
@@ -467,7 +472,7 @@ Status download_blob(const RepoInfo& info, const RepoSpec& spec, const File& f, 
           const auto* data = reinterpret_cast<const char*>(b.data());
           std::size_t left = b.size();
           while (left > 0) {
-            const ssize_t n = ::write(fd, data, left);
+            const platform::ssize_t n = platform::write_fd(fd, data, left);
             if (n < 0) {
               if (errno == EINTR) continue;
               failed = LSE_ERROR(kIoError, "writing ", part.string(), ": ", std::strerror(errno));
@@ -500,7 +505,7 @@ Status download_blob(const RepoInfo& info, const RepoSpec& spec, const File& f, 
     return LSE_ERROR(kIoError, "checksum mismatch for ", f.path, ": ", hash.name(), " ", got, ", expected ",
                      f.etag(), "; the corrupt download was deleted, run the pull again");
   }
-  if (::fsync(fd) != 0) return LSE_ERROR(kIoError, "fsync ", part.string(), ": ", std::strerror(errno));
+  if (!platform::sync_fd(fd)) return LSE_ERROR(kIoError, "fsync ", part.string(), ": ", std::strerror(errno));
   fs::rename(part, blob, ec);
   if (ec) return LSE_ERROR(kIoError, "cannot move ", part.string(), " into place: ", ec.message());
   report(true);
@@ -536,15 +541,16 @@ Status write_ref(const fs::path& repo, const std::string& name, const std::strin
 std::uint64_t free_bytes(fs::path p) {
   std::error_code ec;
   while (!p.empty() && !fs::exists(p, ec)) p = p.parent_path();
-  struct statvfs st {};
-  if (p.empty() || ::statvfs(p.c_str(), &st) != 0) return UINT64_MAX;
-  return static_cast<std::uint64_t>(st.f_bavail) * static_cast<std::uint64_t>(st.f_frsize);
+  if (p.empty()) return UINT64_MAX;
+  const std::int64_t avail = platform::free_space_bytes(p.string());
+  if (avail < 0) return UINT64_MAX;
+  return static_cast<std::uint64_t>(avail);
 }
 
 }  // namespace
 
 ProgressFn stderr_progress(std::string prefix) {
-  const bool tty = ::isatty(STDERR_FILENO) != 0;
+  const bool tty = platform::is_tty(STDERR_FILENO);
   auto last = std::make_shared<std::chrono::steady_clock::time_point>();
   return [prefix = std::move(prefix), tty, last](const Progress& p) {
     const auto now = std::chrono::steady_clock::now();

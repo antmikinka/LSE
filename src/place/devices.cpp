@@ -1,11 +1,13 @@
 #include "lse/place/devices.hpp"
 
+#ifndef _WIN32
 #include <dlfcn.h>
+#include <sys/resource.h>
+#endif
 #if defined(__APPLE__)
 #include <TargetConditionals.h>
 #include <mach-o/dyld.h>
 #endif
-#include <sys/resource.h>
 
 #include <cctype>
 #include <optional>
@@ -548,6 +550,11 @@ DefaultSet& default_set() {
 // limit nor the fix. The hard limit is usually a million, so the soft one is
 // paperwork the process can do for itself.
 void raise_fd_limit() {
+#ifdef _WIN32
+  // No soft fd limit to raise: Windows' descriptor budget is a per-process
+  // handle count, not an rlim_cur cap the process can lift for itself.
+  return;
+#else
   ::rlimit lim{};
   if (::getrlimit(RLIMIT_NOFILE, &lim) != 0) return;
   if (lim.rlim_cur == lim.rlim_max) return;
@@ -558,9 +565,10 @@ void raise_fd_limit() {
   // still far past what a model needs.
   next.rlim_cur = lim.rlim_max < 65536 ? lim.rlim_max : 65536;
   if (next.rlim_cur > lim.rlim_cur) (void)::setrlimit(RLIMIT_NOFILE, &next);
+#endif
 }
 
-#if !(defined(__APPLE__) && TARGET_OS_IOS)
+#if !(defined(__APPLE__) && TARGET_OS_IOS) && !defined(_WIN32)
 // A runtime HRX can drive exports both of these: the virtual-memory reservation
 // the allocator uses and the descriptor queue creation the AMDGPU HAL opens its
 // queues with. ROCm 7.13's ROCr has the first and not the second.
@@ -571,9 +579,11 @@ bool hsa_runtime_is_new_enough(void* handle) {
 #endif
 
 void preload_gpu_runtime() {
-#if defined(__APPLE__) && TARGET_OS_IOS
-  // The HSA runtime is linked into the app: there is nothing to find or load,
-  // and an iOS app may not load one from anywhere else.
+#if (defined(__APPLE__) && TARGET_OS_IOS) || defined(_WIN32)
+  // iOS: the HSA runtime is linked into the app — there is nothing to find or
+  // load, and an iOS app may not load one from anywhere else.
+  // Windows: there is no HSA runtime to preload — the AMD Windows stack loads
+  // its own DLLs, and none of the search paths below exist.
   return;
 #else
   namespace fs = std::filesystem;

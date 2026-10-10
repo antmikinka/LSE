@@ -1,6 +1,8 @@
 #include "lse/probe/link_probe.hpp"
 
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #include <cstdio>
 #include <algorithm>
@@ -8,6 +10,7 @@
 #include <chrono>
 #include <cstring>
 
+#include "lse/core/platform.hpp"
 #include "lse/probe/wire.hpp"
 
 namespace lse::probe {
@@ -58,9 +61,9 @@ int reps_for(std::size_t bytes, std::size_t budget) noexcept {
 }  // namespace
 
 std::string host_identity() {
-  std::array<char, 256> buf{};
-  if (::gethostname(buf.data(), buf.size() - 1) != 0) return "localhost";
-  return std::string(buf.data());
+  std::string name;
+  if (!platform::hostname(name) || name.empty()) return "localhost";
+  return name;
 }
 
 PathKind classify_path(const LinkMember& src, const LinkMember& dst,

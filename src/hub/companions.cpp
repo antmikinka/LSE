@@ -1,6 +1,8 @@
 // Which DFlash2 draft and MTP head a target pairs with, whether they are on
 // disk, and fetching them when a run asks for one without naming it.
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #include <algorithm>
 #include <cctype>

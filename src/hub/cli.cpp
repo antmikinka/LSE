@@ -1,6 +1,8 @@
 // `models` and `pull`: the model-management subcommands lse and lse-server
 // share. Listing is offline; only pull touches the network.
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #include <algorithm>
 #include <chrono>
@@ -283,7 +285,8 @@ int remove_model(std::string_view prog, int argc, char** argv) {
   if (!plan.ok()) return fail(prog, plan.status());
   std::printf("%s %s, freeing %s:\n", yes ? "removing" : "would remove", plan->description.c_str(),
               human(plan->bytes).c_str());
-  for (const auto& p : plan->paths) std::printf("  %s\n", p.c_str());
+  // .string(), not .c_str(): fs::path::c_str() is wchar_t* on Windows.
+  for (const auto& p : plan->paths) std::printf("  %s\n", p.string().c_str());
   if (!yes) {
     std::printf("nothing was removed; add --yes to delete\n");
     return 1;
