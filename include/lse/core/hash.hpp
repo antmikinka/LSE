@@ -3,6 +3,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cstring>
 #include <string_view>
 
 namespace lse {
@@ -25,7 +26,7 @@ inline constexpr std::uint64_t kHashPrime = 1099511628211ull;
 // (0.0 vs -0.0) must not collide in a kernel cache key.
 [[nodiscard]] inline std::uint64_t hash_float(std::uint64_t seed, float v) noexcept {
   std::uint32_t bits;
-  __builtin_memcpy(&bits, &v, sizeof(bits));
+  std::memcpy(&bits, &v, sizeof(bits));
   return hash_mix(seed, bits);
 }
 

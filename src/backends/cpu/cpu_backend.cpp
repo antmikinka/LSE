@@ -5,6 +5,10 @@
 #include <new>
 #include <thread>
 
+#ifdef _WIN32
+#include <malloc.h>  // _aligned_malloc/_aligned_free
+#endif
+
 namespace lse::backend {
 
 namespace {
@@ -75,7 +79,13 @@ Result<DeviceBuffer> CpuBackend::allocate_impl(std::size_t bytes,
   // Round up so the tail of the buffer is safe to touch with aligned vector
   // stores, mirroring how device allocators over-allocate.
   const std::size_t padded = ((bytes + kAlignment - 1) / kAlignment) * kAlignment;
+#ifdef _WIN32
+  // The MSVC STL has no C11 aligned_alloc, and _aligned_malloc's blocks must
+  // be released with _aligned_free — both sides of the pair branch below.
+  void* ptr = ::_aligned_malloc(padded, kAlignment);
+#else
   void* ptr = std::aligned_alloc(kAlignment, padded);
+#endif
   if (ptr == nullptr) {
     return LSE_ERROR(kOutOfMemory, "failed to allocate ", std::to_string(bytes),
                      " bytes on the host");
@@ -86,7 +96,12 @@ Result<DeviceBuffer> CpuBackend::allocate_impl(std::size_t bytes,
   buf.handle = reinterpret_cast<std::uint64_t>(ptr);
   // Views and retained graphs share the allocation, just as device backends
   // do. The deleter needs no live backend and remains valid after shutdown.
+#ifdef _WIN32
+  buf.storage =
+      std::shared_ptr<void>(ptr, [](void* p) { ::_aligned_free(p); });
+#else
   buf.storage = std::shared_ptr<void>(ptr, std::free);
+#endif
   return buf;
 }
 
@@ -95,7 +110,11 @@ void CpuBackend::deallocate_impl(DeviceBuffer& buf) noexcept {
     buf.storage.reset();
   } else {
     // Preserve explicit release of legacy, unowned allocation descriptors.
+#ifdef _WIN32
+    ::_aligned_free(buf.ptr);
+#else
     std::free(buf.ptr);
+#endif
   }
   buf = {};
 }

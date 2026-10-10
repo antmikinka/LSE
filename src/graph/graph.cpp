@@ -1,5 +1,6 @@
 #include "lse/graph/graph.hpp"
 
+#include <cstring>
 #include <ostream>
 #include <unordered_map>
 
@@ -184,7 +185,7 @@ std::uint64_t FusionGroup::signature() const noexcept {
     // kernel, so the second silently computed the first one's value.
     for (float f : n->attrs) {
       std::uint32_t bits;
-      __builtin_memcpy(&bits, &f, sizeof(bits));
+      std::memcpy(&bits, &f, sizeof(bits));
       mix(bits);
     }
     if (n->prim != nullptr) {
@@ -254,7 +255,7 @@ std::uint64_t FusionGroup::emission_signature() const {
     mix(node->attrs.size());
     for (float value : node->attrs) {
       std::uint32_t bits;
-      __builtin_memcpy(&bits, &value, sizeof(bits));
+      std::memcpy(&bits, &value, sizeof(bits));
       mix(bits);
     }
     const auto name = node->prim ? node->prim->name() : std::string_view{};

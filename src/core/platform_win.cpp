@@ -875,9 +875,22 @@ std::uint64_t now_monotonic_ns() { return qpc_ns(); }
 
 std::uint64_t now_boottime_ns() {
   // QueryInterruptTime: 100 ns units since boot, biased (counts across sleep),
-  // matching CLOCK_BOOTTIME.
+  // matching CLOCK_BOOTTIME. Recent SDKs declare it in <realtimeapiset.h> but
+  // kernel32.lib omits the import thunk, so a direct call fails to link with an
+  // unresolved __imp_QueryInterruptTime (only the *Unbiased* variant is there).
+  // kernel32.dll still exports the function, so resolve it at runtime.
+  using QueryInterruptTimeFn = VOID(WINAPI*)(PULONGLONG);
+  static const auto pfn = reinterpret_cast<QueryInterruptTimeFn>(
+      ::GetProcAddress(::GetModuleHandleW(L"kernel32.dll"),
+                       "QueryInterruptTime"));
   ULONGLONG ticks = 0;
-  ::QueryInterruptTime(&ticks);
+  if (pfn != nullptr) {
+    pfn(&ticks);
+  } else {
+    // Pre-Windows 8 fallback: the unbiased counter excludes standby, but still
+    // yields a stable 100 ns clock rather than failing outright.
+    ::QueryUnbiasedInterruptTime(&ticks);
+  }
   return static_cast<std::uint64_t>(ticks) * 100ull;
 }
 

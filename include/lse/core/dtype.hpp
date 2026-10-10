@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <string_view>
 
 namespace lse {
@@ -34,7 +35,7 @@ struct bfloat16_t {
   [[nodiscard]] float to_float() const noexcept {
     std::uint32_t w = static_cast<std::uint32_t>(bits) << 16;
     float out;
-    __builtin_memcpy(&out, &w, sizeof(out));
+    std::memcpy(&out, &w, sizeof(out));
     return out;
   }
 
@@ -43,7 +44,7 @@ struct bfloat16_t {
   // Round-to-nearest-even, matching what the training stack stores.
   static std::uint16_t from_float(float f) noexcept {
     std::uint32_t w;
-    __builtin_memcpy(&w, &f, sizeof(w));
+    std::memcpy(&w, &f, sizeof(w));
     // NaN: force a quiet NaN rather than letting rounding clear the mantissa.
     if (((w >> 23) & 0xFF) == 0xFF && (w & 0x7FFFFF) != 0) {
       return static_cast<std::uint16_t>((w >> 16) | 0x0040);

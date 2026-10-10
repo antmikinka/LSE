@@ -47,6 +47,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
   set(LSE_CARGO_TARGET_DIR "aarch64-apple-ios/release")
   set(LSE_CARGO_ENV "PCRE2_SYS_STATIC=1"
       "IPHONEOS_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+elseif(WIN32)
+  # Naming the triple puts the artifact under target/<triple>/release and, on
+  # the MSVC host toolchain, emits an MSVC .lib rather than a GNU .a.
+  set(LSE_CARGO_TARGET_ARGS --target x86_64-pc-windows-msvc)
+  set(LSE_CARGO_TARGET_DIR "x86_64-pc-windows-msvc/release")
 endif()
 
 # A Rust staticlib does not carry the native C libraries its crates link
@@ -62,16 +67,39 @@ function(_lse_rust_native_libs crate_dir out_var)
 
   set(_libs "")
   if(_rc EQUAL 0 AND "${_out}${_err}" MATCHES "native-static-libs: ([^\n]*)")
-    string(REGEX MATCHALL "-l[^ ]+" _flags "${CMAKE_MATCH_1}")
-    foreach(_flag IN LISTS _flags)
-      string(REGEX REPLACE "^-l" "" _name "${_flag}")
-      # The C runtime and unwinder come in via the C++ driver already.
-      if(NOT _name MATCHES "^(c|gcc_s|m)$")
-        list(APPEND _libs "${_name}")
-      endif()
-    endforeach()
+    if(WIN32)
+      # rustc names them "foo.lib" tokens here, not -lfoo. The real system
+      # import libs (kernel32.lib, ws2_32.lib, ...) are on the MSVC linker path,
+      # and the driver deduplicates the ones it links by default, so they pass
+      # straight through. The `windows` crate is built with raw-dylib, so rustc
+      # ALSO lists synthetic import stubs (windows.0.53.0.lib). Those are only
+      # materialized during a rustc-driven link; a `cargo build --lib` staticlib
+      # never links, so no such file exists for our external linker to open.
+      # Each stub forwards to a system DLL that a real import lib in this same
+      # list already provides, so drop the stubs and keep the real libs.
+      string(REGEX MATCHALL "[A-Za-z0-9_.\\-]+\\.lib" _all "${CMAKE_MATCH_1}")
+      foreach(_lib IN LISTS _all)
+        if(NOT _lib MATCHES "^windows\\.[0-9]")
+          list(APPEND _libs "${_lib}")
+        endif()
+      endforeach()
+    else()
+      string(REGEX MATCHALL "-l[^ ]+" _flags "${CMAKE_MATCH_1}")
+      foreach(_flag IN LISTS _flags)
+        string(REGEX REPLACE "^-l" "" _name "${_flag}")
+        # The C runtime and unwinder come in via the C++ driver already.
+        if(NOT _name MATCHES "^(c|gcc_s|m)$")
+          list(APPEND _libs "${_name}")
+        endif()
+      endforeach()
+    endif()
   else()
     message(WARNING "could not query rustc for native libs; resolving known host dependencies")
+    if(WIN32)
+      set(_libs ws2_32.lib bcrypt.lib userenv.lib)
+      set(${out_var} "${_libs}" PARENT_SCOPE)
+      return()
+    endif()
     set(_libs pthread dl)
     # Cargo's lock file can make the query unavailable in a read-only source
     # checkout even when the static archive has already been built. fastokens
@@ -94,7 +122,11 @@ function(lse_add_rust_staticlib target crate_dir lib_name)
     return()
   endif()
 
-  set(_lib "${crate_dir}/target/${LSE_CARGO_TARGET_DIR}/lib${lib_name}.a")
+  if(WIN32)
+    set(_lib "${crate_dir}/target/${LSE_CARGO_TARGET_DIR}/${lib_name}.lib")
+  else()
+    set(_lib "${crate_dir}/target/${LSE_CARGO_TARGET_DIR}/lib${lib_name}.a")
+  endif()
 
   # Depend on the sources so cargo re-runs on change; cargo decides whether a
   # rebuild is actually needed.
