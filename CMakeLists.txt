@@ -115,6 +115,11 @@ add_subdirectory(src/backends)
 # ---------------------------------------------------------------------------
 if(APPLE)
   set(LSE_POLLER_SOURCE src/communication/poller_kqueue.cpp)
+elseif(WIN32)
+  # WSAPoll plus a self-connected UDP loopback wake socket; the file header
+  # documents its two deviations from the epoll contract (ms granularity,
+  # fd() naming the wake socket).
+  set(LSE_POLLER_SOURCE src/communication/poller_winsock.cpp)
 else()
   set(LSE_POLLER_SOURCE src/communication/poller_epoll.cpp)
 endif()
@@ -127,6 +132,9 @@ add_library(lse_communication
   src/communication/stream_link.cpp
   src/communication/socket.cpp
   src/communication/rdma.cpp
+  # Non-inline half of the socket seam (WSAStartup, WSA*->errno table);
+  # #ifdef-empty off Windows so every platform builds one source set.
+  src/communication/winsock_compat.cpp
 )
 add_library(lse::communication ALIAS lse_communication)
 # ${CMAKE_DL_LIBS} is for dlopen, which is how a fabric transport asks this

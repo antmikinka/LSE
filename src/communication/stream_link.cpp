@@ -1,8 +1,6 @@
 #include "lse/communication/stream_link.hpp"
 
-#include <sys/socket.h>
-#include <sys/uio.h>
-#include <unistd.h>
+#include "winsock_compat.hpp"
 
 #include <algorithm>
 #include <cerrno>
@@ -109,7 +107,7 @@ StreamLink::~StreamLink() {
   for (LaneIo& io : lanes_) {
     if (io.fd >= 0) {
       poller_->remove(io.fd);
-      ::close(io.fd);
+      sock_close(io.fd);
       io.fd = -1;
     }
   }
@@ -187,7 +185,7 @@ void StreamLink::on_ready(int fd, Readiness r) {
 void StreamLink::finish_connect(LaneIo& io) {
   int err = 0;
   socklen_t len = sizeof(err);
-  if (::getsockopt(io.fd, SOL_SOCKET, SO_ERROR, &err, &len) != 0) {
+  if (sock_getsockopt(io.fd, SOL_SOCKET, SO_ERROR, &err, &len) != 0) {
     fault(LSE_ERROR(kIoError, "getsockopt(SO_ERROR) on ", peer_.str(), ": ",
                     std::strerror(errno)),
           StatusCode::kIoError);
@@ -205,7 +203,7 @@ void StreamLink::finish_connect(LaneIo& io) {
 void StreamLink::drive_hello(LaneIo& io) {
   while (!io.hello_sent) {
     const std::size_t left = kHelloBytes - io.hello_out_sent;
-    const ssize_t n = ::send(io.fd, io.hello_out.data() + io.hello_out_sent,
+    const ssize_t n = sock_send(io.fd, io.hello_out.data() + io.hello_out_sent,
                              left, MSG_NOSIGNAL);
     if (n < 0) {
       if (would_block()) return;
@@ -247,7 +245,7 @@ void StreamLink::service(LaneIo& io, Readiness r) {
 
   if (!io.hello_read && (r.readable || r.hangup)) {
     while (io.hello_in_read < kHelloBytes) {
-      const ssize_t n = ::recv(io.fd, io.hello_in.data() + io.hello_in_read,
+      const ssize_t n = sock_recv(io.fd, io.hello_in.data() + io.hello_in_read,
                                kHelloBytes - io.hello_in_read, 0);
       if (n == 0) {
         fault(LSE_ERROR(kIoError, "peer ", peer_.str(),
@@ -323,7 +321,7 @@ void StreamLink::drain_tx(LaneIo& io) {
     if (io.lane == Lane::kControl) {
       const std::size_t left = op.ctrl_len - op.frame_sent;
       const ssize_t n =
-          ::send(io.fd, io.ctrl_tx.data() + io.ctrl_head + op.frame_sent, left,
+          sock_send(io.fd, io.ctrl_tx.data() + io.ctrl_head + op.frame_sent, left,
                  MSG_NOSIGNAL);
       if (n < 0) {
         if (would_block()) break;
@@ -400,7 +398,7 @@ void StreamLink::drain_tx(LaneIo& io) {
     msghdr msg{};
     msg.msg_iov = iov.data();
     msg.msg_iovlen = static_cast<std::size_t>(count);
-    const ssize_t n = ::sendmsg(io.fd, &msg, MSG_NOSIGNAL);
+    const ssize_t n = sock_sendmsg(io.fd, &msg, MSG_NOSIGNAL);
     if (n < 0) {
       if (would_block()) break;
       fault(LSE_ERROR(kIoError, "data send to ", peer_.str(), ": ",
@@ -479,7 +477,7 @@ void StreamLink::half_close_if_drained() {
   if (retired_ || !closing_) return;
   for (LaneIo& io : lanes_) {
     if (io.fd < 0 || io.write_closed || !io.tx.empty()) continue;
-    ::shutdown(io.fd, SHUT_WR);
+    sock_shutdown(io.fd, SHUT_WR);
     io.write_closed = true;
     arm(io);
   }
@@ -500,7 +498,7 @@ void StreamLink::drain_rx_control(LaneIo& io) {
             StatusCode::kIoError);
       return;
     }
-    const ssize_t n = ::recv(io.fd, io.rx.data() + io.rx_len, room, 0);
+    const ssize_t n = sock_recv(io.fd, io.rx.data() + io.rx_len, room, 0);
     if (n == 0) {
       io.eof = true;
     } else if (n < 0) {
@@ -594,7 +592,7 @@ void StreamLink::drain_rx_data(LaneIo& io) {
   for (;;) {
     if (!io.in_frame) {
       while (io.hdr_in_len < kFrameHeaderBytes) {
-        const ssize_t n = ::recv(io.fd, io.hdr_in.data() + io.hdr_in_len,
+        const ssize_t n = sock_recv(io.fd, io.hdr_in.data() + io.hdr_in_len,
                                  kFrameHeaderBytes - io.hdr_in_len, 0);
         if (n == 0) {
           io.eof = true;
@@ -679,7 +677,7 @@ void StreamLink::drain_rx_data(LaneIo& io) {
       } else {
         dst = io.inbound_dst + io.inbound_done;
       }
-      const ssize_t n = ::recv(io.fd, dst, want, 0);
+      const ssize_t n = sock_recv(io.fd, dst, want, 0);
       if (n == 0) {
         fault(LSE_ERROR(kIoError, "peer ", peer_.str(),
                         " closed the data lane after ",
@@ -1011,7 +1009,7 @@ void StreamLink::retire(StatusCode outstanding) {
     io.posted.clear();
     if (io.fd >= 0) {
       poller_->remove(io.fd);
-      ::close(io.fd);
+      sock_close(io.fd);
       io.fd = -1;
     }
     if (debug()) {

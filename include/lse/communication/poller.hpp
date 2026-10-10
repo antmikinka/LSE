@@ -76,6 +76,9 @@ class Poller {
   [[maybe_unused]] int wake_fd_ = -1; // kqueue uses an EVFILT_USER event.
   std::map<int, IReady*> owners_;
   std::vector<unsigned char> scratch_;
+  // WSAPoll rebuilds its wait set on every call, so the winsock poller tracks
+  // each fd's interest here. epoll/kqueue keep it empty.
+  [[maybe_unused]] std::map<int, Interest> interests_;
 };
 
 }  // namespace lse::comm

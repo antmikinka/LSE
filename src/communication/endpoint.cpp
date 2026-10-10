@@ -1,7 +1,6 @@
 #include "lse/communication/endpoint.hpp"
 
-#include <netdb.h>
-#include <sys/socket.h>
+#include "winsock_compat.hpp"
 
 #include <algorithm>
 #include <array>
@@ -256,6 +255,8 @@ Result<std::vector<Endpoint>> resolve(const Endpoint& ep,
   LSE_RETURN_IF_ERROR(split_host_port(ep.authority(), host, port));
   if (host.empty()) return std::vector<Endpoint>{ep};
 
+  // WSAStartup before the first getaddrinfo on Windows; a no-op elsewhere.
+  sock_startup();
   addrinfo hints{};
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
@@ -270,8 +271,7 @@ Result<std::vector<Endpoint>> resolve(const Endpoint& ep,
     rc = ::getaddrinfo(host.c_str(), port.empty() ? nullptr : port.c_str(),
                        &hints, &res);
     if (rc != EAI_AGAIN || std::chrono::steady_clock::now() >= deadline) break;
-    const timespec nap{0, 50'000'000};
-    ::nanosleep(&nap, nullptr);
+    comm_nap_ns(50'000'000);
   }
   if (rc != 0) {
     return LSE_ERROR(kNotFound, "cannot resolve '", host,
@@ -282,7 +282,10 @@ Result<std::vector<Endpoint>> resolve(const Endpoint& ep,
   for (const addrinfo* a = res; a != nullptr; a = a->ai_next) {
     std::array<char, NI_MAXHOST> numeric{};
     std::array<char, NI_MAXSERV> service{};
-    if (::getnameinfo(a->ai_addr, a->ai_addrlen, numeric.data(), numeric.size(),
+    // ai_addrlen is size_t in the Windows addrinfo; socklen_t on POSIX, where
+    // this cast is the identity.
+    if (::getnameinfo(a->ai_addr, static_cast<socklen_t>(a->ai_addrlen),
+                      numeric.data(), numeric.size(),
                       service.data(), service.size(),
                       NI_NUMERICHOST | NI_NUMERICSERV) != 0) {
       continue;

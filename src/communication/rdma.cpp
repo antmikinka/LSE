@@ -16,14 +16,17 @@
 // Writing either data path now would be writing against hardware that is not
 // here and could not be run once. When a device appears, the probe below
 // changes its answer on its own and the transport is the piece to fill in.
+#ifndef _WIN32
 #include <dirent.h>
 #include <dlfcn.h>
+#endif
 
 #include <cstring>
 #include <mutex>
 #include <string>
 #include <string_view>
 
+#include "lse/core/platform.hpp"
 #include "lse/communication/adapter.hpp"
 #include "lse/communication/transport.hpp"
 
@@ -42,8 +45,11 @@ struct FabricProbe {
   std::string reason;
 };
 
+// platform::dl_open is dlopen(RTLD_LAZY|RTLD_LOCAL) on POSIX; on Windows
+// LoadLibraryW fails cleanly on a POSIX soname, which is the decline-with-
+// reason answer this probe wants.
 void* try_dlopen(const char* soname) {
-  return ::dlopen(soname, RTLD_LAZY | RTLD_LOCAL);
+  return platform::dl_open(soname);
 }
 
 FabricProbe probe_verbs() {
@@ -55,10 +61,10 @@ FabricProbe probe_verbs() {
         "provider to open";
     return out;
   }
-  auto get_list =
-      reinterpret_cast<IbvGetDeviceList>(::dlsym(verbs, "ibv_get_device_list"));
+  auto get_list = reinterpret_cast<IbvGetDeviceList>(
+      platform::dl_sym(verbs, "ibv_get_device_list"));
   auto free_list = reinterpret_cast<IbvFreeDeviceList>(
-      ::dlsym(verbs, "ibv_free_device_list"));
+      platform::dl_sym(verbs, "ibv_free_device_list"));
   if (get_list == nullptr || free_list == nullptr) {
     out.reason =
         "libibverbs.so.1 loaded but does not export ibv_get_device_list; this "
@@ -89,17 +95,12 @@ FabricProbe probe_verbs() {
 }
 
 bool has_device_node(const char* dir, std::string_view prefix) {
-  DIR* d = ::opendir(dir);
-  if (d == nullptr) return false;
-  bool found = false;
-  while (const dirent* e = ::readdir(d)) {
-    if (std::string_view(e->d_name).starts_with(prefix)) {
-      found = true;
-      break;
-    }
+  // dir_entries is opendir/readdir on POSIX and empty on failure, so the
+  // shape of the answer — and of this probe's decline — is unchanged.
+  for (const std::string& name : platform::dir_entries(dir)) {
+    if (std::string_view(name).starts_with(prefix)) return true;
   }
-  ::closedir(d);
-  return found;
+  return false;
 }
 
 FabricProbe probe_tb5() {
@@ -111,7 +112,7 @@ FabricProbe probe_tb5() {
         "cannot be opened";
     return out;
   }
-  if (::dlsym(lib, "odl_tb5_open_path") == nullptr) {
+  if (platform::dl_sym(lib, "odl_tb5_open_path") == nullptr) {
     out.reason =
         "libodl_tb5.so.0 loaded but does not export odl_tb5_open_path; this is "
         "not a usable OdinLink library";

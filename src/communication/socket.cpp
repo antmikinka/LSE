@@ -4,14 +4,7 @@
 // stream_link.cpp. What is left here is genuinely family-specific: how a name
 // becomes a sockaddr, how a connection is started without blocking, and how the
 // acceptor pairs the two sockets of one channel by the id in their hellos.
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/un.h>
-#include <unistd.h>
-#include <fcntl.h>
+#include "winsock_compat.hpp"
 
 #include <algorithm>
 #include <array>
@@ -24,6 +17,7 @@
 #include <utility>
 #include <vector>
 
+#include "lse/core/platform.hpp"
 #include "lse/communication/frame.hpp"
 #include "lse/communication/adapter.hpp"
 #include "lse/communication/transport.hpp"
@@ -129,6 +123,9 @@ Result<Address> unix_address(const Endpoint& ep) {
 #ifdef __APPLE__
   if (abstract) return LSE_ERROR(kUnimplemented, "macOS unix sockets require a filesystem path; abstract namespace is Linux-only");
 #endif
+#ifdef _WIN32
+  if (abstract) return LSE_ERROR(kUnimplemented, "Windows unix sockets require a filesystem path; abstract namespace is Linux-only");
+#endif
   const std::string body = abstract ? name.substr(1) : name;
   if (body.size() + 1 > sizeof(un.sun_path)) {
     return LSE_ERROR(kOutOfRange, "unix socket name '", name, "' is longer than ",
@@ -181,7 +178,7 @@ Result<int> make_socket(int family) {
 #ifdef __APPLE__
   const int fd = darwin_socket(family);
 #else
-  const int fd = ::socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
+  const int fd = sock_socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
 #endif
   if (fd < 0) {
     return LSE_ERROR(kIoError, "socket(): ", std::strerror(errno));
@@ -190,7 +187,7 @@ Result<int> make_socket(int family) {
     const int one = 1;
     // Small control messages are the whole point of the control lane; Nagle
     // would batch them behind an ack and hand back milliseconds of latency.
-    ::setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
+    sock_setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
   }
   return fd;
 }
@@ -198,7 +195,7 @@ Result<int> make_socket(int family) {
 std::string describe_peer(int fd, const Endpoint& fallback) {
   sockaddr_storage ss{};
   socklen_t len = sizeof(ss);
-  if (::getpeername(fd, reinterpret_cast<sockaddr*>(&ss), &len) != 0) {
+  if (sock_getpeername(fd, reinterpret_cast<sockaddr*>(&ss), &len) != 0) {
     return fallback.str();
   }
   if (ss.ss_family == AF_INET) {
@@ -224,7 +221,7 @@ Result<Endpoint> bound_endpoint(int fd, const Endpoint& requested) {
   if (is_unix(requested)) return requested;
   sockaddr_storage ss{};
   socklen_t len = sizeof(ss);
-  if (::getsockname(fd, reinterpret_cast<sockaddr*>(&ss), &len) != 0) {
+  if (sock_getsockname(fd, reinterpret_cast<sockaddr*>(&ss), &len) != 0) {
     return LSE_ERROR(kIoError, "getsockname: ", std::strerror(errno));
   }
   std::string authority;
@@ -397,7 +394,7 @@ class SocketTransport {
       auto made = make_socket(addr.family);
       if (!made.ok()) {
         for (const int open_fd : fds) {
-          if (open_fd >= 0) ::close(open_fd);
+          if (open_fd >= 0) sock_close(open_fd);
         }
         return made.status();
       }
@@ -406,19 +403,19 @@ class SocketTransport {
         auto bind_to = inet_address(std::string(local) + ":0");
         if (!bind_to.ok()) {
           for (const int open_fd : fds) {
-            if (open_fd >= 0) ::close(open_fd);
+            if (open_fd >= 0) sock_close(open_fd);
           }
           return bind_to.status();
         }
-        ::bind(fds[i], reinterpret_cast<const sockaddr*>(&bind_to->storage),
+        sock_bind(fds[i], reinterpret_cast<const sockaddr*>(&bind_to->storage),
                bind_to->len);
       }
-      if (::connect(fds[i], reinterpret_cast<const sockaddr*>(&addr.storage),
+      if (sock_connect(fds[i], reinterpret_cast<const sockaddr*>(&addr.storage),
                     addr.len) != 0 &&
           errno != EINPROGRESS) {
         const std::string why = std::strerror(errno);
         for (const int open_fd : fds) {
-          if (open_fd >= 0) ::close(open_fd);
+          if (open_fd >= 0) sock_close(open_fd);
         }
         return LSE_ERROR(kIoError, "connect to ", ep.str(), ": ", why);
       }
@@ -443,8 +440,7 @@ class SocketTransport {
 
     if (addr.family == AF_UNIX && !ep.path().empty() &&
         ep.path().front() != '@') {
-      struct ::stat st{};
-      if (::stat(std::string(ep.path()).c_str(), &st) == 0) {
+      if (platform::exists(ep.path())) {
         return LSE_ERROR(kAlreadyExists, "'", std::string(ep.path()),
                          "' already exists; this transport never unlinks a "
                          "path it did not create");
@@ -454,23 +450,23 @@ class SocketTransport {
     LSE_ASSIGN_OR(const int fd, make_socket(addr.family));
     if (addr.family != AF_UNIX) {
       const int one = 1;
-      ::setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+      sock_setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
     }
-    if (::bind(fd, reinterpret_cast<const sockaddr*>(&addr.storage), addr.len) !=
+    if (sock_bind(fd, reinterpret_cast<const sockaddr*>(&addr.storage), addr.len) !=
         0) {
       const std::string why = std::strerror(errno);
-      ::close(fd);
+      sock_close(fd);
       return LSE_ERROR(kIoError, "bind ", ep.str(), ": ", why);
     }
-    if (::listen(fd, 128) != 0) {
+    if (sock_listen(fd, 128) != 0) {
       const std::string why = std::strerror(errno);
-      ::close(fd);
+      sock_close(fd);
       return LSE_ERROR(kIoError, "listen ", ep.str(), ": ", why);
     }
 
     auto bound = bound_endpoint(fd, ep);
     if (!bound.ok()) {
-      ::close(fd);
+      sock_close(fd);
       return bound.status();
     }
     auto owned = std::make_unique<SocketListener>(
@@ -535,7 +531,7 @@ void SocketTransport::adopt(std::array<int, 2> fds, const Endpoint& listen_ep,
   // read that hello, so it is handed over rather than read twice.
   const std::uint64_t channel = sink_->reserve_channel();
   if (channel == 0) {
-    for (const int fd : fds) ::close(fd);
+    for (const int fd : fds) sock_close(fd);
     return;
   }
   auto link = std::make_unique<StreamLink>(
@@ -550,20 +546,20 @@ void SocketTransport::adopt(std::array<int, 2> fds, const Endpoint& listen_ep,
 void SocketListener::shut() noexcept {
   if (fd_ >= 0) {
     poller_->remove(fd_);
-    ::close(fd_);
+    sock_close(fd_);
     fd_ = -1;
   }
   for (Pending& p : pending_) {
     if (p.fd >= 0) {
       poller_->remove(p.fd);
-      ::close(p.fd);
+      sock_close(p.fd);
       p.fd = -1;
     }
   }
   pending_.clear();
   for (HalfPair& pair : pairs_) {
     for (const int fd : pair.fds) {
-      if (fd >= 0) ::close(fd);
+      if (fd >= 0) sock_close(fd);
     }
   }
   pairs_.clear();
@@ -571,7 +567,7 @@ void SocketListener::shut() noexcept {
 
 void SocketListener::drop(int fd) noexcept {
   poller_->remove(fd);
-  ::close(fd);
+  sock_close(fd);
   std::erase_if(pending_, [fd](const Pending& p) { return p.fd == fd; });
 }
 
@@ -596,8 +592,8 @@ void SocketListener::accept_ready() {
 #ifdef __APPLE__
     const int fd = darwin_accept(fd_);
 #else
-    const int fd = ::accept4(fd_, nullptr, nullptr,
-                             SOCK_NONBLOCK | SOCK_CLOEXEC);
+    const int fd = sock_accept4(fd_, nullptr, nullptr,
+                                SOCK_NONBLOCK | SOCK_CLOEXEC);
 #endif
     if (fd < 0) {
       // Out of descriptors: the connection stays queued and the listening
@@ -616,12 +612,12 @@ void SocketListener::accept_ready() {
     int family = AF_UNIX;
     sockaddr_storage ss{};
     socklen_t len = sizeof(ss);
-    if (::getsockname(fd, reinterpret_cast<sockaddr*>(&ss), &len) == 0) {
+    if (sock_getsockname(fd, reinterpret_cast<sockaddr*>(&ss), &len) == 0) {
       family = ss.ss_family;
     }
     if (family != AF_UNIX) {
       const int one = 1;
-      ::setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
+      sock_setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
     }
     Pending p;
     p.fd = fd;
@@ -635,8 +631,8 @@ void SocketListener::accept_ready() {
 
 void SocketListener::pending_ready(Pending& p) {
   while (p.read < kHelloBytes) {
-    const ssize_t n = ::recv(p.fd, p.hello.data() + p.read, kHelloBytes - p.read,
-                             0);
+    const ssize_t n = sock_recv(p.fd, p.hello.data() + p.read, kHelloBytes - p.read,
+                                0);
     if (n == 0) {
       drop(p.fd);
       return;
@@ -674,7 +670,7 @@ void SocketListener::pending_ready(Pending& p) {
     pair = pairs_.end() - 1;
   }
   if (pair->fds[slot] >= 0) {  // a second socket claiming the same lane
-    ::close(fd);
+    sock_close(fd);
     return;
   }
   pair->fds[slot] = fd;
@@ -704,7 +700,7 @@ void SocketListener::tick(std::uint64_t now_ns) {
       const int fd = p.fd;
       p.fd = -1;
       poller_->remove(fd);
-      ::close(fd);
+      sock_close(fd);
     }
   }
   std::erase_if(pending_, [](const Pending& p) { return p.fd < 0; });
@@ -712,7 +708,7 @@ void SocketListener::tick(std::uint64_t now_ns) {
     if (now_ns < pair.since_ns + handshake_ns_) continue;
     for (int& fd : pair.fds) {
       if (fd >= 0) {
-        ::close(fd);
+        sock_close(fd);
         fd = -1;
       }
     }
