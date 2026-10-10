@@ -4,6 +4,7 @@
 #include <array>
 #include <bit>
 #include <cctype>
+#include <cerrno>
 #include <charconv>
 #include <chrono>
 #include <cmath>
@@ -19,13 +20,16 @@
 #include <utility>
 #include <vector>
 
+#ifndef _WIN32
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <unistd.h>
+#endif
 
 #include <nlohmann/json.hpp>
 
+#include "lse/core/platform.hpp"
 #include "lse/core/sha256.hpp"
 
 #if defined(__APPLE__)
@@ -228,7 +232,7 @@ class Fd {
   Fd(const Fd&) = delete;
   Fd& operator=(const Fd&) = delete;
   Fd(Fd&& o) noexcept : fd_(std::exchange(o.fd_, -1)) {}
-  ~Fd() { if (fd_ >= 0) ::close(fd_); }
+  ~Fd() { if (fd_ >= 0) platform::close_fd(fd_); }
   [[nodiscard]] int get() const { return fd_; }
   [[nodiscard]] bool valid() const { return fd_ >= 0; }
 
@@ -239,7 +243,7 @@ class Fd {
 std::string errno_text() { return std::strerror(errno); }
 
 Result<Fd> open_read(const fs::path& path) {
-  Fd fd(::open(path.c_str(), O_RDONLY | O_CLOEXEC));
+  Fd fd(platform::open_read(path.string()));
   if (!fd.valid()) return LSE_ERROR(kIoError, "cannot open ", path.string(), ": ", errno_text());
   return fd;
 }
@@ -247,7 +251,7 @@ Result<Fd> open_read(const fs::path& path) {
 Status pread_exact(int fd, void* data, std::size_t size, std::uint64_t offset) {
   auto* p = static_cast<char*>(data);
   while (size > 0) {
-    const auto got = ::pread(fd, p, size, static_cast<off_t>(offset));
+    const auto got = platform::pread64(fd, p, size, static_cast<std::int64_t>(offset));
     if (got < 0 && errno == EINTR) continue;
     if (got <= 0) return LSE_ERROR(kIoError, "truncated safetensors payload");
     p += got;
@@ -336,7 +340,7 @@ class Writer {
   }
   Status finish() {
     LSE_RETURN_IF_ERROR(flush());
-    if (::fsync(fd_.get()) != 0) return LSE_ERROR(kIoError, "fsync failed: ", errno_text());
+    if (!platform::sync_fd(fd_.get())) return LSE_ERROR(kIoError, "fsync failed: ", errno_text());
     return OkStatus();
   }
   [[nodiscard]] std::uint64_t written() const { return written_; }
@@ -347,7 +351,7 @@ class Writer {
     const char* p = buffer_.data();
     std::size_t left = buffer_.size();
     while (left > 0) {
-      const auto n = ::write(fd_.get(), p, left);
+      const auto n = platform::write_fd(fd_.get(), p, left);
       if (n < 0 && errno == EINTR) continue;
       if (n <= 0) return LSE_ERROR(kIoError, "write failed: ", errno_text());
       p += n;
@@ -363,17 +367,14 @@ class Writer {
 };
 
 Status write_file(const fs::path& path, std::string_view text) {
-  Fd fd(::open(path.c_str(), O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0644));
+  Fd fd(platform::open_write_create(path.string(), /*exclusive=*/false, /*truncate=*/true, 0644));
   if (!fd.valid()) return LSE_ERROR(kIoError, "cannot create ", path.string(), ": ", errno_text());
   Writer w(std::move(fd));
   LSE_RETURN_IF_ERROR(w.write(text.data(), text.size()));
   return w.finish();
 }
 
-void fsync_dir(const fs::path& dir) {
-  Fd fd(::open(dir.c_str(), O_RDONLY | O_CLOEXEC));
-  if (fd.valid()) ::fsync(fd.get());
-}
+void fsync_dir(const fs::path& dir) { platform::sync_dir(dir.string()); }
 
 // ---------------------------------------------------------------------------
 // Progress.
@@ -411,9 +412,9 @@ class Progress {
 
 Result<std::string> hash_file(const fs::path& path, Progress& progress) {
   LSE_ASSIGN_OR(Fd fd, open_read(path));
-  struct stat st {};
-  if (::fstat(fd.get(), &st) != 0) return LSE_ERROR(kIoError, "cannot stat ", path.string());
-  const auto total = static_cast<std::uint64_t>(st.st_size);
+  const std::int64_t stat_size = platform::fd_size(fd.get());
+  if (stat_size < 0) return LSE_ERROR(kIoError, "cannot stat ", path.string());
+  const auto total = static_cast<std::uint64_t>(stat_size);
   std::vector<char> buffer(kIoChunk);
   Hasher hash;
   std::uint64_t done = 0;
@@ -609,7 +610,7 @@ std::string config_text(const Json& config) { return python_json(config, true) +
 
 Status write_weights(const Plan& plan, int source, const fs::path& path, Progress& progress,
                      std::string* sha) {
-  Fd fd(::open(path.c_str(), O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC, 0644));
+  Fd fd(platform::open_write_create(path.string(), /*exclusive=*/true, /*truncate=*/false, 0644));
   if (!fd.valid()) return LSE_ERROR(kIoError, "cannot create ", path.string(), ": ", errno_text());
   Writer out(std::move(fd));
   const std::uint64_t header_size = plan.header.size();
@@ -676,18 +677,18 @@ struct TempDir {
 Status convert_into(const ModelPaths& source, const fs::path& destination,
                     const DFlash2ConvertOptions& options, Progress& progress) {
   LSE_ASSIGN_OR(Fd fd, open_read(source.weights));
-  struct stat st {};
-  if (::fstat(fd.get(), &st) != 0) return LSE_ERROR(kIoError, "cannot stat ", source.weights);
-  const auto file_size = static_cast<std::uint64_t>(st.st_size);
+  const std::int64_t stat_size = platform::fd_size(fd.get());
+  if (stat_size < 0) return LSE_ERROR(kIoError, "cannot stat ", source.weights);
+  const auto file_size = static_cast<std::uint64_t>(stat_size);
   LSE_ASSIGN_OR(const Plan plan, make_plan(source, fd.get(), file_size));
 
   std::error_code ec;
   const fs::path parent = destination.parent_path();
   fs::create_directories(parent, ec);
   if (ec) return LSE_ERROR(kIoError, "cannot create ", parent.string(), ": ", ec.message());
-  struct statvfs vfs {};
-  if (::statvfs(parent.c_str(), &vfs) == 0) {
-    const auto free_bytes = static_cast<std::uint64_t>(vfs.f_bavail) * vfs.f_frsize;
+  const std::int64_t free_space = platform::free_space_bytes(parent.string());
+  if (free_space >= 0) {
+    const auto free_bytes = static_cast<std::uint64_t>(free_space);
     const std::uint64_t need = plan.output_bytes + (16u << 20);
     if (free_bytes < need)
       return LSE_ERROR(kIoError, "DFlash2 conversion needs ", std::to_string(need >> 20),
@@ -698,7 +699,7 @@ Status convert_into(const ModelPaths& source, const fs::path& destination,
   LSE_ASSIGN_OR(const std::string source_hash, hash_file(source.weights, progress));
 
   std::string pattern = (parent / (destination.filename().string() + ".XXXXXXXX")).string();
-  if (::mkdtemp(pattern.data()) == nullptr)
+  if (!platform::make_temp_dir(pattern))
     return LSE_ERROR(kIoError, "cannot create a temporary directory in ", parent.string(), ": ", errno_text());
   TempDir work{pattern};
 
@@ -717,7 +718,7 @@ Status convert_into(const ModelPaths& source, const fs::path& destination,
   manifest["tensors"] = plan.tensors.size();
   LSE_RETURN_IF_ERROR(write_file(work.path / "source-repository.json", python_json(manifest, true) + "\n"));
   fsync_dir(work.path);
-  if (::rename(work.path.c_str(), destination.c_str()) != 0) {
+  if (!platform::rename_path(work.path.string(), destination.string())) {
     if (errno == EEXIST || errno == ENOTEMPTY)
       return LSE_ERROR(kAlreadyExists, destination.string(), " already exists");
     return LSE_ERROR(kIoError, "cannot rename into ", destination.string(), ": ", errno_text());
@@ -770,15 +771,12 @@ std::string path_safe(std::string s) {
   return s;
 }
 
-std::string stat_stamp(const struct stat& st) {
-#if defined(__APPLE__)
-  const auto mtime_ns = static_cast<long long>(st.st_mtimespec.tv_sec) * 1000000000LL + st.st_mtimespec.tv_nsec;
-#else
-  const auto mtime_ns = static_cast<long long>(st.st_mtim.tv_sec) * 1000000000LL + st.st_mtim.tv_nsec;
-#endif
-  return std::to_string(static_cast<unsigned long long>(st.st_dev)) + ":" +
-         std::to_string(static_cast<unsigned long long>(st.st_ino)) + ":" +
-         std::to_string(static_cast<long long>(st.st_size)) + ":" + std::to_string(mtime_ns);
+// The shim owns the per-platform stat shape; the stamp string is identical to
+// the pre-port dev:ino:size:mtime_ns on POSIX.
+std::string stat_stamp(const platform::FileStamp& st) {
+  return std::to_string(st.dev) + ":" + std::to_string(st.ino) + ":" +
+         std::to_string(static_cast<long long>(st.size)) + ":" +
+         std::to_string(static_cast<long long>(st.mtime_ns));
 }
 
 fs::path stamp_path(const fs::path& destination) {
@@ -788,8 +786,8 @@ fs::path stamp_path(const fs::path& destination) {
 // The source's sha256 without reading it when that is safe: a stamp left by
 // an earlier run for this exact file, or the blob name in an HF cache.
 std::optional<std::string> known_source_sha(const ModelPaths& source, const fs::path& destination) {
-  struct stat st {};
-  if (::stat(source.weights.c_str(), &st) != 0) return std::nullopt;
+  const platform::FileStamp st = platform::file_stamp_of_path(source.weights);
+  if (!st.valid) return std::nullopt;
   if (auto text = read_text(stamp_path(destination)); text.ok()) {
     const auto space = text->find(' ');
     if (space != std::string::npos && text->substr(0, space) == stat_stamp(st)) {
@@ -809,8 +807,8 @@ std::optional<std::string> known_source_sha(const ModelPaths& source, const fs::
 }
 
 void write_stamp(const ModelPaths& source, const fs::path& destination, const std::string& sha) {
-  struct stat st {};
-  if (::stat(source.weights.c_str(), &st) != 0) return;
+  const platform::FileStamp st = platform::file_stamp_of_path(source.weights);
+  if (!st.valid) return;
   (void)write_file(stamp_path(destination), stat_stamp(st) + " " + sha + "\n");
 }
 
@@ -827,7 +825,9 @@ bool cache_valid(const ModelPaths& source, const fs::path& destination, Progress
   const Json* source_sha = member(*manifest, "source_sha256");
   const auto size = fs::file_size(destination / "model.safetensors", ec);
   if (ec || !bytes || !bytes->is_number_unsigned() || bytes->get<std::uint64_t>() != size ||
-      !format || *format != kFormat || !source_sha || !source_sha->is_string()) {
+      // Explicit Json(): MSVC STL's string_view comparison overloads make the
+      // implicit string_view->Json conversion ambiguous under C++20 rewriting.
+      !format || *format != Json(kFormat) || !source_sha || !source_sha->is_string()) {
     *why = "cached conversion is incomplete";
     return false;
   }
@@ -888,18 +888,18 @@ Result<DFlash2CheckpointKind> inspect_dflash2_checkpoint(const ModelPaths& paths
     return DFlash2CheckpointKind::kQuantized;
   if (!paths.weights.ends_with(".safetensors")) return DFlash2CheckpointKind::kUnsupported;
   LSE_ASSIGN_OR(Fd fd, open_read(paths.weights));
-  struct stat st {};
-  if (::fstat(fd.get(), &st) != 0) return LSE_ERROR(kIoError, "cannot stat ", paths.weights);
-  auto plan = make_plan(paths, fd.get(), static_cast<std::uint64_t>(st.st_size));
+  const std::int64_t stat_size = platform::fd_size(fd.get());
+  if (stat_size < 0) return LSE_ERROR(kIoError, "cannot stat ", paths.weights);
+  auto plan = make_plan(paths, fd.get(), static_cast<std::uint64_t>(stat_size));
   if (!plan.ok() || plan->quantize_bytes == 0) return DFlash2CheckpointKind::kUnsupported;
   return DFlash2CheckpointKind::kBF16Source;
 }
 
 Result<std::vector<DFlash2PlannedTensor>> dflash2_q8_layout(const ModelPaths& source) {
   LSE_ASSIGN_OR(Fd fd, open_read(source.weights));
-  struct stat st {};
-  if (::fstat(fd.get(), &st) != 0) return LSE_ERROR(kIoError, "cannot stat ", source.weights);
-  LSE_ASSIGN_OR(const Plan plan, make_plan(source, fd.get(), static_cast<std::uint64_t>(st.st_size)));
+  const std::int64_t stat_size = platform::fd_size(fd.get());
+  if (stat_size < 0) return LSE_ERROR(kIoError, "cannot stat ", source.weights);
+  LSE_ASSIGN_OR(const Plan plan, make_plan(source, fd.get(), static_cast<std::uint64_t>(stat_size)));
   std::vector<DFlash2PlannedTensor> out;
   out.reserve(plan.tensors.size());
   for (const auto& [name, entry] : plan.tensors.items()) {
@@ -958,7 +958,7 @@ Result<ModelPaths> prepare_dflash2_checkpoint(const std::string& name_or_path,
   Progress progress(options.progress);
   std::string why;
   if (cache_valid(paths, destination, progress, &why)) {
-    std::fprintf(stderr, "lse: dflash2: using cached Q8 conversion %s\n", destination.c_str());
+    std::fprintf(stderr, "lse: dflash2: using cached Q8 conversion %s\n", destination.string().c_str());
     return converted;
   }
   std::error_code ec;
@@ -970,7 +970,7 @@ Result<ModelPaths> prepare_dflash2_checkpoint(const std::string& name_or_path,
   const Origin origin = source_origin(paths, options);
   std::fprintf(stderr, "lse: dflash2: converting BF16 %s (%s@%s) to Q8 at %s; this runs once\n",
                paths.weights.c_str(), origin.repository.c_str(), origin.revision.c_str(),
-               destination.c_str());
+               destination.string().c_str());
   DFlash2ConvertOptions convert;
   convert.source_repository = origin.repository;
   convert.source_revision = origin.revision;
@@ -986,7 +986,7 @@ Result<ModelPaths> prepare_dflash2_checkpoint(const std::string& name_or_path,
   if (auto manifest = read_json(destination / "source-repository.json"); manifest.ok())
     if (const Json* sha = member(*manifest, "source_sha256"); sha && sha->is_string())
       write_stamp(paths, destination, sha->get<std::string>());
-  std::fprintf(stderr, "lse: dflash2: conversion complete: %s\n", destination.c_str());
+  std::fprintf(stderr, "lse: dflash2: conversion complete: %s\n", destination.string().c_str());
   return converted;
 }
 

@@ -1,7 +1,9 @@
 #include "lse/trace/record.hpp"
 
+#include "lse/core/platform.hpp"
+
 #include <ctime>
-#ifdef __APPLE__
+#if defined(__APPLE__)
 #include <mach/mach_time.h>
 #endif
 
@@ -9,6 +11,7 @@
 
 namespace lse::trace {
 
+#ifndef _WIN32
 namespace {
 
 std::uint64_t clock_ns(clockid_t id) noexcept {
@@ -19,11 +22,17 @@ std::uint64_t clock_ns(clockid_t id) noexcept {
 }
 
 }  // namespace
+#endif
 
 HostClockPair read_host_clocks() noexcept {
   HostClockPair pair;
+#ifdef _WIN32
+  // QPC for monotonic; QueryInterruptTime counts across sleep, matching
+  // CLOCK_BOOTTIME (the shim owns the mapping).
+  pair.monotonic_ns = platform::now_monotonic_ns();
+  pair.boottime_ns = platform::now_boottime_ns();
+#elif defined(__APPLE__)
   pair.monotonic_ns = clock_ns(CLOCK_MONOTONIC);
-#ifdef __APPLE__
   // Darwin's continuous clock includes time spent asleep, matching BOOTTIME.
   static const mach_timebase_info_data_t scale=[] {
     mach_timebase_info_data_t value{};mach_timebase_info(&value);return value;
@@ -31,6 +40,7 @@ HostClockPair read_host_clocks() noexcept {
   if (scale.denom) pair.boottime_ns=static_cast<std::uint64_t>(
       static_cast<__uint128_t>(mach_continuous_time())*scale.numer/scale.denom);
 #else
+  pair.monotonic_ns = clock_ns(CLOCK_MONOTONIC);
   pair.boottime_ns = clock_ns(CLOCK_BOOTTIME);
 #endif
   return pair;

@@ -71,7 +71,10 @@ int open_read_write_create(std::string_view path, int mode = 0600,
 int open_write_create(std::string_view path, bool exclusive, bool truncate,
                       int mode = 0644);
 
-void close_fd(int fd);
+// Closes the descriptor and reports whether close(2)/_close succeeded: POSIX
+// callers check it to catch deferred write errors on flush paths. The fd is
+// consumed either way.
+bool close_fd(int fd);
 
 // Positioned I/O, EINTR-retried inside. A short count is the caller's to
 // loop on, exactly like pread(2)/pwrite(2). Returns -1 and sets errno.
@@ -91,6 +94,12 @@ std::int64_t path_size(std::string_view path);
 
 bool truncate_fd(int fd, std::int64_t size);
 bool truncate_path(std::string_view path, std::int64_t size);
+
+// rename(2): atomically move `from` onto `to`, replacing an existing `to`
+// (an existing destination DIRECTORY is replaced only when empty). False
+// plus errno on failure; Windows maps a non-empty destination to ENOTEMPTY
+// so callers' EEXIST/ENOTEMPTY race checks behave on both platforms.
+bool rename_path(std::string_view from, std::string_view to);
 
 // fsync. sync_dir commits a directory entry where that concept exists and is
 // a no-op where it does not (Windows).
@@ -126,6 +135,20 @@ struct FileId {
 FileId file_id_of_fd(int fd);
 FileId file_id_of_path(std::string_view path);
 
+// The stat fields cache-identity stamps need (dev, ino, size, mtime). UCRT
+// st_ino is always 0 and its struct stat has no nanosecond mtime, so Windows
+// fills this from GetFileInformationByHandle + GetFileTime; POSIX fills it
+// from stat's st_mtim (st_mtimespec on Apple). Invalid when the path cannot
+// be stat'ed.
+struct FileStamp {
+  std::uint64_t dev = 0;
+  std::uint64_t ino = 0;
+  std::int64_t size = -1;
+  std::int64_t mtime_ns = 0;
+  bool valid = false;
+};
+FileStamp file_stamp_of_path(std::string_view path);
+
 // Names (not paths) of a directory's entries, "." and ".." excluded. Empty on
 // failure; errno set.
 std::vector<std::string> dir_entries(std::string_view path);
@@ -133,6 +156,11 @@ std::vector<std::string> dir_entries(std::string_view path);
 // mkdtemp semantics: rewrites the pattern's trailing XXXXXX in place and
 // creates the directory. Returns false plus errno on failure.
 bool make_temp_dir(std::string& pattern);
+
+// mkstemp semantics: rewrites the pattern's trailing XXXXXX in place, creates
+// the file atomically with owner-only permissions, and returns a read/write
+// fd. -1 plus errno on failure.
+int make_temp_file(std::string& pattern);
 
 // Absolute path of this executable; empty when unknown.
 std::string exe_path();

@@ -2,12 +2,15 @@
 #include "lse/opt/measurements.hpp"
 #include "dispatch_profile.hpp"
 #include "lse/core/debug.hpp"
+#include "lse/core/platform.hpp"
 #include "resource_profile.hpp"
 
+#ifndef _WIN32
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/file.h>
 #include <sys/stat.h>
+#endif
 
 #include <algorithm>
 #include <array>
@@ -333,20 +336,18 @@ class CacheDiskLock {
     fs::create_directories(dir, ec);
     if (ec) return;
     const auto path = dir / ".lse-cache.lock";
-    fd_ = ::open(path.c_str(), O_CREAT | O_RDWR | O_CLOEXEC | O_NOFOLLOW, 0600);
+    fd_ = platform::open_read_write_create(path.string(), 0600, /*no_follow=*/true);
     if (fd_ < 0) return;
-    struct stat info{};
-    if (::fstat(fd_, &info) != 0 || !S_ISREG(info.st_mode)) {
-      ::close(fd_);
+    if (!platform::is_reg_fd(fd_)) {
+      platform::close_fd(fd_);
       fd_ = -1;
       return;
     }
-    int result;
-    do { result = ::flock(fd_, LOCK_EX); } while (result != 0 && errno == EINTR);
-    if (result != 0) { ::close(fd_); fd_ = -1; }
+    // The shim retries EINTR internally, same as the loop this replaces.
+    if (!platform::lock_exclusive(fd_)) { platform::close_fd(fd_); fd_ = -1; }
   }
   ~CacheDiskLock() {
-    if (fd_ >= 0) { ::flock(fd_, LOCK_UN); ::close(fd_); }
+    if (fd_ >= 0) { platform::unlock_exclusive(fd_); platform::close_fd(fd_); }
   }
   CacheDiskLock(const CacheDiskLock&) = delete;
   CacheDiskLock& operator=(const CacheDiskLock&) = delete;
@@ -574,16 +575,16 @@ void preload_measurements(const std::string& dir,
 
 void write_atomic(const fs::path& path, std::span<const std::byte> bytes) {
   auto temporary = path.string() + ".tmpXXXXXX";
-  const int fd = ::mkstemp(temporary.data());
+  const int fd = platform::make_temp_file(temporary);
   if (fd < 0) return;
   std::size_t written = 0;
   while (written < bytes.size()) {
-    const auto result = ::write(fd, bytes.data() + written, bytes.size() - written);
+    const auto result = platform::write_fd(fd, bytes.data() + written, bytes.size() - written);
     if (result < 0 && errno == EINTR) continue;
     if (result <= 0) break;
     written += static_cast<std::size_t>(result);
   }
-  const bool complete = ::close(fd) == 0 && written == bytes.size();
+  const bool complete = platform::close_fd(fd) && written == bytes.size();
   std::error_code ec;
   if (complete) fs::rename(temporary, path, ec);
   if (!complete || ec) fs::remove(temporary, ec);
@@ -1015,9 +1016,9 @@ void purge_kernel_artifacts(std::string_view cache_dir) {
 
 std::string default_cache_dir() {
   if (const char* env = std::getenv("LSE_CACHE_DIR"); env && *env) return env;
-  if (const char* home = std::getenv("HOME"); home && *home) {
-    return std::string(home) + "/.lse/cache";
-  }
+  // home_dir() is HOME on POSIX, with the USERPROFILE fallback Windows needs.
+  const std::string home = platform::home_dir();
+  if (!home.empty()) return home + "/.lse/cache";
   return ".lse/cache";
 }
 
@@ -1026,11 +1027,11 @@ Status prepare_cache_dir(std::string_view requested) {
                                               : std::string(requested);
   std::error_code ec;
   fs::create_directories(path, ec);
-  if (ec || ::access(path.c_str(), W_OK | X_OK) != 0) {
+  if (ec || !platform::dir_writable(path)) {
     return LSE_ERROR(kInvalidArgument, "cannot create or write kernel cache '",
                      path, "'", ec ? ": " + ec.message() : "");
   }
-  if (::setenv("LSE_CACHE_DIR", path.c_str(), 1) != 0)
+  if (!platform::set_env("LSE_CACHE_DIR", path))
     return LSE_ERROR(kInternal, "cannot configure kernel cache '", path, "'");
   return OkStatus();
 }
@@ -1691,7 +1692,7 @@ Result<bool> JitCache::restore(std::size_t member, Dialect dialect,
     std::fprintf(stderr,
                  "lse: launch index: discarding %s: %s; writing and compiling these "
                  "%zu kernels from source\n",
-                 files.front().c_str(), std::string(why).c_str(), signatures.size());
+                 files.front().string().c_str(), std::string(why).c_str(), signatures.size());
     CacheDiskLock lock(cache_dir_);
     for (const fs::path& file : files) {
       std::error_code ec;

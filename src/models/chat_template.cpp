@@ -1,5 +1,7 @@
 #include "lse/models/chat_template.hpp"
 
+#include "lse/core/platform.hpp"
+
 #include <algorithm>
 #include <cctype>
 #include <cmath>
@@ -1543,7 +1545,7 @@ class Renderer {
       const std::string format = text_of(*fmt, line, "strftime_now");
       const std::time_t t = std::time(nullptr);
       std::tm tm{};
-      localtime_r(&t, &tm);
+      platform::localtime_of(t, tm);
       char buf[256];
       // The format is the template's, by design.
 #pragma GCC diagnostic push

@@ -63,7 +63,7 @@ int open_write_create(std::string_view path, bool exclusive, bool truncate,
   return ::open(to_string(path).c_str(), flags, static_cast<mode_t>(mode));
 }
 
-void close_fd(int fd) { ::close(fd); }
+bool close_fd(int fd) { return ::close(fd) == 0; }
 
 ssize_t pread64(int fd, void* buf, std::size_t count, std::int64_t offset) {
   for (;;) {
@@ -111,6 +111,10 @@ bool truncate_fd(int fd, std::int64_t size) {
 
 bool truncate_path(std::string_view path, std::int64_t size) {
   return ::truncate(to_string(path).c_str(), static_cast<off_t>(size)) == 0;
+}
+
+bool rename_path(std::string_view from, std::string_view to) {
+  return ::rename(to_string(from).c_str(), to_string(to).c_str()) == 0;
 }
 
 bool sync_fd(int fd) { return ::fsync(fd) == 0; }
@@ -175,6 +179,26 @@ FileId file_id_of_path(std::string_view path) {
                 static_cast<std::uint64_t>(st.st_ino), true};
 }
 
+FileStamp file_stamp_of_path(std::string_view path) {
+  struct stat st {};
+  if (!stat_path(path, st)) return {};
+  FileStamp out;
+  out.dev = static_cast<std::uint64_t>(st.st_dev);
+  out.ino = static_cast<std::uint64_t>(st.st_ino);
+  out.size = static_cast<std::int64_t>(st.st_size);
+#ifdef __APPLE__
+  out.mtime_ns = static_cast<std::int64_t>(st.st_mtimespec.tv_sec) *
+                     1000000000LL +
+                 st.st_mtimespec.tv_nsec;
+#else
+  out.mtime_ns =
+      static_cast<std::int64_t>(st.st_mtim.tv_sec) * 1000000000LL +
+      st.st_mtim.tv_nsec;
+#endif
+  out.valid = true;
+  return out;
+}
+
 std::vector<std::string> dir_entries(std::string_view path) {
   std::vector<std::string> out;
   DIR* d = ::opendir(to_string(path).c_str());
@@ -194,6 +218,8 @@ std::vector<std::string> dir_entries(std::string_view path) {
 bool make_temp_dir(std::string& pattern) {
   return ::mkdtemp(pattern.data()) != nullptr;
 }
+
+int make_temp_file(std::string& pattern) { return ::mkstemp(pattern.data()); }
 
 std::string exe_path() {
 #ifdef __APPLE__

@@ -1,9 +1,11 @@
 #include "lse/model/weights.hpp"
 
+#ifndef _WIN32
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#endif
 
 #include <algorithm>
 #include <cctype>
@@ -21,6 +23,7 @@
 #include <nlohmann/json.hpp>
 
 #include "lse/core/file_read.hpp"
+#include "lse/core/platform.hpp"
 #include "lse/model/config.hpp"
 #include "lse/model/registry.hpp"
 
@@ -173,8 +176,8 @@ Status TensorView::read_f32(float* dst, std::size_t count) const {
 
 void SafeTensors::unmap_all() noexcept {
   for (const Mapping& m : mappings_) {
-    if (m.ptr != nullptr) ::munmap(m.ptr, m.size);
-    if (m.fd >= 0) ::close(m.fd);
+    if (m.ptr != nullptr) platform::file_unmap(m.ptr, m.size);
+    if (m.fd >= 0) platform::close_fd(m.fd);
   }
   mappings_.clear();
 }
@@ -203,13 +206,28 @@ std::size_t SafeTensors::release_pages() const noexcept {
   std::size_t bytes = 0;
   for (const Mapping& m : mappings_) {
     if (m.ptr == nullptr) continue;
-    (void)::madvise(m.ptr, m.size, MADV_DONTNEED);
+    platform::map_discard(m.ptr, m.size);
     bytes += m.size;
   }
   return bytes;
 }
 
 Status SafeTensors::map_file(const std::string& path) {
+#ifdef _WIN32
+  // The shim maps through CreateFileW/CreateFileMappingW and keeps the
+  // section+file handles in its registry (a view dies with its handles, and
+  // this function holds no fd once it returns).
+  const std::int64_t sz = platform::path_size(path);
+  if (sz < 0) return LSE_ERROR(kIoError, "cannot stat '", path, "'");
+  const auto file_size = static_cast<std::size_t>(sz);
+  if (file_size < 8) {
+    return LSE_ERROR(kIoError, "'", path, "' is too small to be safetensors");
+  }
+  void* map = platform::file_map_ro(path, sz);
+  if (map == nullptr) {
+    return LSE_ERROR(kIoError, "mmap failed for '", path, "'");
+  }
+#else
   const int fd = ::open(path.c_str(), O_RDONLY);
   if (fd < 0) return LSE_ERROR(kIoError, "cannot open '", path, "'");
 
@@ -227,11 +245,12 @@ Status SafeTensors::map_file(const std::string& path) {
   void* map = ::mmap(nullptr, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
   ::close(fd);
   if (map == MAP_FAILED) return LSE_ERROR(kIoError, "mmap failed for '", path, "'");
+#endif
   // A second descriptor for the loader's positioned reads, opened so that
   // streaming a checkpoint through it does not fill the page cache.
   auto streaming = open_for_streaming(path);
   if (!streaming.ok()) {
-    ::munmap(map, file_size);
+    platform::file_unmap(map, file_size);
     return streaming.status();
   }
   const int read_fd = *streaming;
@@ -240,8 +259,8 @@ Status SafeTensors::map_file(const std::string& path) {
   std::uint64_t header_len = 0;
   std::memcpy(&header_len, base, sizeof(header_len));
   if (header_len == 0 || header_len + 8 > file_size) {
-    ::munmap(map, file_size);
-    ::close(read_fd);
+    platform::file_unmap(map, file_size);
+    platform::close_fd(read_fd);
     return LSE_ERROR(kIoError, "safetensors header length is out of range");
   }
 
@@ -449,7 +468,10 @@ std::string expand_path(std::string_view in) {
   out.reserve(in.size());
   std::size_t i = 0;
   if (in.starts_with("~") && (in.size() == 1 || in[1] == '/')) {
-    if (const char* home = env_value("HOME")) {
+    // platform::home_dir is getenv("HOME") on POSIX; on Windows it falls back
+    // to USERPROFILE, which is where the hub cache actually lives.
+    const std::string home = platform::home_dir();
+    if (!home.empty()) {
       out += home;
       i = 1;
     }
@@ -490,8 +512,8 @@ std::string hf_home() {
   if (const char* xdg = env_value("XDG_CACHE_HOME")) {
     return expand_path(xdg) + "/huggingface";
   }
-  if (const char* home = env_value("HOME")) {
-    return std::string(home) + "/.cache/huggingface";
+  if (const std::string home = platform::home_dir(); !home.empty()) {
+    return home + "/.cache/huggingface";
   }
   return ".cache/huggingface";
 }
@@ -825,7 +847,10 @@ namespace {
 // cache downloaded with HF_HUB_DISABLE_SYMLINKS right, where the bytes are in
 // the snapshot and blobs/ may not exist.
 std::uintmax_t directory_bytes(const fs::path& root) {
-  std::set<std::pair<dev_t, ino_t>> seen;
+  // (device, inode) — the shim's FileId. On Windows the UCRT reports st_ino as
+  // 0 for every file, which would collapse the dedup, so there the identity is
+  // the volume serial + file index instead.
+  std::set<std::pair<std::uint64_t, std::uint64_t>> seen;
   std::uintmax_t total = 0;
   std::error_code ec;
   fs::recursive_directory_iterator it(
@@ -834,13 +859,16 @@ std::uintmax_t directory_bytes(const fs::path& root) {
   const fs::recursive_directory_iterator end;
   for (; it != end; it.increment(ec)) {
     if (ec) break;
-    struct stat st {};
     // stat, not lstat: a snapshot symlink should be charged its blob's size,
     // and a dangling one fails here and is charged nothing.
-    if (::stat(it->path().c_str(), &st) != 0) continue;
-    if (!S_ISREG(st.st_mode)) continue;
-    if (!seen.emplace(st.st_dev, st.st_ino).second) continue;
-    total += static_cast<std::uintmax_t>(st.st_size);
+    const std::string p = it->path().string();
+    const platform::FileId id = platform::file_id_of_path(p);
+    if (!id.valid) continue;
+    if (!platform::is_reg(p)) continue;
+    const std::int64_t size = platform::path_size(p);
+    if (size < 0) continue;
+    if (!seen.emplace(id.dev, id.ino).second) continue;
+    total += static_cast<std::uintmax_t>(size);
   }
   return total;
 }

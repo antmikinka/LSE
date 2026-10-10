@@ -1,8 +1,11 @@
 #include "lse/core/file_read.hpp"
 
+#include "lse/core/platform.hpp"
+
+#ifndef _WIN32
 #include <fcntl.h>
-#include <sys/mman.h>
 #include <unistd.h>
+#endif
 
 #include <algorithm>
 #include <cerrno>
@@ -19,8 +22,8 @@ Status read_file_range(int fd, std::uint64_t offset, void* dst,
   std::size_t done = 0;
   while (done < bytes) {
     const std::size_t want = std::min(kMaxRead, bytes - done);
-    const ssize_t got = ::pread(fd, out + done, want,
-                                static_cast<off_t>(offset + done));
+    const auto got = platform::pread64(
+        fd, out + done, want, static_cast<std::int64_t>(offset + done));
     if (got < 0) {
       if (errno == EINTR) continue;
       return LSE_ERROR(kIoError, "reading ", what, " (", std::to_string(bytes),
@@ -38,14 +41,14 @@ Status read_file_range(int fd, std::uint64_t offset, void* dst,
 }
 
 Result<int> open_for_streaming(const std::string& path) {
-  const int fd = ::open(path.c_str(), O_RDONLY | O_CLOEXEC);
+  const int fd = platform::open_read(path);
   if (fd < 0) {
     return LSE_ERROR(kIoError, "cannot open '", path, "': ", std::strerror(errno));
   }
 #if defined(__APPLE__)
   if (::fcntl(fd, F_NOCACHE, 1) != 0) {
     const int error = errno;
-    ::close(fd);
+    platform::close_fd(fd);
     return LSE_ERROR(kIoError, "F_NOCACHE on '", path, "': ", std::strerror(error));
   }
 #endif
@@ -53,7 +56,7 @@ Result<int> open_for_streaming(const std::string& path) {
 }
 
 HostScratch::~HostScratch() {
-  if (data_ != nullptr) ::munmap(data_, mapped_);
+  if (data_ != nullptr) platform::anon_free(data_, mapped_);
 }
 
 HostScratch::HostScratch(HostScratch&& other) noexcept
@@ -64,7 +67,7 @@ HostScratch::HostScratch(HostScratch&& other) noexcept
 
 HostScratch& HostScratch::operator=(HostScratch&& other) noexcept {
   if (this != &other) {
-    if (data_ != nullptr) ::munmap(data_, mapped_);
+    if (data_ != nullptr) platform::anon_free(data_, mapped_);
     data_ = other.data_;
     size_ = other.size_;
     mapped_ = other.mapped_;
@@ -77,10 +80,10 @@ HostScratch& HostScratch::operator=(HostScratch&& other) noexcept {
 Result<HostScratch> HostScratch::allocate(std::size_t bytes, const std::string& what) {
   HostScratch out;
   if (bytes == 0) return out;
-  const auto page = static_cast<std::size_t>(::getpagesize());
+  const std::size_t page = platform::page_size();
   const std::size_t mapped = (bytes + page - 1) / page * page;
-  void* p = ::mmap(nullptr, mapped, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
-  if (p == MAP_FAILED) {
+  void* p = platform::anon_alloc(mapped);
+  if (p == nullptr) {
     return LSE_ERROR(kOutOfMemory, "cannot map ", std::to_string(bytes),
                      " bytes of host memory for ", what, ": ", std::strerror(errno));
   }

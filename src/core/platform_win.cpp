@@ -291,8 +291,9 @@ int open_write_create(std::string_view path, bool exclusive, bool truncate,
   return fd;
 }
 
-void close_fd(int fd) {
-  if (fd >= 0) (void)::_close(fd);
+bool close_fd(int fd) {
+  if (fd < 0) return false;
+  return ::_close(fd) == 0;
 }
 
 ssize_t pread64(int fd, void* buf, std::size_t count, std::int64_t offset) {
@@ -391,6 +392,28 @@ bool truncate_path(std::string_view path, std::int64_t size) {
   const bool ok = truncate_fd(fd, size);
   close_fd(fd);
   return ok;
+}
+
+bool rename_path(std::string_view from, std::string_view to) {
+  // MOVEFILE_REPLACE_EXISTING is rename(2)'s contract: an empty destination
+  // (file or directory) is replaced; a NON-empty destination directory fails.
+  if (::MoveFileExW(to_wide(from).c_str(), to_wide(to).c_str(),
+                    MOVEFILE_REPLACE_EXISTING)) {
+    return true;
+  }
+  const DWORD e = ::GetLastError();
+  if (e == ERROR_DIR_NOT_EMPTY) {
+    errno = ENOTEMPTY;
+    return false;
+  }
+  if (e == ERROR_ACCESS_DENIED && is_dir(to)) {
+    // Windows reports replacing a non-empty directory as access-denied; the
+    // POSIX answer is ENOTEMPTY, which is what concurrent-writer races check.
+    errno = ENOTEMPTY;
+    return false;
+  }
+  set_errno_from_win32(e);
+  return false;
 }
 
 bool sync_fd(int fd) { return ::_commit(fd) == 0; }
@@ -496,6 +519,44 @@ FileId file_id_of_path(std::string_view path) {
                 true};
 }
 
+FileStamp file_stamp_of_path(std::string_view path) {
+  HANDLE h = ::CreateFileW(to_wide(path).c_str(), 0,
+                           FILE_SHARE_READ | FILE_SHARE_WRITE |
+                               FILE_SHARE_DELETE,
+                           nullptr, OPEN_EXISTING,
+                           FILE_FLAG_BACKUP_SEMANTICS, nullptr);
+  if (h == INVALID_HANDLE_VALUE) {
+    set_errno_from_last();
+    return {};
+  }
+  BY_HANDLE_FILE_INFORMATION info{};
+  FILETIME written{};
+  const bool ok = ::GetFileInformationByHandle(h, &info) &&
+                  ::GetFileTime(h, nullptr, nullptr, &written);
+  ::CloseHandle(h);
+  if (!ok) {
+    errno = EIO;
+    return {};
+  }
+  FileStamp out;
+  out.dev = info.dwVolumeSerialNumber;
+  out.ino = (static_cast<std::uint64_t>(info.nFileIndexHigh) << 32) |
+            info.nFileIndexLow;
+  out.size = (static_cast<std::int64_t>(info.nFileSizeHigh) << 32) |
+             info.nFileSizeLow;
+  // FILETIME is 100 ns ticks since 1601-01-01; the Unix epoch is
+  // 11644473600 s later. Timestamps before the epoch clamp to 0.
+  const std::uint64_t ticks =
+      (static_cast<std::uint64_t>(written.dwHighDateTime) << 32) |
+      written.dwLowDateTime;
+  constexpr std::uint64_t kEpoch100ns = 116444736000000000ull;
+  out.mtime_ns = ticks > kEpoch100ns
+                     ? static_cast<std::int64_t>((ticks - kEpoch100ns) * 100ull)
+                     : 0;
+  out.valid = true;
+  return out;
+}
+
 std::vector<std::string> dir_entries(std::string_view path) {
   std::vector<std::string> out;
   std::wstring pattern = to_wide(path);
@@ -550,6 +611,46 @@ bool make_temp_dir(std::string& pattern) {
   }
   errno = EEXIST;
   return false;
+}
+
+int make_temp_file(std::string& pattern) {
+  // mkstemp contract: replace the trailing XXXXXX, create the file with
+  // owner-only access (CREATE_NEW with no sharing is at least as strict), and
+  // hand back a read/write fd.
+  const std::size_t n = pattern.size();
+  if (n < 6 || pattern.compare(n - 6, 6, "XXXXXX") != 0) {
+    errno = EINVAL;
+    return -1;
+  }
+  for (unsigned int attempt = 0; attempt < 64; ++attempt) {
+    const unsigned int seed =
+        ::GetTickCount() ^ (static_cast<unsigned int>(::GetCurrentProcessId())
+                            << 8) ^ (attempt * 2654435761u);
+    char tail[8];
+    std::snprintf(tail, sizeof tail, "%06u", seed % 1000000u);
+    std::string candidate =
+        pattern.substr(0, n - 6) + std::string(tail, 6);
+    HANDLE h = ::CreateFileW(to_wide(candidate).c_str(),
+                             GENERIC_READ | GENERIC_WRITE, 0, nullptr,
+                             CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h != INVALID_HANDLE_VALUE) {
+      const int fd = ::_open_osfhandle(reinterpret_cast<intptr_t>(h), 0);
+      if (fd < 0) {
+        ::CloseHandle(h);
+        errno = EMFILE;
+        return -1;
+      }
+      pattern = std::move(candidate);
+      return fd;
+    }
+    const DWORD e = ::GetLastError();
+    if (e != ERROR_FILE_EXISTS && e != ERROR_ALREADY_EXISTS) {
+      set_errno_from_win32(e);
+      return -1;
+    }
+  }
+  errno = EEXIST;
+  return -1;
 }
 
 std::string exe_path() {
