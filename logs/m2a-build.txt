@@ -1,0 +1,1859 @@
+[0/2] Re-checking globbed directories...
+[1/192] Building CXX object CMakeFiles\lse_core.dir\src\core\debug.cpp.obj
+[2/192] Building CXX object CMakeFiles\lse_core.dir\src\core\dtype.cpp.obj
+[3/192] Building CXX object CMakeFiles\lse_core.dir\src\core\platform_posix.cpp.obj
+[4/192] Building CXX object CMakeFiles\lse_core.dir\src\core\sha256.cpp.obj
+C:\Users\antmi\LSE\src\core\sha256.cpp(85,31): warning: implicit conversion changes signedness: 'std::size_t' (aka 'unsigned long long') to 'ptrdiff_t' (aka 'long long') [-Wsign-conversion]
+   85 |     std::fill(tail_.begin() + used_, tail_.end(), std::byte{0});
+      |                             ~ ^~~~~
+C:\Users\antmi\LSE\src\core\sha256.cpp(89,29): warning: implicit conversion changes signedness: 'std::size_t' (aka 'unsigned long long') to 'ptrdiff_t' (aka 'long long') [-Wsign-conversion]
+   89 |   std::fill(tail_.begin() + used_, tail_.begin() + 56, std::byte{0});
+      |                           ~ ^~~~~
+2 warnings generated.
+[5/192] Building CXX object CMakeFiles\lse_core.dir\src\core\status.cpp.obj
+[6/192] Building CXX object CMakeFiles\lse_core.dir\src\core\file_read.cpp.obj
+[7/192] Building CXX object CMakeFiles\lse_core.dir\src\core\shape.cpp.obj
+[8/192] Building CXX object CMakeFiles\lse_ir.dir\src\ir\alias.cpp.obj
+[9/192] Building CXX object CMakeFiles\lse_ir.dir\src\ir\spell.cpp.obj
+[10/192] Building CXX object CMakeFiles\lse_ir.dir\src\ir\pass\dce.cpp.obj
+[11/192] Building CXX object CMakeFiles\lse_core.dir\src\quant\q8_matrix_pack.cpp.obj
+[12/192] Building CXX object src\backends\CMakeFiles\lse_backend_registry.dir\resources.cpp.obj
+[13/192] Building CXX object CMakeFiles\lse_ir.dir\src\ir\index.cpp.obj
+[14/192] Building CXX object src\backends\CMakeFiles\lse_backend_registry.dir\census.cpp.obj
+[15/192] Building CXX object CMakeFiles\lse_ir.dir\src\ir\pass\cse.cpp.obj
+[16/192] Hashing engine sources for the kernel launch index
+[17/192] Building CXX object CMakeFiles\lse_ir.dir\src\ir\pass\pipeline.cpp.obj
+[18/192] Building CXX object CMakeFiles\lse_ir.dir\src\ir\pass\lds_fold.cpp.obj
+[19/192] Building CXX object CMakeFiles\lse_ir.dir\src\ir\verify.cpp.obj
+[20/192] Building CXX object CMakeFiles\lse_ir.dir\src\ir\lower.cpp.obj
+[21/192] Building CXX object CMakeFiles\lse_kv.dir\src\kv\block.cpp.obj
+[22/192] Building CXX object CMakeFiles\lse_core.dir\src\core\progress.cpp.obj
+[23/192] Building CXX object CMakeFiles\lse_core.dir\src\core\platform_win.cpp.obj
+[24/192] Building CXX object CMakeFiles\lse_opt.dir\src\opt\arrangement.cpp.obj
+[25/192] Building CXX object CMakeFiles\lse_ir.dir\src\ir\recorder.cpp.obj
+[26/192] Building CXX object CMakeFiles\lse_opt.dir\src\opt\occupancy.cpp.obj
+[27/192] Building CXX object CMakeFiles\lse_opt.dir\src\opt\traffic.cpp.obj
+[28/192] Building CXX object CMakeFiles\lse_ir.dir\src\ir\body.cpp.obj
+[29/192] Building CXX object CMakeFiles\lse_opt.dir\src\opt\kernel_census.cpp.obj
+[30/192] Building CXX object CMakeFiles\lse_opt.dir\src\opt\fusion.cpp.obj
+[31/192] Building CXX object CMakeFiles\lse_kv.dir\src\kv\policy.cpp.obj
+[32/192] Building CXX object CMakeFiles\lse_kv.dir\src\kv\allocator.cpp.obj
+[33/192] Building CXX object src\backends\CMakeFiles\lse_backend_registry.dir\memory_reclaim.cpp.obj
+[34/192] Building CXX object CMakeFiles\lse_communication.dir\src\communication\capabilities.cpp.obj
+[35/192] Building CXX object CMakeFiles\lse_ir.dir\src\ir\pass\factor_hoist.cpp.obj
+[36/192] Building CXX object CMakeFiles\lse_communication.dir\src\communication\transport.cpp.obj
+[37/192] Building CXX object CMakeFiles\lse_opt.dir\src\opt\measurements.cpp.obj
+[38/192] Building CXX object CMakeFiles\lse_graph.dir\generated\lse_build_identity.cpp.obj
+[39/192] Building CXX object CMakeFiles\lse_kv.dir\src\kv\memory.cpp.obj
+[40/192] Building CXX object src\backends\CMakeFiles\lse_backend_registry.dir\registry.cpp.obj
+[41/192] Building CXX object CMakeFiles\lse_graph.dir\src\dispatch\q8_matrix.cpp.obj
+In file included from C:\Users\antmi\LSE\src\dispatch\q8_matrix.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\dispatch\q8_matrix.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\dispatch\q8_matrix.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[42/192] Building CXX object CMakeFiles\lse_communication.dir\src\communication\winsock_compat.cpp.obj
+[43/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\quant_swiglu.cpp.obj
+[44/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\fallback.cpp.obj
+[45/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\primitives_builtin.cpp.obj
+[46/192] Building CXX object CMakeFiles\lse_communication.dir\src\communication\endpoint.cpp.obj
+[47/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\variant_book.cpp.obj
+[48/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\codegen.cpp.obj
+[49/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\primitive.cpp.obj
+[50/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\graph.cpp.obj
+C:\Users\antmi\LSE\src\graph\graph.cpp(263,26): warning: implicit conversion changes signedness: 'const value_type' (aka 'const char') to 'unsigned char' [-Wsign-conversion]
+  263 |     for (unsigned char c : name) mix(c);
+      |                        ~ ^
+1 warning generated.
+[51/192] Building CXX object CMakeFiles\lse_communication.dir\src\communication\poller_winsock.cpp.obj
+[52/192] Building CXX object CMakeFiles\lse_graph.dir\src\dispatch\attention.cpp.obj
+In file included from C:\Users\antmi\LSE\src\dispatch\attention.cpp:2:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\dispatch\attention.cpp:2:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\dispatch\attention.cpp:2:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\src\dispatch\attention.cpp(171,19): warning: comparison of integers of different signs: 'const int' and 'std::uint32_t' (aka 'unsigned int') [-Wsign-compare]
+  171 |         row.a_len == kernels::geometry_of(row).lane_k && row.b_len == row.a_len &&
+      |         ~~~~~~~~~ ^  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\dispatch\attention.cpp(280,64): warning: implicit conversion changes signedness: 'const std::int64_t' (aka 'const long long') to 'std::uint64_t' (aka 'unsigned long long') [-Wsign-conversion]
+  280 |         shapes::split_merge_lds_bytes(shapes::split_partitions(capacity)) <=
+      |                                       ~~~~~~                   ^~~~~~~~
+C:\Users\antmi\LSE\src\dispatch\attention.cpp(287,78): warning: implicit conversion changes signedness: 'const std::int64_t' (aka 'const long long') to 'std::uint64_t' (aka 'unsigned long long') [-Wsign-conversion]
+  287 |                           static_cast<std::int64_t>(shapes::split_partitions(capacity)),
+      |                                                     ~~~~~~                   ^~~~~~~~
+C:\Users\antmi\LSE\src\dispatch\attention.cpp(307,51): warning: implicit conversion changes signedness: 'std::int64_t' (aka 'long long') to 'std::uint64_t' (aka 'unsigned long long') [-Wsign-conversion]
+  307 |         shapes::split_merge_lds_bytes(s.inputs[0].dim(3)) <=
+      |         ~~~~~~                        ~~~~~~~~~~~~^~~~~~
+7 warnings generated.
+[53/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\primitive_library.cpp.obj
+[54/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\stream_plan.cpp.obj
+[55/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\program.cpp.obj
+[56/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\sharding.cpp.obj
+[57/192] Building CXX object CMakeFiles\lse_communication.dir\src\communication\rdma.cpp.obj
+[58/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\partitioner.cpp.obj
+[59/192] Building CXX object CMakeFiles\lse_ops.dir\src\ops\moe.cpp.obj
+[60/192] Building CXX object CMakeFiles\lse_ops.dir\src\ops\activation.cpp.obj
+[61/192] Building CXX object CMakeFiles\lse_ops.dir\src\ops\rope.cpp.obj
+[62/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\workgroup.cpp.obj
+[63/192] Building CXX object CMakeFiles\lse_ops.dir\src\ops\norm.cpp.obj
+[64/192] Building CXX object CMakeFiles\lse_core.dir\src\quant\group_affine.cpp.obj
+[65/192] Building CXX object CMakeFiles\lse_sampling.dir\src\runtime\draft_tree.cpp.obj
+C:\Users\antmi\LSE\src\runtime\draft_tree.cpp(34,20): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+   34 |   double maximum = -INFINITY;
+      |          ~~~~~~~   ^~~~~~~~~
+1 warning generated.
+[66/192] Building CXX object CMakeFiles\lse_communication.dir\src\communication\stream_link.cpp.obj
+In file included from C:\Users\antmi\LSE\src\communication\stream_link.cpp:1:
+C:\Users\antmi\LSE\include\lse/communication/stream_link.hpp(188,8): warning: private field 'client_' is not used [-Wunused-private-field]
+  188 |   bool client_ = false;
+      |        ^
+1 warning generated.
+[67/192] Linking CXX static library lse_core.lib
+[68/192] Building CXX object CMakeFiles\lse_dist.dir\src\dist\transport.cpp.obj
+[69/192] Linking CXX static library src\backends\lse_backend_registry.lib
+[70/192] Linking CXX static library lse_ir.lib
+[71/192] Building CXX object CMakeFiles\lse_communication.dir\src\communication\socket.cpp.obj
+[72/192] Building CXX object CMakeFiles\lse_ops.dir\src\ops\linear_attention.cpp.obj
+[73/192] Linking CXX static library lse_opt.lib
+[74/192] Building CXX object CMakeFiles\lse_ops.dir\src\ops\attention.cpp.obj
+C:\Users\antmi\LSE\src\ops\attention.cpp(140,82): warning: implicit conversion changes signedness: 'std::int64_t' (aka 'long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  140 |   const auto block_bytes = dtype_storage_bytes(dtype, shape.elem_count() / shape.dim(0));
+      |                                                                          ~ ~~~~~~^~~~~~
+C:\Users\antmi\LSE\src\ops\attention.cpp(141,43): warning: implicit conversion changes signedness: 'std::int32_t' (aka 'int') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  141 |   LSE_RETURN_IF_ERROR(storage->grow(layer.resident_blocks * block_bytes));
+      |                                     ~~~~~~^~~~~~~~~~~~~~~ ~
+C:\Users\antmi\LSE\include\lse/core/status.hpp(98,34): note: expanded from macro 'LSE_RETURN_IF_ERROR'
+   98 |     ::lse::Status _lse_status = (expr);              \
+      |                                  ^~~~
+C:\Users\antmi\LSE\src\ops\attention.cpp(152,52): warning: implicit conversion changes signedness: 'std::int64_t' (aka 'long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  152 |         pool->shape().elem_count() / pool->shape().dim(0));
+      |                                    ~ ~~~~~~~~~~~~~~^~~~~~
+C:\Users\antmi\LSE\src\ops\attention.cpp(153,64): warning: implicit conversion changes signedness: 'std::int32_t' (aka 'int') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  153 |     LSE_RETURN_IF_ERROR(pool->node()->kv_fragments->grow(layer.resident_blocks * block_bytes));
+      |                                                          ~~~~~~^~~~~~~~~~~~~~~ ~
+C:\Users\antmi\LSE\include\lse/core/status.hpp(98,34): note: expanded from macro 'LSE_RETURN_IF_ERROR'
+   98 |     ::lse::Status _lse_status = (expr);              \
+      |                                  ^~~~
+C:\Users\antmi\LSE\src\ops\attention.cpp(345,48): warning: implicit conversion changes signedness: 'std::int32_t' (aka 'int') to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  345 |           static_cast<std::int32_t>(t.blocks()[i]) + 1);
+      |                                     ~          ^
+C:\Users\antmi\LSE\src\ops\attention.cpp(371,48): warning: implicit conversion changes signedness: 'std::int32_t' (aka 'int') to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  371 |           static_cast<std::int32_t>(t.blocks()[i]) + 1);
+      |                                     ~          ^
+6 warnings generated.
+[75/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\interpreter.cpp.obj
+C:\Users\antmi\LSE\src\graph\interpreter.cpp(996,73): warning: implicit conversion changes signedness: 'const std::size_t' (aka 'const unsigned long long') to 'std::int64_t' (aka 'long long') [-Wsign-conversion]
+  996 |   const auto width = static_cast<std::size_t>(kv::logical_width(format, pitch));
+      |                                               ~~                        ^~~~~
+1 warning generated.
+[76/192] Linking CXX static library lse_kv.lib
+[77/192] Building CXX object CMakeFiles\lse_communication.dir\src\communication\reactor.cpp.obj
+[78/192] Linking CXX static library lse_communication.lib
+[79/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\ops.cpp.obj
+In file included from C:\Users\antmi\LSE\src\graph\ops.cpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\graph\ops.cpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\graph\ops.cpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[80/192] Building CXX object CMakeFiles\lse_dist.dir\src\dist\collective.cpp.obj
+[81/192] cargo build --release (fastokens_ffi)
+    Finished `release` profile [optimized] target(s) in 0.85s
+[82/192] Building CXX object CMakeFiles\lse_dist.dir\src\dist\loopback.cpp.obj
+[83/192] Building CXX object CMakeFiles\lse_sampling.dir\src\runtime\sampler.cpp.obj
+[84/192] Linking CXX static library lse_sampling.lib
+[85/192] Building CXX object CMakeFiles\lse_dist.dir\src\dist\codec.cpp.obj
+[86/192] Building CXX object CMakeFiles\lse_dist.dir\src\dist\peer.cpp.obj
+[87/192] Linking CXX static library lse_dist.lib
+[88/192] Building CXX object CMakeFiles\lse_probe.dir\src\probe\profile.cpp.obj
+C:\Users\antmi\LSE\src\probe\profile.cpp(63,11): warning: enumeration value 'kSU8' not handled in switch [-Wswitch]
+   63 |   switch (e) {
+      |           ^
+1 warning generated.
+[89/192] Building CXX object CMakeFiles\lse_probe.dir\src\probe\cost_model.cpp.obj
+[90/192] Building CXX object CMakeFiles\lse_probe.dir\src\probe\link_probe.cpp.obj
+[91/192] Building CXX object CMakeFiles\lse_runtime.dir\src\runtime\draft_width.cpp.obj
+[92/192] Building CXX object CMakeFiles\lse_probe.dir\src\probe\pool.cpp.obj
+C:\Users\antmi\LSE\src\probe\pool.cpp(23,15): warning: unused function 'mac_hsa_poll_us' [-Wunused-function]
+   23 | std::uint32_t mac_hsa_poll_us(const char* setting) {
+      |               ^~~~~~~~~~~~~~~
+1 warning generated.
+[93/192] Building CXX object CMakeFiles\lse_probe.dir\src\probe\device_probe.cpp.obj
+[94/192] Building CXX object CMakeFiles\lse_model.dir\src\models\qwen3_5_moe.cpp.obj
+[95/192] Building CXX object CMakeFiles\lse_probe.dir\src\probe\profile_store.cpp.obj
+[96/192] Building CXX object CMakeFiles\lse_model.dir\src\model\registry.cpp.obj
+[97/192] Linking CXX static library lse_probe.lib
+[98/192] Building CXX object CMakeFiles\lse_model.dir\src\model\mtp.cpp.obj
+[99/192] Building CXX object CMakeFiles\lse_model.dir\src\models\lemonseed.cpp.obj
+[100/192] Building CXX object CMakeFiles\lse_model.dir\src\models\thinking_controls.cpp.obj
+[101/192] Building CXX object CMakeFiles\lse_model.dir\src\model\layer.cpp.obj
+In file included from C:\Users\antmi\LSE\src\model\layer.cpp:20:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\model\layer.cpp:20:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\model\layer.cpp:20:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\src\model\layer.cpp(899,45): warning: implicit conversion changes signedness: 'std::int64_t' (aka 'long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  898 |       ? static_cast<std::size_t>(mut.shape().dim(
+      |                                              ~~~
+  899 |             static_cast<std::int64_t>(rank) - 1))
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\model\layer.cpp(906,24): warning: implicit conversion increases floating-point precision: 'float' to 'const double' [-Wdouble-promotion]
+  906 |       const double v = graph::interpreter::load_element(*mut.node(), i);
+      |                    ~   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+5 warnings generated.
+[102/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\jit_cache.cpp.obj
+[103/192] Building CXX object CMakeFiles\lse_hub.dir\src\hub\http.cpp.obj
+[104/192] Building CXX object CMakeFiles\lse_model.dir\src\models\qwen3_5.cpp.obj
+[105/192] Building CXX object CMakeFiles\lse_place.dir\src\place\residency.cpp.obj
+[106/192] Building CXX object CMakeFiles\lse_model.dir\src\model\config.cpp.obj
+[107/192] Building CXX object CMakeFiles\lse_graph.dir\src\graph\scheduler.cpp.obj
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(870,51): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  870 |       const ConstKey key{n->attrs.empty() ? 0.0 : n->attrs[0], n->dtype,
+      |                         ~                         ^~~~~~~~~~~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(946,14): warning: declaration shadows a local variable [-Wshadow]
+  946 |         auto fresh = be.allocate(n->buffer.size_bytes,
+      |              ^
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(857,10): note: previous declaration is here
+  857 |     bool fresh = !n->buffer.valid();
+      |          ^
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1217,38): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 1217 |           for (float v : h) { sum += v; asum += std::abs(static_cast<double>(v)); }
+      |                                   ~~ ^
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1221,66): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 1218 |           std::fprintf(stderr, "[buf] %s b%zu n=%zu sum=%.9g abs=%.9g first=%.6g,%.6g,%.6g,%.6g\n",
+      |           ~~~
+ 1219 |                        emitted->entry_name.c_str(), bi, h.size(), sum, asum,
+ 1220 |                        h.size() > 0 ? h[0] : 0.f, h.size() > 1 ? h[1] : 0.f,
+ 1221 |                        h.size() > 2 ? h[2] : 0.f, h.size() > 3 ? h[3] : 0.f);
+      |                                                                  ^~~~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1221,73): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 1218 |           std::fprintf(stderr, "[buf] %s b%zu n=%zu sum=%.9g abs=%.9g first=%.6g,%.6g,%.6g,%.6g\n",
+      |           ~~~
+ 1219 |                        emitted->entry_name.c_str(), bi, h.size(), sum, asum,
+ 1220 |                        h.size() > 0 ? h[0] : 0.f, h.size() > 1 ? h[1] : 0.f,
+ 1221 |                        h.size() > 2 ? h[2] : 0.f, h.size() > 3 ? h[3] : 0.f);
+      |                                                                         ^~~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1221,39): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 1218 |           std::fprintf(stderr, "[buf] %s b%zu n=%zu sum=%.9g abs=%.9g first=%.6g,%.6g,%.6g,%.6g\n",
+      |           ~~~
+ 1219 |                        emitted->entry_name.c_str(), bi, h.size(), sum, asum,
+ 1220 |                        h.size() > 0 ? h[0] : 0.f, h.size() > 1 ? h[1] : 0.f,
+ 1221 |                        h.size() > 2 ? h[2] : 0.f, h.size() > 3 ? h[3] : 0.f);
+      |                                       ^~~~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1221,46): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 1218 |           std::fprintf(stderr, "[buf] %s b%zu n=%zu sum=%.9g abs=%.9g first=%.6g,%.6g,%.6g,%.6g\n",
+      |           ~~~
+ 1219 |                        emitted->entry_name.c_str(), bi, h.size(), sum, asum,
+ 1220 |                        h.size() > 0 ? h[0] : 0.f, h.size() > 1 ? h[1] : 0.f,
+ 1221 |                        h.size() > 2 ? h[2] : 0.f, h.size() > 3 ? h[3] : 0.f);
+      |                                              ^~~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1220,66): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 1218 |           std::fprintf(stderr, "[buf] %s b%zu n=%zu sum=%.9g abs=%.9g first=%.6g,%.6g,%.6g,%.6g\n",
+      |           ~~~
+ 1219 |                        emitted->entry_name.c_str(), bi, h.size(), sum, asum,
+ 1220 |                        h.size() > 0 ? h[0] : 0.f, h.size() > 1 ? h[1] : 0.f,
+      |                                                                  ^~~~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1220,73): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 1218 |           std::fprintf(stderr, "[buf] %s b%zu n=%zu sum=%.9g abs=%.9g first=%.6g,%.6g,%.6g,%.6g\n",
+      |           ~~~
+ 1219 |                        emitted->entry_name.c_str(), bi, h.size(), sum, asum,
+ 1220 |                        h.size() > 0 ? h[0] : 0.f, h.size() > 1 ? h[1] : 0.f,
+      |                                                                         ^~~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1220,39): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 1218 |           std::fprintf(stderr, "[buf] %s b%zu n=%zu sum=%.9g abs=%.9g first=%.6g,%.6g,%.6g,%.6g\n",
+      |           ~~~
+ 1219 |                        emitted->entry_name.c_str(), bi, h.size(), sum, asum,
+ 1220 |                        h.size() > 0 ? h[0] : 0.f, h.size() > 1 ? h[1] : 0.f,
+      |                                       ^~~~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1220,46): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 1218 |           std::fprintf(stderr, "[buf] %s b%zu n=%zu sum=%.9g abs=%.9g first=%.6g,%.6g,%.6g,%.6g\n",
+      |           ~~~
+ 1219 |                        emitted->entry_name.c_str(), bi, h.size(), sum, asum,
+ 1220 |                        h.size() > 0 ? h[0] : 0.f, h.size() > 1 ? h[1] : 0.f,
+      |                                              ^~~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1429,57): warning: implicit conversion from 'std::uint64_t' (aka 'unsigned long long') to 'double' may lose precision [-Wimplicit-int-float-conversion]
+ 1429 |             host_exec / k, host_wait / k, readback / k, unatt / k);
+      |                                                         ^~~~~ ~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1429,43): warning: implicit conversion from 'std::uint64_t' (aka 'unsigned long long') to 'double' may lose precision [-Wimplicit-int-float-conversion]
+ 1429 |             host_exec / k, host_wait / k, readback / k, unatt / k);
+      |                                           ^~~~~~~~ ~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1429,28): warning: implicit conversion from 'std::uint64_t' (aka 'unsigned long long') to 'double' may lose precision [-Wimplicit-int-float-conversion]
+ 1429 |             host_exec / k, host_wait / k, readback / k, unatt / k);
+      |                            ^~~~~~~~~ ~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1429,13): warning: implicit conversion from 'std::uint64_t' (aka 'unsigned long long') to 'double' may lose precision [-Wimplicit-int-float-conversion]
+ 1429 |             host_exec / k, host_wait / k, readback / k, unatt / k);
+      |             ^~~~~~~~~ ~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1428,66): warning: implicit conversion from 'std::uint64_t' (aka 'unsigned long long') to 'double' may lose precision [-Wimplicit-int-float-conversion]
+ 1428 |             emit / k, jit_lookup / k, jit_compile / k, bind / k, submit / k,
+      |                                                                  ^~~~~~ ~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1428,56): warning: implicit conversion from 'std::uint64_t' (aka 'unsigned long long') to 'double' may lose precision [-Wimplicit-int-float-conversion]
+ 1428 |             emit / k, jit_lookup / k, jit_compile / k, bind / k, submit / k,
+      |                                                        ^~~~ ~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1428,39): warning: implicit conversion from 'std::uint64_t' (aka 'unsigned long long') to 'double' may lose precision [-Wimplicit-int-float-conversion]
+ 1428 |             emit / k, jit_lookup / k, jit_compile / k, bind / k, submit / k,
+      |                                       ^~~~~~~~~~~ ~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1428,23): warning: implicit conversion from 'std::uint64_t' (aka 'unsigned long long') to 'double' may lose precision [-Wimplicit-int-float-conversion]
+ 1428 |             emit / k, jit_lookup / k, jit_compile / k, bind / k, submit / k,
+      |                       ^~~~~~~~~~ ~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1428,13): warning: implicit conversion from 'std::uint64_t' (aka 'unsigned long long') to 'double' may lose precision [-Wimplicit-int-float-conversion]
+ 1428 |             emit / k, jit_lookup / k, jit_compile / k, bind / k, submit / k,
+      |             ^~~~ ~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1427,65): warning: implicit conversion from 'std::uint64_t' (aka 'unsigned long long') to 'double' may lose precision [-Wimplicit-int-float-conversion]
+ 1427 |             (unsigned long long)steps, step / k, partition / k, schedule / k,
+      |                                                                 ^~~~~~~~ ~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1427,50): warning: implicit conversion from 'std::uint64_t' (aka 'unsigned long long') to 'double' may lose precision [-Wimplicit-int-float-conversion]
+ 1427 |             (unsigned long long)steps, step / k, partition / k, schedule / k,
+      |                                                  ^~~~~~~~~ ~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1427,40): warning: implicit conversion from 'std::uint64_t' (aka 'unsigned long long') to 'double' may lose precision [-Wimplicit-int-float-conversion]
+ 1427 |             (unsigned long long)steps, step / k, partition / k, schedule / k,
+      |                                        ^~~~ ~
+In file included from C:\Users\antmi\LSE\src\graph\scheduler.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/graph/gdn_pair.hpp:2:
+In file included from C:\Users\antmi\LSE\include\lse/graph/graph.hpp:18:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(631,14): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[5], const std::basic_string<char> &, const char (&)[47]>' requested here
+  631 |       return LSE_ERROR(kInternal, "variant ", v, " of ", t.base.entry_name,
+      |              ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(750,14): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[5], std::basic_string<char>, const char (&)[54], std::basic_string<char>>' requested here
+  750 |       return LSE_ERROR(kInternal, "variant ", pick.variant, " of ", describe_group(group, 0),
+      |              ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'const unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\graph\scheduler.cpp(1565,49): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[11], const unsigned int &, const char (&)[25]>' requested here
+ 1565 |             m.variants[i] != 0 ? ::lse::detail::concat(" (variant ", m.variants[i],
+      |                                                 ^
+26 warnings generated.
+[108/192] Linking CXX static library lse_graph.lib
+[109/192] Building CXX object CMakeFiles\lse_tokenizer.dir\src\tokenizer\tokenizer.cpp.obj
+[110/192] Building CXX object CMakeFiles\lse_server.dir\src\server\chat.cpp.obj
+[111/192] Linking CXX static library lse_ops.lib
+[112/192] Linking CXX static library lse_tokenizer.lib
+[113/192] Building CXX object CMakeFiles\lse_place.dir\src\place\placement.cpp.obj
+[114/192] Building CXX object CMakeFiles\lse_model.dir\src\models\sampling_defaults.cpp.obj
+[115/192] Building CXX object CMakeFiles\lse_model.dir\src\models\qwen3_5_common.cpp.obj
+[116/192] Building CXX object CMakeFiles\lse_model.dir\src\model\hybrid_lm.cpp.obj
+C:\Users\antmi\LSE\src\model\hybrid_lm.cpp(1601,24): warning: declaration shadows a local variable [-Wshadow]
+ 1601 |       for (std::size_t first = 0; first < feature_outputs.size(); first += 8) {
+      |                        ^
+C:\Users\antmi\LSE\src\model\hybrid_lm.cpp(1133,29): note: previous declaration is here
+ 1133 |   std::vector<std::int32_t> first;
+      |                             ^
+C:\Users\antmi\LSE\src\model\hybrid_lm.cpp(1604,60): warning: implicit conversion changes signedness: 'unsigned long long const' to 'difference_type' (aka 'long long') [-Wsign-conversion]
+ 1604 |                                  feature_outputs.begin() + end);
+      |                                                          ~ ^~~
+C:\Users\antmi\LSE\src\model\hybrid_lm.cpp(1603,60): warning: implicit conversion changes signedness: 'std::size_t' (aka 'unsigned long long') to 'difference_type' (aka 'long long') [-Wsign-conversion]
+ 1603 |         std::vector<Array> parts(feature_outputs.begin() + first,
+      |                                                          ~ ^~~~~
+3 warnings generated.
+[117/192] Building CXX object src\backends\cpu\CMakeFiles\lse_backend_cpu.dir\cpu_backend.cpp.obj
+[118/192] Building CXX object CMakeFiles\lse_runtime.dir\src\runtime\session.cpp.obj
+[119/192] Linking CXX static library src\backends\cpu\lse_backend_cpu.lib
+[120/192] Building CXX object CMakeFiles\lse_trace.dir\src\trace\record.cpp.obj
+[121/192] Building CXX object CMakeFiles\lse_runtime.dir\src\runtime\batch.cpp.obj
+[122/192] Building CXX object CMakeFiles\lse_server.dir\src\server\in_process.cpp.obj
+[123/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\concat.cpp.obj
+[124/192] Building CXX object CMakeFiles\lse_trace.dir\src\trace\collector.cpp.obj
+[125/192] Building CXX object CMakeFiles\lse_hub.dir\src\hub\companions.cpp.obj
+[126/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\softmax_top.cpp.obj
+C:\Users\antmi\LSE\src\kernels\softmax_top.cpp(45,84): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+   45 |   for (std::int64_t i = 0; i < n; ++i) sum += std::exp(static_cast<double>(x[i]) - shift);
+      |                                                                                  ~ ^~~~~
+C:\Users\antmi\LSE\src\kernels\softmax_top.cpp(220,95): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  220 |           sum += static_cast<double>(x[c * 2 + 1]) * std::exp(static_cast<double>(x[c * 2]) - top);
+      |                                                                                             ~ ^~~
+2 warnings generated.
+[127/192] Building CXX object CMakeFiles\lse_trace.dir\src\trace\tracer.cpp.obj
+[128/192] Building CXX object CMakeFiles\lse_model.dir\src\model\dflash2_convert.cpp.obj
+C:\Users\antmi\LSE\src\model\dflash2_convert.cpp(764,24): warning: implicit conversion changes signedness: 'const value_type' (aka 'const char') to 'unsigned char' [-Wsign-conversion]
+  764 |   for (unsigned char c : s) h = (h ^ c) * 1099511628211ull;
+      |                      ~ ^
+1 warning generated.
+[129/192] Building CXX object CMakeFiles\lse_runtime.dir\src\runtime\perplexity.cpp.obj
+C:\Users\antmi\LSE\src\runtime\perplexity.cpp(70,23): warning: implicit conversion increases floating-point precision: 'const float' to 'const double' [-Wdouble-promotion]
+   70 |     const double lp = base_logprobs[i], lq = current_logprobs[i];
+      |                  ~~   ^~~~~~~~~~~~~~~~
+1 warning generated.
+[130/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\gather.cpp.obj
+[131/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\argmax.cpp.obj
+[132/192] Building CXX object CMakeFiles\lse_trace.dir\src\trace\export.cpp.obj
+[133/192] Building CXX object CMakeFiles\lse_model.dir\src\model\weights.cpp.obj
+[134/192] Building CXX object CMakeFiles\lse_place.dir\src\place\devices.cpp.obj
+[135/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\kv_write.cpp.obj
+[136/192] Building CXX object CMakeFiles\lse_runtime.dir\src\runtime\generator.cpp.obj
+C:\Users\antmi\LSE\src\runtime\generator.cpp(660,37): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+  660 |         const double value = norm - r[2];
+      |                                   ~ ^~~~
+C:\Users\antmi\LSE\src\runtime\generator.cpp(666,80): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+  666 |         for (std::size_t q = 0; q < probe_k; ++q) out.probe_logprobs.push_back(r[3 + q] - norm);
+      |                                                                                ^~~~~~~~ ~
+C:\Users\antmi\LSE\src\runtime\generator.cpp(668,57): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  668 |           out.top_logprobs.push_back(static_cast<float>(top[(i * top_k + q) * 2] - norm));
+      |                                                         ^~~~~~~~~~~~~~~~~~~~~~~~ ~
+C:\Users\antmi\LSE\src\runtime\generator.cpp(1040,62): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+ 1040 |       const double temperature = sampled ? sampler_.params().temperature : 1.0;
+      |                    ~~~~~~~~~~~             ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+4 warnings generated.
+[137/192] Linking CXX static library lse_place.lib
+[138/192] Building CXX object CMakeFiles\lse_model.dir\src\model\dflash2.cpp.obj
+C:\Users\antmi\LSE\src\model\dflash2.cpp(247,22): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  247 |     double maximum = -INFINITY;
+      |            ~~~~~~~   ^~~~~~~~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(256,79): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  256 |       q.probabilities[k] = std::exp((static_cast<double>(row[k]) - maximum) / temperature);
+      |                                                                             ~ ^~~~~~~~~~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(422,47): warning: implicit conversion changes signedness: 'const std::int64_t' (aka 'const long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  422 |   p.anchor = slot_view(p.inputs, Shape{1, 1}, rows);
+      |              ~~~~~~~~~                        ^~~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(423,49): warning: implicit conversion changes signedness: 'std::int64_t' (aka 'long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  423 |   p.offset = slot_view(p.inputs, Shape{1}, rows + 1);
+      |              ~~~~~~~~~                     ~~~~~^~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(424,47): warning: implicit conversion changes signedness: 'std::int64_t' (aka 'long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  424 |   p.meta = slot_view(p.inputs, Shape{3}, rows + 2);
+      |            ~~~~~~~~~                     ~~~~~^~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(687,64): warning: implicit conversion from 'std::int32_t' (aka 'int') to 'float' may lose precision [-Wimplicit-int-float-conversion]
+  687 |     if (!std::isfinite(raw) || raw < 0 || raw >= impl_->config.vocab_size || std::floor(raw) != raw)
+      |                                               ~~ ~~~~~~~~~~~~~~^~~~~~~~~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(719,37): warning: implicit conversion from 'std::int32_t' (aka 'int') to 'float' may lose precision [-Wimplicit-int-float-conversion]
+  719 |         raw_ids[i] >= impl_->config.vocab_size || std::floor(raw_ids[i]) != raw_ids[i])
+      |                    ~~ ~~~~~~~~~~~~~~^~~~~~~~~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(725,26): warning: implicit conversion changes signedness: 'std::int32_t' (aka 'int') to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  723 |   return dflash2_sample_path(std::span(scores).first(static_cast<std::size_t>(proposals) * top * top),
+      |          ~~~~~~~~~~~~~~~~~~~
+  724 |       std::span(ids).first(static_cast<std::size_t>(proposals) * top), proposals,
+  725 |       top, impl_->config.vocab_size, temperature, sampler);
+      |            ~~~~~~~~~~~~~~^~~~~~~~~~
+8 warnings generated.
+[139/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\conv.cpp.obj
+[140/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\linked.cpp.obj
+[141/192] Building CXX object CMakeFiles\lse_hub.dir\src\hub\cli.cpp.obj
+[142/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\linear_indexed.cpp.obj
+[143/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\logit_pick.cpp.obj
+[144/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\quant_embedding.cpp.obj
+[145/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\scatter.cpp.obj
+[146/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\matmul.cpp.obj
+[147/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\lds_linear.cpp.obj
+[148/192] Building CXX object CMakeFiles\lse_kernels.dir\src\dispatch\quant.cpp.obj
+In file included from C:\Users\antmi\LSE\src\dispatch\quant.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\dispatch\quant.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\dispatch\quant.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[149/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\rope.cpp.obj
+[150/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\quant_activation_panel.cpp.obj
+[151/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\reduction.cpp.obj
+[152/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\gdn.cpp.obj
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(432,32): warning: implicit conversion changes signedness: 'int' to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  432 |         srow[j + x] = srow[j + x].read() * al;
+      |                              ~ ^
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(432,18): warning: implicit conversion changes signedness: 'int' to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  432 |         srow[j + x] = srow[j + x].read() * al;
+      |                ~ ^
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(433,65): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  433 |         part[x] = math::fma(srow[j + x].read(), kj.back(), part[x].read());
+      |                                                            ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(433,38): warning: implicit conversion changes signedness: 'int' to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  433 |         part[x] = math::fma(srow[j + x].read(), kj.back(), part[x].read());
+      |                                    ~ ^
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(433,14): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  433 |         part[x] = math::fma(srow[j + x].read(), kj.back(), part[x].read());
+      |         ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(439,38): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  439 |     for (int x = 0; x < 4; ++x) part[x] = 0.0f;
+      |                                 ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(443,60): warning: implicit conversion changes signedness: 'int' to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  443 |         srow[j + x] = math::fma(delta, kj[j + x], srow[j + x].read());
+      |                                                          ~ ^
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(443,47): warning: implicit conversion changes signedness: 'int' to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  443 |         srow[j + x] = math::fma(delta, kj[j + x], srow[j + x].read());
+      |                                             ~ ^
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(443,18): warning: implicit conversion changes signedness: 'int' to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  443 |         srow[j + x] = math::fma(delta, kj[j + x], srow[j + x].read());
+      |                ~ ^
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(444,61): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  444 |         part[x] = math::fma(srow[j + x].read(), qp[x], part[x].read());
+      |                                                        ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(444,38): warning: implicit conversion changes signedness: 'int' to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  444 |         part[x] = math::fma(srow[j + x].read(), qp[x], part[x].read());
+      |                                    ~ ^
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(444,14): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  444 |         part[x] = math::fma(srow[j + x].read(), qp[x], part[x].read());
+      |         ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(937,84): warning: implicit conversion changes signedness: 'std::size_t' (aka 'unsigned long long') to 'difference_type' (aka 'long long') [-Wsign-conversion]
+  937 |           std::vector<float> srow(levels.begin() + d * D, levels.begin() + (d + 1) * D);
+      |                                                                          ~ ~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(937,54): warning: implicit conversion changes signedness: 'std::size_t' (aka 'unsigned long long') to 'difference_type' (aka 'long long') [-Wsign-conversion]
+  937 |           std::vector<float> srow(levels.begin() + d * D, levels.begin() + (d + 1) * D);
+      |                                                  ~ ~~^~~
+C:\Users\antmi\LSE\src\kernels\gdn.cpp(941,72): warning: implicit conversion changes signedness: 'std::size_t' (aka 'unsigned long long') to 'difference_type' (aka 'long long') [-Wsign-conversion]
+  941 |           std::copy(srow.begin(), srow.end(), levels.begin() + (d + 1) * D);
+      |                                                              ~ ~~~~~~~~^~~
+15 warnings generated.
+[153/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\slice.cpp.obj
+[154/192] Building CXX object CMakeFiles\lse_model.dir\src\model\inspect.cpp.obj
+In file included from C:\Users\antmi\LSE\src\model\inspect.cpp:25:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\model\inspect.cpp:25:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\model\inspect.cpp:25:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[155/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\transpose.cpp.obj
+[156/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\topk.cpp.obj
+[157/192] Building CXX object CMakeFiles\lse_hub.dir\src\hub\cache.cpp.obj
+[158/192] Linking CXX static library lse_trace.lib
+[159/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\dflash2_convolve.cpp.obj
+[160/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\dflash2_sdpa.cpp.obj
+[161/192] Building CXX object CMakeFiles\lse_model.dir\src\models\chat_template.cpp.obj
+[162/192] Linking CXX static library lse_model.lib
+[163/192] Linking CXX static library lse_runtime.lib
+[164/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\dflash2_ring_split.cpp.obj
+[165/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\quant_swiglu.cpp.obj
+In file included from C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp(46,9): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+   46 |       g[p] = quant::dot4_code_plane(e, e.let(gwords[static_cast<int>(j)]), p);
+      |       ~ ^
+C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp(47,9): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+   47 |       u[p] = quant::dot4_code_plane(e, e.let(uwords[static_cast<int>(j)]), p);
+      |       ~ ^
+C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp(72,57): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+   72 |                               kir::cast<kir::i32>(gp[j][p]), gi.read());
+      |                                                   ~~    ^
+C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp(74,57): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+   74 |                               kir::cast<kir::i32>(up[j][p]), ui.read());
+      |                                                   ~~    ^
+C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp(113,9): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  113 |       g[p] = quant::dot4_code_plane(e, e.let(gwords[static_cast<int>(j)]), p);
+      |       ~ ^
+C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp(114,9): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  114 |       u[p] = quant::dot4_code_plane(e, e.let(uwords[static_cast<int>(j)]), p);
+      |       ~ ^
+C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp(138,57): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  138 |                               kir::cast<kir::i32>(gp[j][p]), gi.read());
+      |                                                   ~~    ^
+C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp(140,57): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  140 |                               kir::cast<kir::i32>(up[j][p]), ui.read());
+      |                                                   ~~    ^
+C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp(450,71): warning: implicit conversion changes signedness: 'std::int64_t' (aka 'long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  450 |                   std::bit_cast<float>(word(7, row * stride + rule->k / 4 + c));
+      |                                                             ~ ~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp(466,52): warning: implicit conversion changes signedness: 'std::int64_t' (aka 'long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  466 |                 word(7, row * stride + 3 * rule->k / 8 + g));
+      |                                      ~ ~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\quant_swiglu.cpp(481,51): warning: implicit conversion changes signedness: 'const std::int64_t' (aka 'const long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  481 |       std::memcpy(out.bytes.data() + (row * rule->n + col) * 4, &value, 4);
+      |                                           ~ ~~~~~~^
+14 warnings generated.
+[166/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\quant_linear_panel.cpp.obj
+In file included from C:\Users\antmi\LSE\src\kernels\quant_linear_panel.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\quant_linear_panel.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\quant_linear_panel.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[167/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\quant_matrix_panel.cpp.obj
+In file included from C:\Users\antmi\LSE\src\kernels\quant_matrix_panel.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\quant_matrix_panel.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\quant_matrix_panel.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\src\kernels\quant_matrix_panel.cpp(792,58): warning: implicit conversion changes signedness: 'int' to 'unsigned int' [-Wsign-conversion]
+  792 |           const auto half = e.let(weight / (1u << (16u * f)));
+      |                                                        ~ ^
+C:\Users\antmi\LSE\src\kernels\quant_matrix_panel.cpp(792,58): warning: implicit conversion changes signedness: 'int' to 'unsigned int' [-Wsign-conversion]
+  792 |           const auto half = e.let(weight / (1u << (16u * f)));
+      |                                                        ~ ^
+C:\Users\antmi\LSE\src\kernels\quant_matrix_panel.cpp(884,40): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_prefill_matrix<true, true>' requested here
+  884 |                  ? (rule->n == 17408 ? emit_prefill_matrix<true, true>(s)
+      |                                        ^
+C:\Users\antmi\LSE\src\kernels\quant_matrix_panel.cpp(792,58): warning: implicit conversion changes signedness: 'int' to 'unsigned int' [-Wsign-conversion]
+  792 |           const auto half = e.let(weight / (1u << (16u * f)));
+      |                                                        ~ ^
+C:\Users\antmi\LSE\src\kernels\quant_matrix_panel.cpp(885,40): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_prefill_matrix<true, false>' requested here
+  885 |                                      : emit_prefill_matrix<true>(s))
+      |                                        ^
+C:\Users\antmi\LSE\src\kernels\quant_matrix_panel.cpp(792,58): warning: implicit conversion changes signedness: 'int' to 'unsigned int' [-Wsign-conversion]
+  792 |           const auto half = e.let(weight / (1u << (16u * f)));
+      |                                                        ~ ^
+C:\Users\antmi\LSE\src\kernels\quant_matrix_panel.cpp(886,20): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_prefill_matrix<false, false>' requested here
+  886 |                  : emit_prefill_matrix<false>(s);
+      |                    ^
+7 warnings generated.
+[168/192] Building CXX object CMakeFiles\lse_server.dir\src\server\chat_protocol.cpp.obj
+[169/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\wmma_linear.cpp.obj
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_linear.cpp:2:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_linear.cpp:2:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_linear.cpp:2:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[170/192] Building CXX object CMakeFiles\lse_hub.dir\src\hub\pull.cpp.obj
+[171/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\dflash2_cache.cpp.obj
+[172/192] Linking CXX static library lse_hub.lib
+[173/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\dflash2_ring_sdpa.cpp.obj
+[174/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\dflash2_selector.cpp.obj
+[175/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\quant_linear.cpp.obj
+In file included from C:\Users\antmi\LSE\src\kernels\quant_linear.cpp:10:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\quant_linear.cpp:10:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\quant_linear.cpp:10:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(981,23): warning: unused variable 'aligned' [-Wunused-variable]
+  981 |   const std::uint32_t aligned = (nchunks / span) * span;
+      |                       ^~~~~~~
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(515,77): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  515 |           for (std::uint32_t t = 0; t < wide; ++t) v[r][j + t] = e.let(pack[t]);
+      |                                                                        ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(909,17): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::stage_dot_acts_fetch<lse::kernels::(anonymous namespace)::QuantLinearArgs<float>>' requested here
+  909 |       fetched = stage_dot_acts_fetch<A>(e, a, stage ? &xs : nullptr, row, 1, 1,
+      |                 ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(962,46): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_decode_dot<lse::kernels::(anonymous namespace)::QuantLinearArgs<float>>' requested here
+  962 |     if (decode_prefetch(s, d, false)) return emit_decode_dot<A>(s, d);
+      |                                              ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1268,14): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::QuantLinearArgs<float>>' requested here
+ 1268 |       return emit_body<QuantLinearArgs<S>>(s, d);
+      |              ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(41,42): note: in instantiation of function template specialization 'lse::kernels::QuantLinearKernel::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<float>' requested here
+   41 |     case DType::kF32: return fn.template operator()<graph::kir::f32>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1267,12): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\quant_linear.cpp:1267:41)>' requested here
+ 1267 |     return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |            ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(439,38): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  439 |             v[r][j + t] = e.let(pack[t]);
+      |                                 ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1064,7): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::stage_dot_acts_all<lse::kernels::(anonymous namespace)::QuantLinearArgs<float>>' requested here
+ 1064 |       stage_dot_acts_all<A>(e, a, stage ? &xs : nullptr, row, rows,
+      |       ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1268,14): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::QuantLinearArgs<float>>' requested here
+ 1268 |       return emit_body<QuantLinearArgs<S>>(s, d);
+      |              ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(41,42): note: in instantiation of function template specialization 'lse::kernels::QuantLinearKernel::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<float>' requested here
+   41 |     case DType::kF32: return fn.template operator()<graph::kir::f32>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1267,12): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\quant_linear.cpp:1267:41)>' requested here
+ 1267 |     return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |            ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(515,77): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  515 |           for (std::uint32_t t = 0; t < wide; ++t) v[r][j + t] = e.let(pack[t]);
+      |                                                                        ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(909,17): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::stage_dot_acts_fetch<lse::kernels::(anonymous namespace)::QuantLinearArgs<lse::bf16>>' requested here
+  909 |       fetched = stage_dot_acts_fetch<A>(e, a, stage ? &xs : nullptr, row, 1, 1,
+      |                 ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(962,46): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_decode_dot<lse::kernels::(anonymous namespace)::QuantLinearArgs<lse::bf16>>' requested here
+  962 |     if (decode_prefetch(s, d, false)) return emit_decode_dot<A>(s, d);
+      |                                              ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1268,14): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::QuantLinearArgs<lse::bf16>>' requested here
+ 1268 |       return emit_body<QuantLinearArgs<S>>(s, d);
+      |              ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(42,43): note: in instantiation of function template specialization 'lse::kernels::QuantLinearKernel::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::bf16>' requested here
+   42 |     case DType::kBF16: return fn.template operator()<lse::bf16>();
+      |                                           ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1267,12): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\quant_linear.cpp:1267:41)>' requested here
+ 1267 |     return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |            ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(439,38): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  439 |             v[r][j + t] = e.let(pack[t]);
+      |                                 ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1064,7): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::stage_dot_acts_all<lse::kernels::(anonymous namespace)::QuantLinearArgs<lse::bf16>>' requested here
+ 1064 |       stage_dot_acts_all<A>(e, a, stage ? &xs : nullptr, row, rows,
+      |       ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1268,14): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::QuantLinearArgs<lse::bf16>>' requested here
+ 1268 |       return emit_body<QuantLinearArgs<S>>(s, d);
+      |              ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(42,43): note: in instantiation of function template specialization 'lse::kernels::QuantLinearKernel::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::bf16>' requested here
+   42 |     case DType::kBF16: return fn.template operator()<lse::bf16>();
+      |                                           ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1267,12): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\quant_linear.cpp:1267:41)>' requested here
+ 1267 |     return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |            ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(515,77): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  515 |           for (std::uint32_t t = 0; t < wide; ++t) v[r][j + t] = e.let(pack[t]);
+      |                                                                        ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(909,17): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::stage_dot_acts_fetch<lse::kernels::(anonymous namespace)::QuantLinearArgs<lse::f16>>' requested here
+  909 |       fetched = stage_dot_acts_fetch<A>(e, a, stage ? &xs : nullptr, row, 1, 1,
+      |                 ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(962,46): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_decode_dot<lse::kernels::(anonymous namespace)::QuantLinearArgs<lse::f16>>' requested here
+  962 |     if (decode_prefetch(s, d, false)) return emit_decode_dot<A>(s, d);
+      |                                              ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1268,14): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::QuantLinearArgs<lse::f16>>' requested here
+ 1268 |       return emit_body<QuantLinearArgs<S>>(s, d);
+      |              ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(43,42): note: in instantiation of function template specialization 'lse::kernels::QuantLinearKernel::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::f16>' requested here
+   43 |     case DType::kF16: return fn.template operator()<lse::f16>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1267,12): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\quant_linear.cpp:1267:41)>' requested here
+ 1267 |     return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |            ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(439,38): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  439 |             v[r][j + t] = e.let(pack[t]);
+      |                                 ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1064,7): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::stage_dot_acts_all<lse::kernels::(anonymous namespace)::QuantLinearArgs<lse::f16>>' requested here
+ 1064 |       stage_dot_acts_all<A>(e, a, stage ? &xs : nullptr, row, rows,
+      |       ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1268,14): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::QuantLinearArgs<lse::f16>>' requested here
+ 1268 |       return emit_body<QuantLinearArgs<S>>(s, d);
+      |              ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(43,42): note: in instantiation of function template specialization 'lse::kernels::QuantLinearKernel::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::f16>' requested here
+   43 |     case DType::kF16: return fn.template operator()<lse::f16>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1267,12): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\quant_linear.cpp:1267:41)>' requested here
+ 1267 |     return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |            ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(439,38): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  439 |             v[r][j + t] = e.let(pack[t]);
+      |                                 ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1064,7): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::stage_dot_acts_all<lse::kernels::(anonymous namespace)::QuantLinearIndexedArgs<float>>' requested here
+ 1064 |       stage_dot_acts_all<A>(e, a, stage ? &xs : nullptr, row, rows,
+      |       ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1324,14): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::QuantLinearIndexedArgs<float>>' requested here
+ 1324 |       return emit_body<QuantLinearIndexedArgs<S>>(s, d);
+      |              ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(41,42): note: in instantiation of function template specialization 'lse::kernels::QuantLinearIndexedKernel::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<float>' requested here
+   41 |     case DType::kF32: return fn.template operator()<graph::kir::f32>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1323,12): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\quant_linear.cpp:1323:41)>' requested here
+ 1323 |     return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |            ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(439,38): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  439 |             v[r][j + t] = e.let(pack[t]);
+      |                                 ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1064,7): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::stage_dot_acts_all<lse::kernels::(anonymous namespace)::QuantLinearIndexedArgs<lse::bf16>>' requested here
+ 1064 |       stage_dot_acts_all<A>(e, a, stage ? &xs : nullptr, row, rows,
+      |       ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1324,14): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::QuantLinearIndexedArgs<lse::bf16>>' requested here
+ 1324 |       return emit_body<QuantLinearIndexedArgs<S>>(s, d);
+      |              ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(42,43): note: in instantiation of function template specialization 'lse::kernels::QuantLinearIndexedKernel::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::bf16>' requested here
+   42 |     case DType::kBF16: return fn.template operator()<lse::bf16>();
+      |                                           ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1323,12): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\quant_linear.cpp:1323:41)>' requested here
+ 1323 |     return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |            ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(439,38): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  439 |             v[r][j + t] = e.let(pack[t]);
+      |                                 ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1064,7): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::stage_dot_acts_all<lse::kernels::(anonymous namespace)::QuantLinearIndexedArgs<lse::f16>>' requested here
+ 1064 |       stage_dot_acts_all<A>(e, a, stage ? &xs : nullptr, row, rows,
+      |       ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1324,14): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::QuantLinearIndexedArgs<lse::f16>>' requested here
+ 1324 |       return emit_body<QuantLinearIndexedArgs<S>>(s, d);
+      |              ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(43,42): note: in instantiation of function template specialization 'lse::kernels::QuantLinearIndexedKernel::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::f16>' requested here
+   43 |     case DType::kF16: return fn.template operator()<lse::f16>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\quant_linear.cpp(1323,12): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\quant_linear.cpp:1323:41)>' requested here
+ 1323 |     return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |            ^
+13 warnings generated.
+[176/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\wmma_q6_linear.cpp.obj
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp:4:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp:4:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp:4:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(34,31): warning: implicit conversion changes signedness: 'const std::int64_t' (aka 'const long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+   34 |       s.output.elem_count() % n)
+      |                             ~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(36,42): warning: implicit conversion changes signedness: 'const std::int64_t' (aka 'const long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+   36 |   const auto m = s.output.elem_count() / n;
+      |                                        ~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(38,37): warning: implicit conversion changes signedness: 'const std::int64_t' (aka 'const long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+   38 |       n * words > UINT32_MAX || m * n > UINT32_MAX)
+      |                                   ~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(37,39): warning: implicit conversion changes signedness: 'const std::int64_t' (aka 'const long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+   37 |   if (m < 16 || m > UINT32_MAX || m * k > UINT32_MAX ||
+      |                                     ~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(41,32): warning: comparison of integers of different signs: 'std::size_t' (aka 'unsigned long long') and 'std::int64_t' (aka 'long long') [-Wsign-compare]
+   41 |       s.inputs[3].elem_count() != n * (k / group) ||
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(40,32): warning: comparison of integers of different signs: 'std::size_t' (aka 'unsigned long long') and 'std::int64_t' (aka 'long long') [-Wsign-compare]
+   40 |   if (s.inputs[2].elem_count() != n * (k / group) ||
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(112,52): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  112 |             av[v * 4 + j] = math::narrow<F>(loaded[j]);
+      |                                             ~~~~~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(112,22): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  112 |             av[v * 4 + j] = math::narrow<F>(loaded[j]);
+      |             ~~ ~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(131,14): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  131 |           bv[j] = math::narrow<F>(
+      |           ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(236,46): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  236 |             const auto original=e.let(loaded[j]);
+      |                                       ~~~~~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(238,22): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  238 |             av[v * 4 + j] = math::narrow<F>(original);
+      |             ~~ ~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(260,14): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  260 |           bv[j] = math::narrow<F>(original);
+      |           ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(263,61): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  263 |           const auto residual=e.let(original-math::widen(bv[j].read()));
+      |                                                          ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(265,14): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  265 |           bl[j] = math::narrow<F>(residual);
+      |           ~~ ^
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp:344:
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(60,36): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+   60 |             av[v * 4 + j] = loaded[j];
+      |                             ~~~~~~ ^
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(60,22): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+   60 |             av[v * 4 + j] = loaded[j];
+      |             ~~ ~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(79,14): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+   79 |           bv[j] = math::fma(math::cast<kir::f32>(e.let(code)), scale, bias);
+      |           ~~ ^
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(131,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  131 |               av[pack * 4 + 3].read() / sx.read()};
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(130,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  130 |               av[pack * 4 + 2].read() / sx.read(),
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(129,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  129 |               av[pack * 4 + 1].read() / sx.read(),
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(128,23): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  128 |               av[pack * 4].read() / sx.read(),
+      |               ~~ ~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(136,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  136 |               bv[pack * 4 + 3].read() / sw.read()};
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(135,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  135 |               bv[pack * 4 + 2].read() / sw.read(),
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(134,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  134 |               bv[pack * 4 + 1].read() / sw.read(),
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(133,23): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  133 |               bv[pack * 4].read() / sw.read(),
+      |               ~~ ~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(60,36): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+   60 |             av[v * 4 + j] = loaded[j];
+      |                             ~~~~~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(431,12): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_residual<lse::math::MatrixElem::kFp8>' requested here
+  431 |     return emit_residual<T>(s, d);
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(420,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::ResidualKernel<lse::math::MatrixElem::kFp8>::emit_kernel' requested here
+  420 | struct ResidualKernel final : KernelPrimitive<ResidualKernel<T>> {
+      |        ^
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp:344:
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(60,22): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+   60 |             av[v * 4 + j] = loaded[j];
+      |             ~~ ~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(79,14): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+   79 |           bv[j] = math::fma(math::cast<kir::f32>(e.let(code)), scale, bias);
+      |           ~~ ^
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(131,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  131 |               av[pack * 4 + 3].read() / sx.read()};
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(130,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  130 |               av[pack * 4 + 2].read() / sx.read(),
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(129,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  129 |               av[pack * 4 + 1].read() / sx.read(),
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(128,23): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  128 |               av[pack * 4].read() / sx.read(),
+      |               ~~ ~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(136,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  136 |               bv[pack * 4 + 3].read() / sw.read()};
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(135,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  135 |               bv[pack * 4 + 2].read() / sw.read(),
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(134,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  134 |               bv[pack * 4 + 1].read() / sw.read(),
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(133,23): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  133 |               bv[pack * 4].read() / sw.read(),
+      |               ~~ ~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(60,36): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+   60 |             av[v * 4 + j] = loaded[j];
+      |                             ~~~~~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(431,12): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_residual<lse::math::MatrixElem::kBf8>' requested here
+  431 |     return emit_residual<T>(s, d);
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp(420,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::ResidualKernel<lse::math::MatrixElem::kBf8>::emit_kernel' requested here
+  420 | struct ResidualKernel final : KernelPrimitive<ResidualKernel<T>> {
+      |        ^
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_q6_linear.cpp:344:
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(60,22): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+   60 |             av[v * 4 + j] = loaded[j];
+      |             ~~ ~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(79,14): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+   79 |           bv[j] = math::fma(math::cast<kir::f32>(e.let(code)), scale, bias);
+      |           ~~ ^
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(131,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  131 |               av[pack * 4 + 3].read() / sx.read()};
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(130,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  130 |               av[pack * 4 + 2].read() / sx.read(),
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(129,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  129 |               av[pack * 4 + 1].read() / sx.read(),
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(128,23): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  128 |               av[pack * 4].read() / sx.read(),
+      |               ~~ ~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(136,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  136 |               bv[pack * 4 + 3].read() / sw.read()};
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(135,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  135 |               bv[pack * 4 + 2].read() / sw.read(),
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(134,27): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  134 |               bv[pack * 4 + 1].read() / sw.read(),
+      |               ~~ ~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\kernels\q6_fp8_residual.inc(133,23): warning: implicit conversion changes signedness: 'unsigned int' to 'int' [-Wsign-conversion]
+  133 |               bv[pack * 4].read() / sw.read(),
+      |               ~~ ~~~~~^~~
+50 warnings generated.
+[177/192] Building CXX object CMakeFiles\lse_server.dir\src\server\http_server.cpp.obj
+[178/192] Building CXX object CMakeFiles\lse_api.dir\src\api\lse.cpp.obj
+In file included from C:\Users\antmi\LSE\src\api\lse.cpp:14:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\api\lse.cpp:14:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\api\lse.cpp:14:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\src\api\lse.cpp(133,48): warning: implicit conversion loses integer precision: 'std::size_t' (aka 'unsigned long long') to 'unsigned int' [-Wshorten-64-to-32]
+  133 |       if (echo >= 0) (void)!::write(echo, buf, static_cast<std::size_t>(n));
+      |                             ~~                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\api\lse.cpp(1010,52): warning: implicit conversion changes signedness: 'int' to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+ 1010 |       for (int b = 0; b < 4; ++b) id_bytes[i * 4 + b] = static_cast<char>((tokens[i] >> (8 * b)) & 0xffu);
+      |                                                  ~ ^
+5 warnings generated.
+[179/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\wmma_q8_linear.cpp.obj
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_q8_linear.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_q8_linear.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_q8_linear.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\src\kernels\wmma_q8_linear.cpp(463,62): warning: implicit conversion changes signedness: 'const int' to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  463 |     const auto block = q8_grid(s, d.m, kRows, d.n, d.matrix->wave).block;
+      |                        ~~~~~~~                     ~~~~~~~~~~^~~~
+C:\Users\antmi\LSE\include\lse/graph/kernel_primitive.hpp(302,21): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::AffineWmmaKernel<1>::plan_impl' requested here
+  302 |     return Derived::plan_impl(shapes);
+      |                     ^
+C:\Users\antmi\LSE\include\lse/graph/kernel_primitive.hpp(268,7): note: in instantiation of member function 'lse::graph::KernelPrimitive<lse::kernels::(anonymous namespace)::AffineWmmaKernel<1>>::plan' requested here
+  268 | class KernelPrimitive : public KernelPrimitiveBase {
+      |       ^
+C:\Users\antmi\LSE\src\kernels\wmma_q8_linear.cpp(464,42): warning: implicit conversion changes signedness: 'const int' to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  464 |     const auto waves = block / d.matrix->wave;
+      |                              ~ ~~~~~~~~~~^~~~
+C:\Users\antmi\LSE\src\kernels\wmma_q8_linear.cpp(463,62): warning: implicit conversion changes signedness: 'const int' to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  463 |     const auto block = q8_grid(s, d.m, kRows, d.n, d.matrix->wave).block;
+      |                        ~~~~~~~                     ~~~~~~~~~~^~~~
+C:\Users\antmi\LSE\include\lse/graph/kernel_primitive.hpp(302,21): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::AffineWmmaKernel<1, true>::plan_impl' requested here
+  302 |     return Derived::plan_impl(shapes);
+      |                     ^
+C:\Users\antmi\LSE\include\lse/graph/kernel_primitive.hpp(268,7): note: in instantiation of member function 'lse::graph::KernelPrimitive<lse::kernels::(anonymous namespace)::AffineWmmaKernel<1, true>>::plan' requested here
+  268 | class KernelPrimitive : public KernelPrimitiveBase {
+      |       ^
+C:\Users\antmi\LSE\src\kernels\wmma_q8_linear.cpp(464,42): warning: implicit conversion changes signedness: 'const int' to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  464 |     const auto waves = block / d.matrix->wave;
+      |                              ~ ~~~~~~~~~~^~~~
+C:\Users\antmi\LSE\src\kernels\wmma_q8_linear.cpp(463,62): warning: implicit conversion changes signedness: 'const int' to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  463 |     const auto block = q8_grid(s, d.m, kRows, d.n, d.matrix->wave).block;
+      |                        ~~~~~~~                     ~~~~~~~~~~^~~~
+C:\Users\antmi\LSE\include\lse/graph/kernel_primitive.hpp(302,21): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::AffineWmmaKernel<4>::plan_impl' requested here
+  302 |     return Derived::plan_impl(shapes);
+      |                     ^
+C:\Users\antmi\LSE\include\lse/graph/kernel_primitive.hpp(268,7): note: in instantiation of member function 'lse::graph::KernelPrimitive<lse::kernels::(anonymous namespace)::AffineWmmaKernel<4>>::plan' requested here
+  268 | class KernelPrimitive : public KernelPrimitiveBase {
+      |       ^
+C:\Users\antmi\LSE\src\kernels\wmma_q8_linear.cpp(464,42): warning: implicit conversion changes signedness: 'const int' to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  464 |     const auto waves = block / d.matrix->wave;
+      |                              ~ ~~~~~~~~~~^~~~
+9 warnings generated.
+[180/192] Building CXX object CMakeFiles\lse_server.dir\src\server\router.cpp.obj
+[181/192] Linking CXX static library lse_server.lib
+[182/192] Linking CXX static library LSE.lib
+[183/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\q4_gemm.cpp.obj
+In file included from C:\Users\antmi\LSE\src\kernels\q4_gemm.cpp:36:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\q4_gemm.cpp:36:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\q4_gemm.cpp:36:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[184/192] Building CXX object CMakeFiles\lse.dir\src\cli\main.cpp.obj
+[185/192] Building CXX object CMakeFiles\lse-server.dir\src\cli\server_main.cpp.obj
+[186/192] Linking CXX executable lse.exe
+[187/192] Linking CXX executable lse-server.exe
+[188/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\sdpa.cpp.obj
+In file included from C:\Users\antmi\LSE\src\kernels\sdpa.cpp:8:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\sdpa.cpp:8:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\sdpa.cpp:8:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[189/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\wmma_quant_linear.cpp.obj
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:13:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:13:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:13:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(69,39): warning: implicit conversion changes signedness: 'std::size_t' (aka 'unsigned long long') to 'const std::int64_t' (aka 'const long long') [-Wsign-conversion]
+   69 |   const std::int64_t elems = s.output.elem_count();
+      |                      ~~~~~   ~~~~~~~~~^~~~~~~~~~~~
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(283,29): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  283 |             (*packed_words)[w] = word;
+      |             ~               ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(319,59): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  319 |           for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                     ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<float>, lse::math::MatrixTarget::kRdna3, false>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(41,42): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<float>' requested here
+   41 |     case DType::kF32: return fn.template operator()<graph::kir::f32>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(155,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna3>' requested here
+  155 |       return fn.template operator()<MatrixTarget::kRdna3>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(323,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  323 |             for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                       ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(339,18): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  339 |               af[c] = xq[e.let(lane_words[i] + lane_word +
+      |               ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(365,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  365 |                 math::fma(term, kir::cast<kir::f32>(acc[ij][z].read()),
+      |                                                     ~~~     ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(92,10): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+   92 |     frag[f] = bits == 4 ? PackedCodes<4>::word(e, a.packed, base, f)
+      |     ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(321,13): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::fill_weights<4, lse::kernels::(anonymous namespace)::Args<float>>' requested here
+  321 |             fill_weights(e, a, bcol[j], k0, lane_k, lanes, d.spec.bits, bf[j]);
+      |             ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<float>, lse::math::MatrixTarget::kRdna3, false>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(41,42): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<float>' requested here
+   41 |     case DType::kF32: return fn.template operator()<graph::kir::f32>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(155,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna3>' requested here
+  155 |       return fn.template operator()<MatrixTarget::kRdna3>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(319,59): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  319 |           for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                     ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<lse::bf16>, lse::math::MatrixTarget::kRdna3, false>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(42,43): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<lse::bf16>' requested here
+   42 |     case DType::kBF16: return fn.template operator()<lse::bf16>();
+      |                                           ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(155,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna3>' requested here
+  155 |       return fn.template operator()<MatrixTarget::kRdna3>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(323,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  323 |             for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                       ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(339,18): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  339 |               af[c] = xq[e.let(lane_words[i] + lane_word +
+      |               ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(365,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  365 |                 math::fma(term, kir::cast<kir::f32>(acc[ij][z].read()),
+      |                                                     ~~~     ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(92,10): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+   92 |     frag[f] = bits == 4 ? PackedCodes<4>::word(e, a.packed, base, f)
+      |     ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(321,13): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::fill_weights<4, lse::kernels::(anonymous namespace)::Args<lse::bf16>>' requested here
+  321 |             fill_weights(e, a, bcol[j], k0, lane_k, lanes, d.spec.bits, bf[j]);
+      |             ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<lse::bf16>, lse::math::MatrixTarget::kRdna3, false>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(42,43): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<lse::bf16>' requested here
+   42 |     case DType::kBF16: return fn.template operator()<lse::bf16>();
+      |                                           ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(155,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna3>' requested here
+  155 |       return fn.template operator()<MatrixTarget::kRdna3>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(319,59): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  319 |           for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                     ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<lse::f16>, lse::math::MatrixTarget::kRdna3, false>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(43,42): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<lse::f16>' requested here
+   43 |     case DType::kF16: return fn.template operator()<lse::f16>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(155,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna3>' requested here
+  155 |       return fn.template operator()<MatrixTarget::kRdna3>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(323,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  323 |             for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                       ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(339,18): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  339 |               af[c] = xq[e.let(lane_words[i] + lane_word +
+      |               ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(365,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  365 |                 math::fma(term, kir::cast<kir::f32>(acc[ij][z].read()),
+      |                                                     ~~~     ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(92,10): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+   92 |     frag[f] = bits == 4 ? PackedCodes<4>::word(e, a.packed, base, f)
+      |     ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(321,13): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::fill_weights<4, lse::kernels::(anonymous namespace)::Args<lse::f16>>' requested here
+  321 |             fill_weights(e, a, bcol[j], k0, lane_k, lanes, d.spec.bits, bf[j]);
+      |             ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<lse::f16>, lse::math::MatrixTarget::kRdna3, false>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(43,42): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<lse::f16>' requested here
+   43 |     case DType::kF16: return fn.template operator()<lse::f16>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(155,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna3>' requested here
+  155 |       return fn.template operator()<MatrixTarget::kRdna3>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(319,59): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  319 |           for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                     ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<float>, lse::math::MatrixTarget::kRdna4, false>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(41,42): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<float>' requested here
+   41 |     case DType::kF32: return fn.template operator()<graph::kir::f32>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(157,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna4>' requested here
+  157 |       return fn.template operator()<MatrixTarget::kRdna4>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(323,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  323 |             for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                       ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(339,18): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  339 |               af[c] = xq[e.let(lane_words[i] + lane_word +
+      |               ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(365,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  365 |                 math::fma(term, kir::cast<kir::f32>(acc[ij][z].read()),
+      |                                                     ~~~     ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(92,10): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+   92 |     frag[f] = bits == 4 ? PackedCodes<4>::word(e, a.packed, base, f)
+      |     ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(321,13): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::fill_weights<2, lse::kernels::(anonymous namespace)::Args<float>>' requested here
+  321 |             fill_weights(e, a, bcol[j], k0, lane_k, lanes, d.spec.bits, bf[j]);
+      |             ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<float>, lse::math::MatrixTarget::kRdna4, false>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(41,42): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<float>' requested here
+   41 |     case DType::kF32: return fn.template operator()<graph::kir::f32>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(157,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna4>' requested here
+  157 |       return fn.template operator()<MatrixTarget::kRdna4>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(319,59): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  319 |           for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                     ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<lse::bf16>, lse::math::MatrixTarget::kRdna4, false>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(42,43): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<lse::bf16>' requested here
+   42 |     case DType::kBF16: return fn.template operator()<lse::bf16>();
+      |                                           ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(157,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna4>' requested here
+  157 |       return fn.template operator()<MatrixTarget::kRdna4>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(323,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  323 |             for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                       ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(339,18): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  339 |               af[c] = xq[e.let(lane_words[i] + lane_word +
+      |               ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(365,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  365 |                 math::fma(term, kir::cast<kir::f32>(acc[ij][z].read()),
+      |                                                     ~~~     ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(92,10): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+   92 |     frag[f] = bits == 4 ? PackedCodes<4>::word(e, a.packed, base, f)
+      |     ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(321,13): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::fill_weights<2, lse::kernels::(anonymous namespace)::Args<lse::bf16>>' requested here
+  321 |             fill_weights(e, a, bcol[j], k0, lane_k, lanes, d.spec.bits, bf[j]);
+      |             ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<lse::bf16>, lse::math::MatrixTarget::kRdna4, false>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(42,43): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<lse::bf16>' requested here
+   42 |     case DType::kBF16: return fn.template operator()<lse::bf16>();
+      |                                           ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(157,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna4>' requested here
+  157 |       return fn.template operator()<MatrixTarget::kRdna4>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(319,59): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  319 |           for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                     ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<lse::f16>, lse::math::MatrixTarget::kRdna4, false>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(43,42): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<lse::f16>' requested here
+   43 |     case DType::kF16: return fn.template operator()<lse::f16>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(157,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna4>' requested here
+  157 |       return fn.template operator()<MatrixTarget::kRdna4>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(323,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  323 |             for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                       ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(339,18): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  339 |               af[c] = xq[e.let(lane_words[i] + lane_word +
+      |               ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(365,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  365 |                 math::fma(term, kir::cast<kir::f32>(acc[ij][z].read()),
+      |                                                     ~~~     ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(92,10): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+   92 |     frag[f] = bits == 4 ? PackedCodes<4>::word(e, a.packed, base, f)
+      |     ~~~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(321,13): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::fill_weights<2, lse::kernels::(anonymous namespace)::Args<lse::f16>>' requested here
+  321 |             fill_weights(e, a, bcol[j], k0, lane_k, lanes, d.spec.bits, bf[j]);
+      |             ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<lse::f16>, lse::math::MatrixTarget::kRdna4, false>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(43,42): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<lse::f16>' requested here
+   43 |     case DType::kF16: return fn.template operator()<lse::f16>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(157,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna4>' requested here
+  157 |       return fn.template operator()<MatrixTarget::kRdna4>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<false>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(283,29): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  283 |             (*packed_words)[w] = word;
+      |             ~               ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<float>, lse::math::MatrixTarget::kRdna3, true>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(41,42): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<float>' requested here
+   41 |     case DType::kF32: return fn.template operator()<graph::kir::f32>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(155,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna3>' requested here
+  155 |       return fn.template operator()<MatrixTarget::kRdna3>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(319,59): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  319 |           for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                     ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(323,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  323 |             for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                       ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(334,66): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  334 |             for (std::uint32_t c = 0; c < kFrag; ++c) af[c] = av[c];
+      |                                                               ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(334,58): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  334 |             for (std::uint32_t c = 0; c < kFrag; ++c) af[c] = av[c];
+      |                                                       ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(365,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  365 |                 math::fma(term, kir::cast<kir::f32>(acc[ij][z].read()),
+      |                                                     ~~~     ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(283,29): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  283 |             (*packed_words)[w] = word;
+      |             ~               ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<lse::bf16>, lse::math::MatrixTarget::kRdna3, true>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(42,43): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<lse::bf16>' requested here
+   42 |     case DType::kBF16: return fn.template operator()<lse::bf16>();
+      |                                           ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(155,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna3>' requested here
+  155 |       return fn.template operator()<MatrixTarget::kRdna3>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(319,59): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  319 |           for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                     ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(323,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  323 |             for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                       ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(334,66): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  334 |             for (std::uint32_t c = 0; c < kFrag; ++c) af[c] = av[c];
+      |                                                               ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(334,58): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  334 |             for (std::uint32_t c = 0; c < kFrag; ++c) af[c] = av[c];
+      |                                                       ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(365,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  365 |                 math::fma(term, kir::cast<kir::f32>(acc[ij][z].read()),
+      |                                                     ~~~     ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(283,29): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  283 |             (*packed_words)[w] = word;
+      |             ~               ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<lse::f16>, lse::math::MatrixTarget::kRdna3, true>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(43,42): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<lse::f16>' requested here
+   43 |     case DType::kF16: return fn.template operator()<lse::f16>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(155,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna3>' requested here
+  155 |       return fn.template operator()<MatrixTarget::kRdna3>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(319,59): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  319 |           for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                     ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(323,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  323 |             for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                       ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(334,66): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  334 |             for (std::uint32_t c = 0; c < kFrag; ++c) af[c] = av[c];
+      |                                                               ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(334,58): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  334 |             for (std::uint32_t c = 0; c < kFrag; ++c) af[c] = av[c];
+      |                                                       ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(365,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  365 |                 math::fma(term, kir::cast<kir::f32>(acc[ij][z].read()),
+      |                                                     ~~~     ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(283,29): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  283 |             (*packed_words)[w] = word;
+      |             ~               ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<float>, lse::math::MatrixTarget::kRdna4, true>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(41,42): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<float>' requested here
+   41 |     case DType::kF32: return fn.template operator()<graph::kir::f32>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(157,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna4>' requested here
+  157 |       return fn.template operator()<MatrixTarget::kRdna4>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(319,59): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  319 |           for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                     ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(323,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  323 |             for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                       ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(334,66): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  334 |             for (std::uint32_t c = 0; c < kFrag; ++c) af[c] = av[c];
+      |                                                               ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(334,58): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  334 |             for (std::uint32_t c = 0; c < kFrag; ++c) af[c] = av[c];
+      |                                                       ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(365,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  365 |                 math::fma(term, kir::cast<kir::f32>(acc[ij][z].read()),
+      |                                                     ~~~     ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(283,29): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  283 |             (*packed_words)[w] = word;
+      |             ~               ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<lse::bf16>, lse::math::MatrixTarget::kRdna4, true>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(42,43): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<lse::bf16>' requested here
+   42 |     case DType::kBF16: return fn.template operator()<lse::bf16>();
+      |                                           ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(157,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna4>' requested here
+  157 |       return fn.template operator()<MatrixTarget::kRdna4>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(319,59): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  319 |           for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                     ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(323,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  323 |             for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                       ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(334,66): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  334 |             for (std::uint32_t c = 0; c < kFrag; ++c) af[c] = av[c];
+      |                                                               ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(334,58): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  334 |             for (std::uint32_t c = 0; c < kFrag; ++c) af[c] = av[c];
+      |                                                       ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(365,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  365 |                 math::fma(term, kir::cast<kir::f32>(acc[ij][z].read()),
+      |                                                     ~~~     ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(283,29): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  283 |             (*packed_words)[w] = word;
+      |             ~               ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(433,22): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::emit_body<lse::kernels::(anonymous namespace)::Args<lse::f16>, lse::math::MatrixTarget::kRdna4, true>' requested here
+  433 |               return emit_body<Args<S>, G, ActsLayout>(s, d);
+      |                      ^
+C:\Users\antmi\LSE\include\lse/kernels/vec_mem.hpp(43,42): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()()::(anonymous class)::operator()<lse::f16>' requested here
+   43 |     case DType::kF16: return fn.template operator()<lse::f16>();
+      |                                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(432,20): note: in instantiation of function template specialization 'lse::kernels::with_elem<(lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:432:49)>' requested here
+  432 |             return with_elem(s.input_dtypes[2], [&]<class S>() -> std::string {
+      |                    ^
+C:\Users\antmi\LSE\include\lse/kernels/wmma.hpp(157,26): note: in instantiation of function template specialization 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel(const KernelShapes &)::(anonymous class)::operator()<lse::math::MatrixTarget::kRdna4>' requested here
+  157 |       return fn.template operator()<MatrixTarget::kRdna4>();
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(425,12): note: in instantiation of function template specialization 'lse::kernels::with_matrix_target<std::basic_string<char>, (lambda at C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp:426:22)>' requested here
+  425 |     return with_matrix_target<std::string>(
+      |            ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(391,8): note: in instantiation of member function 'lse::kernels::(anonymous namespace)::QuantWmmaKernel<true>::emit_kernel' requested here
+  391 | struct QuantWmmaKernel final : graph::KernelPrimitive<QuantWmmaKernel<ActsLayout>> {
+      |        ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(319,59): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  319 |           for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                     ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(323,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  323 |             for (std::uint32_t c = 0; c < kFrag; ++c) bf[j][c] = e.u32(0);
+      |                                                       ~~    ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(334,66): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  334 |             for (std::uint32_t c = 0; c < kFrag; ++c) af[c] = av[c];
+      |                                                               ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(334,58): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  334 |             for (std::uint32_t c = 0; c < kFrag; ++c) af[c] = av[c];
+      |                                                       ~~ ^
+C:\Users\antmi\LSE\src\kernels\wmma_quant_linear.cpp(365,61): warning: implicit conversion changes signedness: 'std::uint32_t' (aka 'unsigned int') to 'int' [-Wsign-conversion]
+  365 |                 math::fma(term, kir::cast<kir::f32>(acc[ij][z].read()),
+      |                                                     ~~~     ^
+71 warnings generated.
+[190/192] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\flash_wmma_sdpa.cpp.obj
+C:\Users\antmi\LSE\src\kernels\flash_wmma_sdpa.cpp(1244,56): warning: declaration shadows a local variable [-Wshadow]
+ 1244 |             std::vector<kir::Pack<KvElement<Storage>>> rows;
+      |                                                        ^
+C:\Users\antmi\LSE\src\kernels\flash_wmma_sdpa.cpp(824,16): note: previous declaration is here
+  824 |     const auto rows = e.runtime_extent("rows", kir::cast<kir::u32>(a.meta[2u]));
+      |                ^
+C:\Users\antmi\LSE\src\kernels\flash_wmma_sdpa.cpp(1250,26): warning: declaration shadows a local variable [-Wshadow]
+ 1250 |               const auto part = e.let(piece % pieces_per_key);
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\flash_wmma_sdpa.cpp(787,16): note: previous declaration is here
+  787 |     const auto part = [&] {
+      |                ^
+C:\Users\antmi\LSE\src\kernels\flash_wmma_sdpa.cpp(1320,56): warning: declaration shadows a local variable [-Wshadow]
+ 1320 |             std::vector<kir::Pack<KvElement<Storage>>> rows;
+      |                                                        ^
+C:\Users\antmi\LSE\src\kernels\flash_wmma_sdpa.cpp(824,16): note: previous declaration is here
+  824 |     const auto rows = e.runtime_extent("rows", kir::cast<kir::u32>(a.meta[2u]));
+      |                ^
+C:\Users\antmi\LSE\src\kernels\flash_wmma_sdpa.cpp(1326,26): warning: declaration shadows a local variable [-Wshadow]
+ 1326 |               const auto part = e.let(piece % pieces_per_key);
+      |                          ^
+C:\Users\antmi\LSE\src\kernels\flash_wmma_sdpa.cpp(787,16): note: previous declaration is here
+  787 |     const auto part = [&] {
+      |                ^
+4 warnings generated.
+[191/192] Linking CXX static library lse_kernels.lib
+
+########################################################################
+# M2a GATE EVIDENCE (ID-3 acceptance) - branch feature/windows-enablement
+# Toolchain: clang-cl 21.0.0 (ROCm 7.1) + MSVC 14.44 STL/UCRT + Ninja + lld-link
+# Generated: 2026-10-10T23:17:58Z
+########################################################################
+
+## PART 1 - tests-OFF full build: GREEN (above)
+   cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLSE_BUILD_TESTS=OFF
+   clean build: [192/192] steps, 0 errors; lse.exe + lse-server.exe link with fastokens_ffi.lib
+   rerun: 'ninja: no work to do' (stable); lse.exe --help runs (exit 0)
+
+## PART 2 - targeted build of COMPILE_EXPOSURE (35) + test_registration_smoke
+   never 'all' (ID-3b). 2 of 35 excluded via if(NOT WIN32) -> COMPILE_EXCLUSIONS.md (X=2).
+   33 COMPILE_EXPOSURE + smoke = 34 targeted binaries: all compile + link, 0 errors.
+   Excluded (whole-binary, .cpp needs <unistd.h>): test_dflash2, test_loom_cache
+
+## PART 3 - ctest on the 34 targeted binaries
+    2/34 Test #14: test_loom_print ..................   Passed    0.01 sec
+    3/34 Test #15: test_loom_repeat .................   Passed    0.01 sec
+    4/34 Test #16: test_loom_extent .................   Passed    0.01 sec
+    5/34 Test #17: test_loom_conv ...................   Passed    0.01 sec
+    6/34 Test #18: test_loom_gdn ....................   Passed    0.09 sec
+    7/34 Test #19: test_loom_words ..................   Passed    0.01 sec
+    8/34 Test #20: test_loom_flash ..................   Passed    0.17 sec
+    9/34 Test #21: test_loom_concat .................   Passed    0.02 sec
+   10/34 Test #23: test_quant_prefill ...............   Passed    5.05 sec
+   11/34 Test #30: test_registration_smoke ..........   Passed    0.01 sec
+   12/34 Test #42: test_runtime .....................   Passed    1.48 sec
+   13/34 Test #44: test_perplexity ..................   Passed    2.54 sec
+   14/34 Test #60: test_submission_constants ........   Passed    0.02 sec
+   15/34 Test #62: test_submission_decode ...........   Passed    0.08 sec
+   16/34 Test #63: test_attention_decode ............   Passed    0.10 sec
+   17/34 Test #65: test_gdn_pair ....................   Passed    0.06 sec
+   18/34 Test #66: test_scheduler_epilogue ..........   Passed    1.04 sec
+   19/34 Test #67: test_loom_matrix .................   Passed    0.01 sec
+   20/34 Test #68: test_loom_dot ....................   Passed    0.02 sec
+   21/34 Test #69: test_gdn_scheduler ...............   Passed    0.08 sec
+   22/34 Test #71: test_q8_matrix_dispatch ..........   Passed    0.01 sec
+   23/34 Test #72: test_quant_dispatch ..............   Passed    0.01 sec
+   24/34 Test #75: test_cooperative_rms .............   Passed    0.02 sec
+   25/34 Test #77: test_wave32_l2 ...................   Passed    0.02 sec
+   26/34 Test #78: test_topk_parallel ...............   Passed    0.02 sec
+   27/34 Test #79: test_attention_short .............   Passed    0.57 sec
+   28/34 Test #80: test_typed_kernel ................   Passed    0.02 sec
+   29/34 Test #81: test_quant_swiglu ................   Passed    0.82 sec
+   30/34 Test #82: test_q4_activation_panel .........   Passed    0.19 sec
+   31/34 Test #83: test_q4_matrix_panel .............   Passed    0.69 sec
+   32/34 Test #88: test_q8_matrix_pack ..............   Passed    0.02 sec
+   33/34 Test #89: test_dflash2_walk ................   Passed    0.01 sec
+   34/34 Test #91: test_kv_cache ....................   Passed    0.07 sec
+   100% tests passed, 0 tests failed out of 34
+   Total Test time (real) =  13.37 sec
+
+## PART 4 - registration smoke (SC3 / ID-11): PASSED
+         Start 30: test_registration_smoke
+   11/34 Test #30: test_registration_smoke ..........   Passed    0.01 sec
+
+## LEDGER - windows-enablement/COMPILE_EXCLUSIONS.md: X=2 (target 0, X<=5), complete.
+## RESULT - M2a gate SATISFIED: tests-OFF green; 34/34 targeted compile+ctest; smoke green; ledger complete.
