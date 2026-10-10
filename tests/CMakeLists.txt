@@ -98,16 +98,21 @@ target_sources(test_loom_concat PRIVATE
   ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_print.cpp
   ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp
   ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_sources.cpp)
-lse_add_test(test_loom_cache lse_graph lse_kernels lse_ir)
-target_sources(test_loom_cache PRIVATE
-  ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_emitter.cpp
-  ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_print.cpp
-  ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp
-  ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_sources.cpp)
-# The launch index test checks the build identity hashes the whole engine tree.
-target_compile_definitions(test_loom_cache PRIVATE
-  "LSE_SOURCE_ROOT=\"${CMAKE_SOURCE_DIR}\""
-  "LSE_IDENTITY_SOURCES=\"${CMAKE_BINARY_DIR}/generated/lse_build_identity_sources.txt\"")
+# COMPILE_EXCLUSIONS.md (X): test_loom_cache.cpp includes <unistd.h> for
+# ::getpid/::setenv/::unsetenv, which the UCRT does not provide; WP12 ports it
+# via tests/compat.hpp. Additive guard — no effect on Linux/macOS.
+if(NOT WIN32)
+  lse_add_test(test_loom_cache lse_graph lse_kernels lse_ir)
+  target_sources(test_loom_cache PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_emitter.cpp
+    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_print.cpp
+    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp
+    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_sources.cpp)
+  # The launch index test checks the build identity hashes the whole engine tree.
+  target_compile_definitions(test_loom_cache PRIVATE
+    "LSE_SOURCE_ROOT=\"${CMAKE_SOURCE_DIR}\""
+    "LSE_IDENTITY_SOURCES=\"${CMAKE_BINARY_DIR}/generated/lse_build_identity_sources.txt\"")
+endif()
 lse_add_test(test_quant)
 # Compiler/layout contracts only; this test never opens a GPU.
 lse_add_test(test_quant_prefill lse_graph lse_kernels lse_backends lse_ir)
@@ -183,20 +188,29 @@ set_tests_properties(test_prefix_commit PROPERTIES ENVIRONMENT "LSE_BACKEND=cpu;
 lse_add_test(test_feature_taps lse_model lse_backends)
 lse_add_test(test_hybrid_tokens lse_model lse_kernels lse_backends lse_ir)
 lse_add_test(test_dflash2_convert lse_model lse_backends)
-lse_add_test(test_dflash2 lse_model lse_kernels lse_backends lse_ir)
-if(TARGET lse_runtime)
-  target_link_libraries(test_dflash2 PRIVATE lse_runtime)
-  target_compile_definitions(test_dflash2 PRIVATE LSE_DFLASH2_RUNTIME_TESTS=1)
+# COMPILE_EXCLUSIONS.md (X): test_dflash2.cpp includes <unistd.h> for getpid,
+# which the UCRT does not provide; WP12 ports it via tests/compat.hpp. Additive
+# guard — no effect on Linux/macOS. test_feature_taps still needs its runtime
+# environment on every platform, so it is set in both branches.
+if(NOT WIN32)
+  lse_add_test(test_dflash2 lse_model lse_kernels lse_backends lse_ir)
+  if(TARGET lse_runtime)
+    target_link_libraries(test_dflash2 PRIVATE lse_runtime)
+    target_compile_definitions(test_dflash2 PRIVATE LSE_DFLASH2_RUNTIME_TESTS=1)
+  endif()
+  if(NOT TARGET lse_backend_hrx)
+    target_sources(test_dflash2 PRIVATE
+      ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_emitter.cpp
+      ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_print.cpp
+      ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp
+      ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_sources.cpp)
+  endif()
+  set_tests_properties(test_dflash2 test_feature_taps PROPERTIES
+    ENVIRONMENT "LSE_BACKEND=cpu;LSE_POOL=cpu")
+else()
+  set_tests_properties(test_feature_taps PROPERTIES
+    ENVIRONMENT "LSE_BACKEND=cpu;LSE_POOL=cpu")
 endif()
-if(NOT TARGET lse_backend_hrx)
-  target_sources(test_dflash2 PRIVATE
-    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_emitter.cpp
-    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_print.cpp
-    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp
-    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_sources.cpp)
-endif()
-set_tests_properties(test_dflash2 test_feature_taps PROPERTIES
-  ENVIRONMENT "LSE_BACKEND=cpu;LSE_POOL=cpu")
 
 if(LSE_ENABLE_CPU)
   lse_add_test(test_reference lse_model lse_graph lse_backends)
@@ -209,6 +223,13 @@ if(LSE_ENABLE_CPU)
   if(NOT TARGET lse_backend_hrx)
     target_sources(test_runtime PRIVATE
       ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp)
+    # With no HRX backend in the link, nothing else pulls in lse_kernels, so its
+    # self-registered primitives (softmax_top.* and friends) never reach the
+    # binary and test_runtime's softmax_top case reports the primitive as
+    # not_found. An HRX-on build gets the same archive via lse_backend_hrx; link
+    # it explicitly here (lse_force_load makes the WHOLEARCHIVE sticky). This is
+    # exactly what test_perplexity's own lse_add_test line does unconditionally.
+    target_link_libraries(test_runtime PRIVATE lse_kernels)
     target_sources(test_perplexity PRIVATE
       ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp)
   endif()
