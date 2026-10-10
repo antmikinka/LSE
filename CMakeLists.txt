@@ -57,6 +57,8 @@ include(LSEBuildIdentity)
 add_library(lse_core
   src/core/debug.cpp
   src/core/file_read.cpp
+  src/core/platform_posix.cpp
+  src/core/platform_win.cpp
   src/core/progress.cpp
   src/core/dtype.cpp
   src/core/shape.cpp
