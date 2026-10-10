@@ -13,6 +13,14 @@ option(LSE_ASAN           "Build with AddressSanitizer"     OFF)
 # without it so the archive needs no ROCm install.
 option(LSE_WITH_COMGR     "Link amd_comgr when ROCm provides it" ON)
 
+if(WIN32 AND LSE_ENABLE_HRX)
+  # The HRX backend needs the ROCm/HSA runtime, which has no Windows port.
+  # Force it OFF so a Windows configure never chases a backend that cannot
+  # link; the Phase-3 compile-only spike re-enables it behind its own guard.
+  set(LSE_ENABLE_HRX OFF)
+  message(STATUS "HRX backend: not supported on Windows in Phase 1 (forced OFF)")
+endif()
+
 # gfx1151 = Radeon 8060S (Strix Halo, this machine)
 # gfx1201 = RDNA4 discrete
 # gfx942  = MI300X (the lemonseed training target)

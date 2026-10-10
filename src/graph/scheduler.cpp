@@ -2524,6 +2524,10 @@ void register_device_set_factory(DeviceSetFactory factory) {
   if (g_device_set_factory == nullptr) g_device_set_factory = factory;
 }
 
+bool device_set_factory_registered() noexcept {
+  return g_device_set_factory != nullptr;
+}
+
 namespace {
 // Not thread-local: a model loads on one thread and the value must be visible
 // to whatever allocates underneath it. Nothing else writes it.

@@ -126,14 +126,24 @@ lse_add_test(test_shape)
 lse_add_test(test_sampling_defaults lse_model)
 lse_add_test(test_chat_template lse_model)
 target_include_directories(test_sampling_defaults PRIVATE ${CMAKE_SOURCE_DIR}/src/server)
-lse_add_test(test_server lse_server lse_tokenizer lse_model lse_backends)
-lse_add_test(test_chat_protocol lse_server lse_tokenizer lse_model lse_backends)
-target_include_directories(test_chat_protocol PRIVATE
-  ${CMAKE_SOURCE_DIR}/src/server ${CMAKE_SOURCE_DIR}/third_party/vendor)
-# lse_request and the HTTP server give the same answers: both transports over
-# one Router, driven by a tiny host-only model. Opens a loopback socket only.
-lse_add_test(test_api_parity lse_server lse_tokenizer lse_model lse_backends)
-target_include_directories(test_api_parity PRIVATE ${CMAKE_SOURCE_DIR}/third_party/vendor)
+# The server stack exists only when the Rust tokenizer shim built. These link
+# it unconditionally upstream, which turns a missing fastokens_ffi into a
+# configure failure that also blocks every test that does not need it.
+if(TARGET lse_tokenizer)
+  lse_add_test(test_server lse_server lse_tokenizer lse_model lse_backends)
+  lse_add_test(test_chat_protocol lse_server lse_tokenizer lse_model lse_backends)
+  target_include_directories(test_chat_protocol PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/server ${CMAKE_SOURCE_DIR}/third_party/vendor)
+  # lse_request and the HTTP server give the same answers: both transports over
+  # one Router, driven by a tiny host-only model. Opens a loopback socket only.
+  lse_add_test(test_api_parity lse_server lse_tokenizer lse_model lse_backends)
+  target_include_directories(test_api_parity PRIVATE ${CMAKE_SOURCE_DIR}/third_party/vendor)
+endif()
+# Whole-archive/force-load tripwire: every self-registering archive that
+# linked into this binary must have landed. Runs on every platform.
+lse_add_test(test_registration_smoke lse_graph lse_kernels lse_model
+                                     lse_communication lse_dist lse_place
+                                     lse_backends)
 # Model inspection and memory planning against fixture checkpoints, checked
 # against what a load on the host backend allocates. No device.
 if(TARGET lse_api)
@@ -193,7 +203,9 @@ if(LSE_ENABLE_CPU)
   lse_add_test(test_runtime lse_runtime lse_model lse_graph lse_backends)
   lse_add_test(test_attention_layout lse_runtime lse_model lse_graph lse_backends)
   lse_add_test(test_perplexity lse_runtime lse_model lse_graph lse_kernels lse_backends)
-  lse_add_test(test_memory_lifecycle lse_server lse_runtime lse_model lse_graph lse_backends lse_tokenizer)
+  if(TARGET lse_tokenizer)
+    lse_add_test(test_memory_lifecycle lse_server lse_runtime lse_model lse_graph lse_backends lse_tokenizer)
+  endif()
   if(NOT TARGET lse_backend_hrx)
     target_sources(test_runtime PRIVATE
       ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp)

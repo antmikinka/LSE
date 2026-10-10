@@ -31,3 +31,25 @@ cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++
 cmake --build build
 # binaries: build/lse, build/lse-server
 ```
+
+## Windows (experimental — Phase 1)
+
+Prerequisites:
+
+| Windows x86_64 |
+| --- |
+| LLVM 21+ providing `clang-cl`, with the MSVC STL/UCRT headers from Visual Studio 2022 or Build Tools |
+| CMake 3.30+, Ninja |
+| Rust/Cargo with the `x86_64-pc-windows-msvc` target |
+| Python 3 |
+
+The HRX backend has no Windows runtime; configure forces `LSE_ENABLE_HRX=OFF`
+and the engine builds with the CPU reference backend only.
+
+```powershell
+$env:CC  = "clang-cl"
+$env:CXX = "clang-cl"
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake --build build
+# binaries: build\lse.exe, build\lse-server.exe
+```

@@ -699,6 +699,12 @@ class Scheduler {
 using DeviceSetFactory = backend::IDeviceSet* (*)();
 void register_device_set_factory(DeviceSetFactory factory);
 
+// True once the layer that owns device lifetimes (lse::place) has registered
+// its factory. That registration is a static initializer in an archive nothing
+// references, so a link that silently dropped it is only observable here; the
+// startup registration smoke test censuses it.
+[[nodiscard]] bool device_set_factory_registered() noexcept;
+
 // null when no backend could be created or initialized.
 Scheduler* default_scheduler();
 

@@ -80,12 +80,7 @@ else()
 endif()
 
 # See the cpu backend: self-registration requires whole-archive linking.
-if(APPLE)
-  target_link_options(lse_backend_hrx INTERFACE "LINKER:-force_load,$<TARGET_FILE:lse_backend_hrx>")
-else()
-  target_link_options(lse_backend_hrx INTERFACE
-  "LINKER:--whole-archive,$<TARGET_FILE:lse_backend_hrx>,--no-whole-archive")
-endif()
+lse_force_load(lse_backend_hrx)
 
 lse_apply_common_flags(lse_backend_hrx)
 
