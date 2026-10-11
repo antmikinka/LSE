@@ -1,0 +1,2089 @@
+[0/2] Re-checking globbed directories...
+[1/138] Linking CXX static library lse_graph.lib
+[2/138] Linking CXX static library lse_kernels.lib
+[3/138] Building CXX object CMakeFiles\lse_ops.dir\src\ops\norm.cpp.obj
+[4/138] Building CXX object CMakeFiles\lse_ops.dir\src\ops\activation.cpp.obj
+[5/138] Building CXX object CMakeFiles\lse_ops.dir\src\ops\linear_attention.cpp.obj
+[6/138] Building CXX object CMakeFiles\lse_ops.dir\src\ops\attention.cpp.obj
+C:\Users\antmi\LSE\src\ops\attention.cpp(140,82): warning: implicit conversion changes signedness: 'std::int64_t' (aka 'long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  140 |   const auto block_bytes = dtype_storage_bytes(dtype, shape.elem_count() / shape.dim(0));
+      |                                                                          ~ ~~~~~~^~~~~~
+C:\Users\antmi\LSE\src\ops\attention.cpp(141,43): warning: implicit conversion changes signedness: 'std::int32_t' (aka 'int') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  141 |   LSE_RETURN_IF_ERROR(storage->grow(layer.resident_blocks * block_bytes));
+      |                                     ~~~~~~^~~~~~~~~~~~~~~ ~
+C:\Users\antmi\LSE\include\lse/core/status.hpp(98,34): note: expanded from macro 'LSE_RETURN_IF_ERROR'
+   98 |     ::lse::Status _lse_status = (expr);              \
+      |                                  ^~~~
+C:\Users\antmi\LSE\src\ops\attention.cpp(152,52): warning: implicit conversion changes signedness: 'std::int64_t' (aka 'long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  152 |         pool->shape().elem_count() / pool->shape().dim(0));
+      |                                    ~ ~~~~~~~~~~~~~~^~~~~~
+C:\Users\antmi\LSE\src\ops\attention.cpp(153,64): warning: implicit conversion changes signedness: 'std::int32_t' (aka 'int') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  153 |     LSE_RETURN_IF_ERROR(pool->node()->kv_fragments->grow(layer.resident_blocks * block_bytes));
+      |                                                          ~~~~~~^~~~~~~~~~~~~~~ ~
+C:\Users\antmi\LSE\include\lse/core/status.hpp(98,34): note: expanded from macro 'LSE_RETURN_IF_ERROR'
+   98 |     ::lse::Status _lse_status = (expr);              \
+      |                                  ^~~~
+C:\Users\antmi\LSE\src\ops\attention.cpp(345,48): warning: implicit conversion changes signedness: 'std::int32_t' (aka 'int') to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  345 |           static_cast<std::int32_t>(t.blocks()[i]) + 1);
+      |                                     ~          ^
+C:\Users\antmi\LSE\src\ops\attention.cpp(371,48): warning: implicit conversion changes signedness: 'std::int32_t' (aka 'int') to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  371 |           static_cast<std::int32_t>(t.blocks()[i]) + 1);
+      |                                     ~          ^
+6 warnings generated.
+[7/138] Building CXX object CMakeFiles\lse_ops.dir\src\ops\rope.cpp.obj
+[8/138] Building CXX object CMakeFiles\lse_ops.dir\src\ops\moe.cpp.obj
+[9/138] Linking CXX static library lse_ops.lib
+[10/138] Building CXX object tests\CMakeFiles\test_loom_repeat.dir\test_loom_repeat.cpp.obj
+[11/138] Building CXX object CMakeFiles\lse_model.dir\src\models\qwen3_5.cpp.obj
+[12/138] Building CXX object tests\CMakeFiles\test_pointwise_fusion.dir\test_pointwise_fusion.cpp.obj
+[13/138] Building CXX object CMakeFiles\lse_place.dir\src\place\devices.cpp.obj
+[14/138] Building CXX object CMakeFiles\lse_model.dir\src\models\qwen3_5_moe.cpp.obj
+[15/138] Building CXX object tests\CMakeFiles\test_loom_conv.dir\test_loom_conv.cpp.obj
+[16/138] Linking CXX static library lse_place.lib
+[17/138] Building CXX object CMakeFiles\lse_runtime.dir\src\runtime\perplexity.cpp.obj
+C:\Users\antmi\LSE\src\runtime\perplexity.cpp(70,23): warning: implicit conversion increases floating-point precision: 'const float' to 'const double' [-Wdouble-promotion]
+   70 |     const double lp = base_logprobs[i], lq = current_logprobs[i];
+      |                  ~~   ^~~~~~~~~~~~~~~~
+1 warning generated.
+[18/138] Building CXX object CMakeFiles\lse_runtime.dir\src\runtime\session.cpp.obj
+[19/138] Building CXX object CMakeFiles\lse_model.dir\src\model\registry.cpp.obj
+[20/138] Building CXX object tests\CMakeFiles\test_loom_gdn.dir\test_loom_gdn.cpp.obj
+C:\Users\antmi\LSE\tests\test_loom_gdn.cpp(29,27): warning: implicit conversion loses integer precision: 'std::uint32_t' (aka 'unsigned int') to 'std::uint16_t' (aka 'unsigned short') [-Wimplicit-int-conversion]
+   29 |   device.wavefront_size = static_cast<std::uint32_t>(wave);
+      |                         ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
+[21/138] Building CXX object CMakeFiles\lse_model.dir\src\model\layer.cpp.obj
+In file included from C:\Users\antmi\LSE\src\model\layer.cpp:20:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\model\layer.cpp:20:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\model\layer.cpp:20:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\src\model\layer.cpp(899,45): warning: implicit conversion changes signedness: 'std::int64_t' (aka 'long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  898 |       ? static_cast<std::size_t>(mut.shape().dim(
+      |                                              ~~~
+  899 |             static_cast<std::int64_t>(rank) - 1))
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\src\model\layer.cpp(906,24): warning: implicit conversion increases floating-point precision: 'float' to 'const double' [-Wdouble-promotion]
+  906 |       const double v = graph::interpreter::load_element(*mut.node(), i);
+      |                    ~   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+5 warnings generated.
+[22/138] Building CXX object tests\CMakeFiles\test_pointwise_fusion.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[23/138] Building CXX object tests\CMakeFiles\test_loom_concat.dir\test_loom_concat.cpp.obj
+[24/138] Building CXX object tests\CMakeFiles\test_loom_flash.dir\__\src\backends\hrx\hipc\phase_emit.cpp.obj
+[25/138] Building CXX object CMakeFiles\lse_model.dir\src\models\lemonseed.cpp.obj
+[26/138] Building CXX object CMakeFiles\lse_runtime.dir\src\runtime\batch.cpp.obj
+[27/138] Building CXX object CMakeFiles\lse_model.dir\src\models\qwen3_5_common.cpp.obj
+[28/138] Building CXX object CMakeFiles\lse_model.dir\src\model\hybrid_lm.cpp.obj
+C:\Users\antmi\LSE\src\model\hybrid_lm.cpp(1601,24): warning: declaration shadows a local variable [-Wshadow]
+ 1601 |       for (std::size_t first = 0; first < feature_outputs.size(); first += 8) {
+      |                        ^
+C:\Users\antmi\LSE\src\model\hybrid_lm.cpp(1133,29): note: previous declaration is here
+ 1133 |   std::vector<std::int32_t> first;
+      |                             ^
+C:\Users\antmi\LSE\src\model\hybrid_lm.cpp(1604,60): warning: implicit conversion changes signedness: 'unsigned long long const' to 'difference_type' (aka 'long long') [-Wsign-conversion]
+ 1604 |                                  feature_outputs.begin() + end);
+      |                                                          ~ ^~~
+C:\Users\antmi\LSE\src\model\hybrid_lm.cpp(1603,60): warning: implicit conversion changes signedness: 'std::size_t' (aka 'unsigned long long') to 'difference_type' (aka 'long long') [-Wsign-conversion]
+ 1603 |         std::vector<Array> parts(feature_outputs.begin() + first,
+      |                                                          ~ ^~~~~
+3 warnings generated.
+[29/138] Building CXX object tests\CMakeFiles\test_loom_repeat.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[30/138] Building CXX object tests\CMakeFiles\test_loom_conv.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[31/138] Building CXX object CMakeFiles\lse_model.dir\src\model\mtp.cpp.obj
+[32/138] Building CXX object tests\CMakeFiles\test_loom_gdn.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[33/138] Building CXX object tests\CMakeFiles\test_submission_constants.dir\test_submission_constants.cpp.obj
+[34/138] Building CXX object tests\CMakeFiles\test_registration_smoke.dir\test_registration_smoke.cpp.obj
+[35/138] Building CXX object CMakeFiles\lse_model.dir\src\model\dflash2.cpp.obj
+C:\Users\antmi\LSE\src\model\dflash2.cpp(247,22): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  247 |     double maximum = -INFINITY;
+      |            ~~~~~~~   ^~~~~~~~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(256,79): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  256 |       q.probabilities[k] = std::exp((static_cast<double>(row[k]) - maximum) / temperature);
+      |                                                                             ~ ^~~~~~~~~~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(422,47): warning: implicit conversion changes signedness: 'const std::int64_t' (aka 'const long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  422 |   p.anchor = slot_view(p.inputs, Shape{1, 1}, rows);
+      |              ~~~~~~~~~                        ^~~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(423,49): warning: implicit conversion changes signedness: 'std::int64_t' (aka 'long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  423 |   p.offset = slot_view(p.inputs, Shape{1}, rows + 1);
+      |              ~~~~~~~~~                     ~~~~~^~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(424,47): warning: implicit conversion changes signedness: 'std::int64_t' (aka 'long long') to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  424 |   p.meta = slot_view(p.inputs, Shape{3}, rows + 2);
+      |            ~~~~~~~~~                     ~~~~~^~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(687,64): warning: implicit conversion from 'std::int32_t' (aka 'int') to 'float' may lose precision [-Wimplicit-int-float-conversion]
+  687 |     if (!std::isfinite(raw) || raw < 0 || raw >= impl_->config.vocab_size || std::floor(raw) != raw)
+      |                                               ~~ ~~~~~~~~~~~~~~^~~~~~~~~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(719,37): warning: implicit conversion from 'std::int32_t' (aka 'int') to 'float' may lose precision [-Wimplicit-int-float-conversion]
+  719 |         raw_ids[i] >= impl_->config.vocab_size || std::floor(raw_ids[i]) != raw_ids[i])
+      |                    ~~ ~~~~~~~~~~~~~~^~~~~~~~~~
+C:\Users\antmi\LSE\src\model\dflash2.cpp(725,26): warning: implicit conversion changes signedness: 'std::int32_t' (aka 'int') to 'std::uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  723 |   return dflash2_sample_path(std::span(scores).first(static_cast<std::size_t>(proposals) * top * top),
+      |          ~~~~~~~~~~~~~~~~~~~
+  724 |       std::span(ids).first(static_cast<std::size_t>(proposals) * top), proposals,
+  725 |       top, impl_->config.vocab_size, temperature, sampler);
+      |            ~~~~~~~~~~~~~~^~~~~~~~~~
+8 warnings generated.
+[36/138] Building CXX object tests\CMakeFiles\test_gdn_pair.dir\test_gdn_pair.cpp.obj
+C:\Users\antmi\LSE\tests\test_gdn_pair.cpp(32,42): warning: implicit conversion loses integer precision: 'unsigned int' to 'std::uint16_t' (aka 'unsigned short') [-Wimplicit-int-conversion]
+   32 |     auto dev=device();dev.wavefront_size=wave;
+      |                                         ~^~~~
+1 warning generated.
+[37/138] Building CXX object tests\CMakeFiles\test_loom_flash.dir\test_loom_flash.cpp.obj
+In file included from C:\Users\antmi\LSE\tests\test_loom_flash.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_loom_flash.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_loom_flash.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[38/138] Building CXX object tests\CMakeFiles\test_quant_prefill.dir\__\src\backends\hrx\hipc\phase_emit.cpp.obj
+[39/138] Building CXX object CMakeFiles\lse_model.dir\src\model\weights.cpp.obj
+[40/138] Building CXX object tests\CMakeFiles\test_gdn_pair.dir\__\src\backends\hrx\hipc\phase_emit.cpp.obj
+[41/138] Building CXX object tests\CMakeFiles\test_loom_concat.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[42/138] Building CXX object tests\CMakeFiles\test_quant_prefill.dir\test_quant_prefill.cpp.obj
+C:\Users\antmi\LSE\tests\test_quant_prefill.cpp(253,103): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  253 |           std::fprintf(stderr, "FAIL M%u K%u output%u expected=%g actual=%g\n", m, k, i, expected[i], actual[i]);
+      |           ~~~                                                                                         ^~~~~~~~~
+C:\Users\antmi\LSE\tests\test_quant_prefill.cpp(253,90): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  253 |           std::fprintf(stderr, "FAIL M%u K%u output%u expected=%g actual=%g\n", m, k, i, expected[i], actual[i]);
+      |           ~~~                                                                            ^~~~~~~~~~~
+2 warnings generated.
+[43/138] Building CXX object tests\CMakeFiles\test_attention_decode.dir\test_attention_decode.cpp.obj
+[44/138] Building CXX object CMakeFiles\lse_runtime.dir\src\runtime\generator.cpp.obj
+C:\Users\antmi\LSE\src\runtime\generator.cpp(660,37): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+  660 |         const double value = norm - r[2];
+      |                                   ~ ^~~~
+C:\Users\antmi\LSE\src\runtime\generator.cpp(666,80): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+  666 |         for (std::size_t q = 0; q < probe_k; ++q) out.probe_logprobs.push_back(r[3 + q] - norm);
+      |                                                                                ^~~~~~~~ ~
+C:\Users\antmi\LSE\src\runtime\generator.cpp(668,57): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  668 |           out.top_logprobs.push_back(static_cast<float>(top[(i * top_k + q) * 2] - norm));
+      |                                                         ^~~~~~~~~~~~~~~~~~~~~~~~ ~
+C:\Users\antmi\LSE\src\runtime\generator.cpp(1040,62): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+ 1040 |       const double temperature = sampled ? sampler_.params().temperature : 1.0;
+      |                    ~~~~~~~~~~~             ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+4 warnings generated.
+[45/138] Building CXX object tests\CMakeFiles\test_loom_flash.dir\__\src\backends\hrx\hipc\hip_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[46/138] Building CXX object tests\CMakeFiles\test_loom_flash.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[47/138] Building CXX object tests\CMakeFiles\test_gdn_scheduler.dir\test_gdn_scheduler.cpp.obj
+[48/138] Building CXX object tests\CMakeFiles\test_perplexity.dir\test_perplexity.cpp.obj
+C:\Users\antmi\LSE\tests\test_perplexity.cpp(51,16): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+   51 |   double top = row[0];
+      |          ~~~   ^~~~~~
+C:\Users\antmi\LSE\tests\test_perplexity.cpp(315,87): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+  315 |       const double nll = got[5 * r] + std::log(static_cast<double>(got[5 * r + 1])) - got[5 * r + 2 + j];
+      |                                                                                     ~ ^~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_perplexity.cpp(315,26): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+  315 |       const double nll = got[5 * r] + std::log(static_cast<double>(got[5 * r + 1])) - got[5 * r + 2 + j];
+      |                          ^~~~~~~~~~ ~
+C:\Users\antmi\LSE\tests\test_perplexity.cpp(496,73): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  496 |     const std::vector<std::uint32_t> long_ids(tiny.config.kv_capacity() + 1, 1u);
+      |                                      ~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+4 warnings generated.
+[49/138] Building CXX object tests\CMakeFiles\test_quant_prefill.dir\__\src\backends\hrx\hipc\hip_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[50/138] Building CXX object tests\CMakeFiles\test_loom_dot.dir\test_loom_dot.cpp.obj
+[51/138] Building CXX object CMakeFiles\lse_model.dir\src\model\inspect.cpp.obj
+In file included from C:\Users\antmi\LSE\src\model\inspect.cpp:25:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\model\inspect.cpp:25:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\model\inspect.cpp:25:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/q8_matrix.hpp:3:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[52/138] Linking CXX static library lse_model.lib
+[53/138] Linking CXX static library lse_runtime.lib
+[54/138] Building CXX object tests\CMakeFiles\test_gdn_pair.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[55/138] Building CXX object tests\CMakeFiles\test_q8_matrix_dispatch.dir\test_q8_matrix_dispatch.cpp.obj
+In file included from C:\Users\antmi\LSE\tests\test_q8_matrix_dispatch.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_q8_matrix_dispatch.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_q8_matrix_dispatch.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[56/138] Building CXX object tests\CMakeFiles\test_wave32_l2.dir\__\src\backends\hrx\hipc\phase_emit.cpp.obj
+[57/138] Building CXX object tests\CMakeFiles\test_cooperative_rms.dir\__\src\backends\hrx\hipc\phase_emit.cpp.obj
+[58/138] Building CXX object tests\CMakeFiles\test_quant_prefill.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[59/138] Building CXX object tests\CMakeFiles\test_scheduler_epilogue.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[60/138] Building CXX object tests\CMakeFiles\test_loom_dot.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[61/138] Building CXX object tests\CMakeFiles\test_submission_constants.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[62/138] Building CXX object tests\CMakeFiles\test_cooperative_rms.dir\__\src\backends\hrx\hipc\hip_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[63/138] Building CXX object tests\CMakeFiles\test_attention_decode.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[64/138] Building CXX object tests\CMakeFiles\test_gdn_pair.dir\__\src\backends\hrx\hipc\hip_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[65/138] Building CXX object tests\CMakeFiles\test_attention_short.dir\test_attention_short.cpp.obj
+[66/138] Building CXX object tests\CMakeFiles\test_cooperative_rms.dir\test_cooperative_rms.cpp.obj
+In file included from C:\Users\antmi\LSE\tests\test_cooperative_rms.cpp:8:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_cooperative_rms.cpp:8:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_cooperative_rms.cpp:8:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\tests\test_cooperative_rms.cpp(172,32): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  172 |    x[i]=v;reference+=double(v)*v;
+      |                               ~^
+C:\Users\antmi\LSE\tests\test_cooperative_rms.cpp(185,50): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+  185 |     const double wanted=double(x[col])*wantscale*w;
+      |                                                 ~^
+5 warnings generated.
+[67/138] Building CXX object tests\CMakeFiles\test_scheduler_epilogue.dir\test_scheduler_epilogue.cpp.obj
+[68/138] Building CXX object tests\CMakeFiles\test_wave32_l2.dir\test_wave32_l2.cpp.obj
+In file included from C:\Users\antmi\LSE\tests\test_wave32_l2.cpp:12:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_wave32_l2.cpp:12:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_wave32_l2.cpp:12:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\tests\test_wave32_l2.cpp(190,30): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  190 |           ref += double(v) * v;
+      |                            ~ ^
+4 warnings generated.
+[69/138] Building CXX object tests\CMakeFiles\test_topk_parallel.dir\test_topk_parallel.cpp.obj
+[70/138] Building CXX object tests\CMakeFiles\test_q8_matrix_dispatch.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[71/138] Building CXX object tests\CMakeFiles\test_typed_kernel.dir\test_typed_kernel.cpp.obj
+[72/138] Building CXX object tests\CMakeFiles\test_cooperative_rms.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[73/138] Building CXX object tests\CMakeFiles\test_gdn_scheduler.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[74/138] Building CXX object tests\CMakeFiles\test_typed_kernel.dir\__\src\backends\hrx\hipc\phase_emit.cpp.obj
+[75/138] Building CXX object tests\CMakeFiles\test_typed_kernel.dir\__\src\backends\hrx\hipc\hip_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[76/138] Building CXX object tests\CMakeFiles\test_wave32_l2.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[77/138] Building CXX object tests\CMakeFiles\test_quant_swiglu.dir\test_quant_swiglu.cpp.obj
+In file included from C:\Users\antmi\LSE\tests\test_quant_swiglu.cpp:4:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_quant_swiglu.cpp:4:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_quant_swiglu.cpp:4:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\tests\test_quant_swiglu.cpp(216,36): warning: implicit conversion changes signedness: 'std::size_t' (aka 'unsigned long long') to 'difference_type' (aka 'long long') [-Wsign-conversion]
+  216 |       std::fill_n(gw.begin() + col * 640, 640,
+      |                              ~ ~~~~^~~~~
+C:\Users\antmi\LSE\tests\test_quant_swiglu.cpp(218,36): warning: implicit conversion changes signedness: 'std::size_t' (aka 'unsigned long long') to 'difference_type' (aka 'long long') [-Wsign-conversion]
+  218 |       std::fill_n(uw.begin() + col * 640, 640,
+      |                              ~ ~~~~^~~~~
+C:\Users\antmi\LSE\tests\test_quant_swiglu.cpp(225,39): warning: implicit conversion changes signedness: 'std::size_t' (aka 'unsigned long long') to 'difference_type' (aka 'long long') [-Wsign-conversion]
+  225 |       std::fill_n(panel.begin() + row * 2000, 1280, packed);
+      |                                 ~ ~~~~^~~~~~
+C:\Users\antmi\LSE\tests\test_quant_swiglu.cpp(226,39): warning: implicit conversion changes signedness: 'std::size_t' (aka 'unsigned long long') to 'difference_type' (aka 'long long') [-Wsign-conversion]
+  226 |       std::fill_n(panel.begin() + row * 2000 + 1280, 640,
+      |                                 ~ ~~~~^~~~~~
+C:\Users\antmi\LSE\tests\test_quant_swiglu.cpp(229,56): warning: implicit conversion from 'const int' to 'float' may lose precision [-Wimplicit-int-float-conversion]
+  229 |                   std::bit_cast<std::uint32_t>(64.0f * code));
+      |                                                      ~ ^~~~
+C:\Users\antmi\LSE\tests\test_quant_swiglu.cpp(228,39): warning: implicit conversion changes signedness: 'std::size_t' (aka 'unsigned long long') to 'difference_type' (aka 'long long') [-Wsign-conversion]
+  228 |       std::fill_n(panel.begin() + row * 2000 + 1920, 80,
+      |                                 ~ ~~~~^~~~~~
+9 warnings generated.
+[78/138] Building CXX object tests\CMakeFiles\test_quant_swiglu.dir\__\src\backends\hrx\hipc\phase_emit.cpp.obj
+[79/138] Building CXX object tests\CMakeFiles\test_wave32_l2.dir\__\src\backends\hrx\hipc\hip_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[80/138] Building CXX object tests\CMakeFiles\test_quant_swiglu.dir\__\src\backends\hrx\hipc\hip_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[81/138] Building CXX object tests\CMakeFiles\test_quant_swiglu.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[82/138] Building CXX object tests\CMakeFiles\test_typed_kernel.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[83/138] Building CXX object tests\CMakeFiles\test_q4_activation_panel.dir\__\src\backends\hrx\hipc\phase_emit.cpp.obj
+[84/138] Building CXX object tests\CMakeFiles\test_topk_parallel.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[85/138] Linking CXX executable tests\test_pointwise_fusion.exe
+[86/138] Linking CXX executable tests\test_loom_repeat.exe
+[87/138] Building CXX object tests\CMakeFiles\test_q4_matrix_panel.dir\__\src\backends\hrx\hipc\phase_emit.cpp.obj
+[88/138] Linking CXX executable tests\test_loom_conv.exe
+[89/138] Building CXX object tests\CMakeFiles\test_q4_matrix_panel.dir\__\src\backends\hrx\hipc\hip_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[90/138] Linking CXX executable tests\test_loom_gdn.exe
+[91/138] Building CXX object tests\CMakeFiles\test_q4_activation_panel.dir\__\src\backends\hrx\hipc\hip_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[92/138] Building CXX object tests\CMakeFiles\test_attention_short.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[93/138] Linking CXX executable tests\test_loom_flash.exe
+[94/138] Linking CXX executable tests\test_loom_concat.exe
+[95/138] Linking CXX executable tests\test_quant_prefill.exe
+[96/138] Linking CXX executable tests\test_registration_smoke.exe
+[97/138] Linking CXX executable tests\test_submission_constants.exe
+[98/138] Linking CXX executable tests\test_attention_decode.exe
+[99/138] Building CXX object tests\CMakeFiles\test_q4_matrix_panel.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[100/138] Linking CXX executable tests\test_perplexity.exe
+[101/138] Building CXX object tests\CMakeFiles\test_q4_activation_panel.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[102/138] Linking CXX executable tests\test_gdn_pair.exe
+[103/138] Linking CXX executable tests\test_scheduler_epilogue.exe
+[104/138] Linking CXX executable tests\test_loom_matrix.exe
+[105/138] Building CXX object tests\CMakeFiles\test_q8_matrix_pack.dir\test_q8_matrix_pack.cpp.obj
+In file included from C:\Users\antmi\LSE\tests\test_q8_matrix_pack.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_q8_matrix_pack.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_q8_matrix_pack.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[106/138] Linking CXX executable tests\test_loom_dot.exe
+[107/138] Linking CXX executable tests\test_gdn_scheduler.exe
+[108/138] Linking CXX executable tests\test_q8_matrix_dispatch.exe
+[109/138] Linking CXX executable tests\test_quant_dispatch.exe
+[110/138] Linking CXX executable tests\test_cooperative_rms.exe
+[111/138] Linking CXX executable tests\test_topk_parallel.exe
+[112/138] Linking CXX executable tests\test_wave32_l2.exe
+[113/138] Linking CXX executable tests\test_attention_short.exe
+[114/138] Linking CXX executable tests\test_typed_kernel.exe
+[115/138] Linking CXX executable tests\test_quant_swiglu.exe
+[116/138] Building CXX object tests\CMakeFiles\test_q8_matrix_pack.dir\__\src\backends\hrx\hipc\phase_emit.cpp.obj
+[117/138] Building CXX object tests\CMakeFiles\test_q4_activation_panel.dir\test_q4_activation_panel.cpp.obj
+In file included from C:\Users\antmi\LSE\tests\test_q4_activation_panel.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_q4_activation_panel.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_q4_activation_panel.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[118/138] Building CXX object tests\CMakeFiles\test_q8_matrix_pack.dir\__\src\backends\hrx\hipc\hip_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[119/138] Linking CXX executable tests\test_q4_activation_panel.exe
+[120/138] Building CXX object tests\CMakeFiles\test_dflash2_walk.dir\__\src\backends\hrx\hipc\phase_emit.cpp.obj
+[121/138] Building CXX object tests\CMakeFiles\test_q8_matrix_pack.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[122/138] Building CXX object tests\CMakeFiles\test_q4_matrix_panel.dir\test_q4_matrix_panel.cpp.obj
+In file included from C:\Users\antmi\LSE\tests\test_q4_matrix_panel.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_q4_matrix_panel.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_q4_matrix_panel.cpp:7:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\tests\test_q4_matrix_panel.cpp(924,67): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  924 |       const auto difference = std::abs(static_cast<double>(got) - want);
+      |                                                                 ~ ^~~~
+4 warnings generated.
+[123/138] Linking CXX executable tests\test_q8_matrix_pack.exe
+[124/138] Linking CXX executable tests\test_q4_matrix_panel.exe
+[125/138] Building CXX object tests\CMakeFiles\test_kv_cache.dir\__\src\backends\hrx\hipc\phase_emit.cpp.obj
+[126/138] Building CXX object tests\CMakeFiles\test_dflash2_walk.dir\__\src\backends\hrx\hipc\hip_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[127/138] Building CXX object tests\CMakeFiles\test_kv_cache.dir\__\src\backends\hrx\hipc\hip_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\hipc\hip_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[128/138] Building CXX object tests\CMakeFiles\test_dflash2_walk.dir\test_dflash2_walk.cpp.obj
+C:\Users\antmi\LSE\tests\test_dflash2_walk.cpp(30,26): warning: declaration shadows a local variable [-Wshadow]
+   30 |         for (std::size_t k = 0; k < top; ++k)
+      |                          ^
+C:\Users\antmi\LSE\tests\test_dflash2_walk.cpp(25,32): note: previous declaration is here
+   25 |   explicit Fixture(std::size_t k = 16)
+      |                                ^
+C:\Users\antmi\LSE\tests\test_dflash2_walk.cpp(34,28): warning: declaration shadows a local variable [-Wshadow]
+   34 |           for (std::size_t k = 0; k < top; ++k)
+      |                            ^
+C:\Users\antmi\LSE\tests\test_dflash2_walk.cpp(25,32): note: previous declaration is here
+   25 |   explicit Fixture(std::size_t k = 16)
+      |                                ^
+2 warnings generated.
+[129/138] Building CXX object tests\CMakeFiles\test_dflash2_walk.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[130/138] Building CXX object tests\CMakeFiles\test_kv_cache.dir\__\src\backends\hrx\loomc\loom_emitter.cpp.obj
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/cache.hpp:5:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/quant.hpp:6:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp:1:
+In file included from C:\Users\antmi\LSE\include\lse/backends/hrx/loomc/loom_emitter.hpp:24:
+In file included from C:\Users\antmi\LSE\include\lse/graph/codegen.hpp:17:
+In file included from C:\Users\antmi\LSE\include\lse/backend/backend.hpp:27:
+In file included from C:\Users\antmi\LSE\include\lse/core/file_read.hpp:12:
+C:\Users\antmi\LSE\include\lse/core/status.hpp(63,12): warning: implicit conversion loses integer precision: 'unsigned int' to 'char' [-Wimplicit-int-conversion]
+   63 |   ((out += std::forward<Args>(args)), ...);
+      |         ~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\backends\hrx\loomc\loom_emitter.cpp(618,12): note: in instantiation of function template specialization 'lse::detail::concat<const char (&)[9], unsigned int &, const char (&)[56]>' requested here
+  618 |     return LSE_ERROR(kInvalidArgument, "variant ", si_shapes.variant,
+      |            ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(57,57): note: expanded from macro 'LSE_ERROR'
+   57 |   ::lse::Status(::lse::StatusCode::code, ::lse::detail::concat(__VA_ARGS__))
+      |                                                         ^
+4 warnings generated.
+[131/138] Linking CXX executable tests\test_dflash2_walk.exe
+[132/138] Building CXX object tests\CMakeFiles\test_kv_cache.dir\test_kv_cache.cpp.obj
+[133/138] Linking CXX executable tests\test_kv_cache.exe
+[134/138] Building CXX object tests\CMakeFiles\test_submission_decode.dir\test_submission_decode.cpp.obj
+In file included from C:\Users\antmi\LSE\tests\test_submission_decode.cpp:4:
+In file included from C:\Users\antmi\LSE\tests\test_runtime.cpp:25:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_submission_decode.cpp:4:
+In file included from C:\Users\antmi\LSE\tests\test_runtime.cpp:25:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_submission_decode.cpp:4:
+In file included from C:\Users\antmi\LSE\tests\test_runtime.cpp:25:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_submission_decode.cpp:4:
+C:\Users\antmi\LSE\tests\test_runtime.cpp(141,35): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  141 |         table_values[row * stride + i] = static_cast<float>((i * 13 + 7 + row * 126) % blocks);
+      |         ~~~~~~~~~~~~ ~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(154,78): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  154 |             const auto physical = static_cast<int>(table_values[row * stride + position / block]);
+      |                                                    ~~~~~~~~~~~~ ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(156,92): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  156 |             keys[at] = float16_t::from_float(additions[((row * kvheads + h) * 3 + t) * dim + d]);
+      |                                              ~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(218,77): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  218 |             const int physical = static_cast<int>(table_values[row * stride + key / block]);
+      |                                                   ~~~~~~~~~~~~ ~~~~~~~~~~~~~^~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(224,82): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  224 |               score += static_cast<double>(query[(row * heads + h) * dim + d]) * decode(keys[at(key, d)]);
+      |                                                                                ~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(224,74): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  224 |               score += static_cast<double>(query[(row * heads + h) * dim + d]) * decode(keys[at(key, d)]);
+      |                                            ~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(225,48): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  225 |             maximum = std::max(maximum, scores[key] = score * .125);
+      |                                         ~~~~~~ ^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(231,77): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  231 |             for (int key = 0; key < live; ++key) numerator += scores[key] * decode(values[at(key, d)]);
+      |                                                                           ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(231,70): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  231 |             for (int key = 0; key < live; ++key) numerator += scores[key] * decode(values[at(key, d)]);
+      |                                                               ~~~~~~ ^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(296,59): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  296 |         std::vector<std::uint16_t> expected(heads * block * dim);
+      |                                    ~~~~~~~~ ~~~~~~~~~~~~~~^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(307,91): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  307 |           for (int d = 0; d < dim; ++d) squares += static_cast<double>(input[base + d]) * input[base + d];
+      |                                                                                         ~ ^~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(307,102): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  307 |           for (int d = 0; d < dim; ++d) squares += static_cast<double>(input[base + d]) * input[base + d];
+      |                                                                                           ~~~~~ ~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(307,83): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  307 |           for (int d = 0; d < dim; ++d) squares += static_cast<double>(input[base + d]) * input[base + d];
+      |                                                                        ~~~~~ ~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(310,38): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  310 |             float value = input[base + d] * scale;
+      |                           ~~~~~ ~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(315,42): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  315 |               const float a = input[base + pair] * scale, b = input[base + pair + 1] * scale;
+      |                               ~~~~~ ~~~~~^~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(315,81): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  315 |               const float a = input[base + pair] * scale, b = input[base + pair + 1] * scale;
+      |                                                               ~~~~~ ~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(318,52): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  318 |             expected[(h * block + first + t) * dim + d] = float16_t::from_float(value);
+      |             ~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(327,79): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  327 |           const double error = std::abs(static_cast<double>(decode(got[i])) - decode(expected[i]));
+      |                                                                             ~ ^~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(332,30): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  330 |         std::fprintf(stderr, "       %s partial RoPE to K heads=%d queries=%d max_abs=%.9g index=%zu actual=%.9g expected=%.9g device=%u host=%u\n",
+      |         ~~~
+  331 |             dialect == graph::Dialect::kHip ? "hip" : "loom", heads, queries, worst, at,
+  332 |             decode(got[at]), decode(expected[at]), trace.device_groups, trace.host_groups);
+      |                              ^~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(332,13): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  330 |         std::fprintf(stderr, "       %s partial RoPE to K heads=%d queries=%d max_abs=%.9g index=%zu actual=%.9g expected=%.9g device=%u host=%u\n",
+      |         ~~~
+  331 |             dialect == graph::Dialect::kHip ? "hip" : "loom", heads, queries, worst, at,
+  332 |             decode(got[at]), decode(expected[at]), trace.device_groups, trace.host_groups);
+      |             ^~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(384,46): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  384 |         std::vector<float> q(heads * queries * dim), k(kvheads * queries * dim), v(k.size());
+      |                            ~ ~~~~~~~~~~~~~~~~^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(384,74): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  384 |         std::vector<float> q(heads * queries * dim), k(kvheads * queries * dim), v(k.size());
+      |                                                      ~ ~~~~~~~~~~~~~~~~~~^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(386,59): warning: implicit conversion changes signedness: 'const int' to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  386 |           q[i] = static_cast<float>(static_cast<int>((i + first) % 31) - 15) / 32.f;
+      |                                                         ~ ^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(388,59): warning: implicit conversion changes signedness: 'const int' to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  388 |           k[i] = static_cast<float>(static_cast<int>((i + first) % 29) - 14) / 32.f;
+      |                                                         ~ ^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(389,59): warning: implicit conversion changes signedness: 'const int' to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  389 |           v[i] = static_cast<float>(static_cast<int>((i + first) % 23) - 11) / 32.f;
+      |                                                         ~ ^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(424,57): warning: implicit conversion changes signedness: 'const difference_type' (aka 'const long long') to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  424 |                 unsigned(actual[at]), unsigned(expected[at]));
+      |                                                ~~~~~~~~ ^~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(429,39): note: in instantiation of function template specialization 'native_f16_paged_prefill_and_decode_match_reference()::(anonymous class)::operator()()::(anonymous class)::operator()<std::vector<unsigned short>>' requested here
+  429 |         LSE_RETURN_IF_ERROR(check_pool(key_pool, keys, "K"));
+      |                                       ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(98,34): note: expanded from macro 'LSE_RETURN_IF_ERROR'
+   98 |     ::lse::Status _lse_status = (expr);              \
+      |                                  ^
+In file included from C:\Users\antmi\LSE\tests\test_submission_decode.cpp:4:
+C:\Users\antmi\LSE\tests\test_runtime.cpp(424,33): warning: implicit conversion changes signedness: 'const difference_type' (aka 'const long long') to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  424 |                 unsigned(actual[at]), unsigned(expected[at]));
+      |                          ~~~~~~ ^~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(442,57): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  442 |                 score += q[(h * queries + t) * dim + d] * decode(keys[index(h / 2, static_cast<int>(j), d)]);
+      |                       ~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(442,52): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  442 |                 score += q[(h * queries + t) * dim + d] * decode(keys[index(h / 2, static_cast<int>(j), d)]);
+      |                          ~ ~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(450,42): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  450 |                 numerator += scores[j] * decode(values[index(h / 2, static_cast<int>(j), d)]);
+      |                                        ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(453,48): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  453 |               worst = std::max(worst, std::abs(got[at] - numerator / denominator));
+      |                                                ^~~~~~~ ~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(678,36): warning: declaration shadows a local variable [-Wshadow]
+  678 |     } else if (const std::uint32_t rows = policy.tree_exploring(); rows != 0) {
+      |                                    ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(676,29): note: previous declaration is here
+  676 |     if (const std::uint32_t rows = policy.exploring(); rows != 0) {
+      |                             ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(1339,24): warning: implicit conversion increases floating-point precision: 'const float' to 'const double' [-Wdouble-promotion]
+ 1339 |     const double top = *std::max_element(x, x + n);
+      |                  ~~~   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(1819,24): warning: lambda capture 'pool_blocks' is not required to be captured for this use [-Wunused-lambda-capture]
+ 1819 |     const auto phys = [pool_blocks](std::int32_t b) {
+      |                        ^~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2856,25): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 2855 |             expected += static_cast<double>(x[row * static_cast<std::size_t>(k) + at]) *
+      |                                                                                        ~
+ 2856 |                         std::fma(static_cast<float>(code), scale, bias);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2908,54): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2908 |     std::vector<float> query(batch * heads * queries * dim), keys(pool_blocks * block * dim, poison);
+      |                        ~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2908,87): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2908 |     std::vector<float> query(batch * heads * queries * dim), keys(pool_blocks * block * dim, poison);
+      |                                                              ~~~~ ~~~~~~~~~~~~~~~~~~~~^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2909,65): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2909 |     std::vector<float> values(keys.size(), poison), table(batch * stride, 999999.0f);
+      |                                                     ~~~~~ ~~~~~~^~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2914,28): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2914 |         table[row * stride + bi] = static_cast<float>(1 + row * blocks + blocks - bi - 1);
+      |         ~~~~~ ~~~~~~~~~~~~~^~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2916,66): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2916 |         const int physical = static_cast<int>(table[row * stride + key / block]);
+      |                                               ~~~~~ ~~~~~~~~~~~~~^~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2976,70): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2976 |             const int physical = static_cast<int>(table[row * stride + key / block]);
+      |                                                   ~~~~~ ~~~~~~~~~~~~~^~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2979,97): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 2979 |               dot += static_cast<double>(query[((row * heads + h) * queries + qi) * dim + d]) * keys[base + d];
+      |                                                                                               ~ ^~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2979,109): warning: implicit conversion changes signedness: 'int' to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+ 2979 |               dot += static_cast<double>(query[((row * heads + h) * queries + qi) * dim + d]) * keys[base + d];
+      |                                                                                                           ~ ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2979,89): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2979 |               dot += static_cast<double>(query[((row * heads + h) * queries + qi) * dim + d]) * keys[base + d];
+      |                                          ~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2980,19): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2980 |             score[key] = dot * .0625;
+      |             ~~~~~ ^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2981,47): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2981 |             maximum = std::max(maximum, score[key]);
+      |                                         ~~~~~ ^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2986,38): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2986 |             if (!std::isfinite(score[key])) continue;
+      |                                ~~~~~ ^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2987,48): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2987 |             const auto weight = std::exp(score[key] - maximum);
+      |                                          ~~~~~ ^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2989,70): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2989 |             const int physical = static_cast<int>(table[row * stride + key / block]);
+      |                                                   ~~~~~ ~~~~~~~~~~~~~^~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2991,53): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2991 |             for (int d = 0; d < dim; ++d) numerator[d] += weight * values[base + d];
+      |                                           ~~~~~~~~~ ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2991,68): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 2991 |             for (int d = 0; d < dim; ++d) numerator[d] += weight * values[base + d];
+      |                                                                  ~ ^~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2991,82): warning: implicit conversion changes signedness: 'int' to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+ 2991 |             for (int d = 0; d < dim; ++d) numerator[d] += weight * values[base + d];
+      |                                                                                ~ ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2994,63): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2994 |             const auto expected = denominator > 0 ? numerator[d] / denominator : 0;
+      |                                                     ~~~~~~~~~ ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2995,78): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2995 |             const auto got = actual[((row * heads + h) * queries + qi) * dim + d];
+      |                              ~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(3589,41): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 3589 |       LSE_EXPECT_NEAR(got[c], expected, 2e-6f);
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+C:\Users\antmi\LSE\tests\harness.hpp(156,31): note: expanded from macro 'LSE_EXPECT_NEAR'
+  156 |     if (std::fabs(_a - _b) > (tol))                                         \
+      |                            ~  ^~~
+In file included from C:\Users\antmi\LSE\tests\test_submission_decode.cpp:4:
+C:\Users\antmi\LSE\tests\test_runtime.cpp(3869,26): warning: implicit conversion increases floating-point precision: 'const float' to 'const double' [-Wdouble-promotion]
+ 3869 |         const double a = dev.out[r * per + i];
+      |                      ~   ^~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(3870,26): warning: implicit conversion increases floating-point precision: 'const float' to 'const double' [-Wdouble-promotion]
+ 3870 |         const double b = ref.out[r * per + i];
+      |                      ~   ^~~~~~~~~~~~~~~~~~~~
+60 warnings generated.
+[135/138] Linking CXX executable tests\test_submission_decode.exe
+[136/138] Building CXX object tests\CMakeFiles\test_runtime.dir\test_runtime.cpp.obj
+In file included from C:\Users\antmi\LSE\tests\test_runtime.cpp:25:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_runtime.cpp:25:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\tests\test_runtime.cpp:25:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(141,35): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  141 |         table_values[row * stride + i] = static_cast<float>((i * 13 + 7 + row * 126) % blocks);
+      |         ~~~~~~~~~~~~ ~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(154,78): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  154 |             const auto physical = static_cast<int>(table_values[row * stride + position / block]);
+      |                                                    ~~~~~~~~~~~~ ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(156,92): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  156 |             keys[at] = float16_t::from_float(additions[((row * kvheads + h) * 3 + t) * dim + d]);
+      |                                              ~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(218,77): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  218 |             const int physical = static_cast<int>(table_values[row * stride + key / block]);
+      |                                                   ~~~~~~~~~~~~ ~~~~~~~~~~~~~^~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(224,82): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  224 |               score += static_cast<double>(query[(row * heads + h) * dim + d]) * decode(keys[at(key, d)]);
+      |                                                                                ~ ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(224,74): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  224 |               score += static_cast<double>(query[(row * heads + h) * dim + d]) * decode(keys[at(key, d)]);
+      |                                            ~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(225,48): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  225 |             maximum = std::max(maximum, scores[key] = score * .125);
+      |                                         ~~~~~~ ^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(231,77): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  231 |             for (int key = 0; key < live; ++key) numerator += scores[key] * decode(values[at(key, d)]);
+      |                                                                           ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(231,70): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  231 |             for (int key = 0; key < live; ++key) numerator += scores[key] * decode(values[at(key, d)]);
+      |                                                               ~~~~~~ ^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(296,59): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  296 |         std::vector<std::uint16_t> expected(heads * block * dim);
+      |                                    ~~~~~~~~ ~~~~~~~~~~~~~~^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(307,91): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  307 |           for (int d = 0; d < dim; ++d) squares += static_cast<double>(input[base + d]) * input[base + d];
+      |                                                                                         ~ ^~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(307,102): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  307 |           for (int d = 0; d < dim; ++d) squares += static_cast<double>(input[base + d]) * input[base + d];
+      |                                                                                           ~~~~~ ~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(307,83): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  307 |           for (int d = 0; d < dim; ++d) squares += static_cast<double>(input[base + d]) * input[base + d];
+      |                                                                        ~~~~~ ~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(310,38): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  310 |             float value = input[base + d] * scale;
+      |                           ~~~~~ ~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(315,42): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  315 |               const float a = input[base + pair] * scale, b = input[base + pair + 1] * scale;
+      |                               ~~~~~ ~~~~~^~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(315,81): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  315 |               const float a = input[base + pair] * scale, b = input[base + pair + 1] * scale;
+      |                                                               ~~~~~ ~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(318,52): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  318 |             expected[(h * block + first + t) * dim + d] = float16_t::from_float(value);
+      |             ~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(327,79): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  327 |           const double error = std::abs(static_cast<double>(decode(got[i])) - decode(expected[i]));
+      |                                                                             ~ ^~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(332,30): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  330 |         std::fprintf(stderr, "       %s partial RoPE to K heads=%d queries=%d max_abs=%.9g index=%zu actual=%.9g expected=%.9g device=%u host=%u\n",
+      |         ~~~
+  331 |             dialect == graph::Dialect::kHip ? "hip" : "loom", heads, queries, worst, at,
+  332 |             decode(got[at]), decode(expected[at]), trace.device_groups, trace.host_groups);
+      |                              ^~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(332,13): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  330 |         std::fprintf(stderr, "       %s partial RoPE to K heads=%d queries=%d max_abs=%.9g index=%zu actual=%.9g expected=%.9g device=%u host=%u\n",
+      |         ~~~
+  331 |             dialect == graph::Dialect::kHip ? "hip" : "loom", heads, queries, worst, at,
+  332 |             decode(got[at]), decode(expected[at]), trace.device_groups, trace.host_groups);
+      |             ^~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(384,46): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  384 |         std::vector<float> q(heads * queries * dim), k(kvheads * queries * dim), v(k.size());
+      |                            ~ ~~~~~~~~~~~~~~~~^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(384,74): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  384 |         std::vector<float> q(heads * queries * dim), k(kvheads * queries * dim), v(k.size());
+      |                                                      ~ ~~~~~~~~~~~~~~~~~~^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(386,59): warning: implicit conversion changes signedness: 'const int' to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  386 |           q[i] = static_cast<float>(static_cast<int>((i + first) % 31) - 15) / 32.f;
+      |                                                         ~ ^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(388,59): warning: implicit conversion changes signedness: 'const int' to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  388 |           k[i] = static_cast<float>(static_cast<int>((i + first) % 29) - 14) / 32.f;
+      |                                                         ~ ^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(389,59): warning: implicit conversion changes signedness: 'const int' to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+  389 |           v[i] = static_cast<float>(static_cast<int>((i + first) % 23) - 11) / 32.f;
+      |                                                         ~ ^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(424,57): warning: implicit conversion changes signedness: 'const difference_type' (aka 'const long long') to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  424 |                 unsigned(actual[at]), unsigned(expected[at]));
+      |                                                ~~~~~~~~ ^~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(429,39): note: in instantiation of function template specialization 'native_f16_paged_prefill_and_decode_match_reference()::(anonymous class)::operator()()::(anonymous class)::operator()<std::vector<unsigned short>>' requested here
+  429 |         LSE_RETURN_IF_ERROR(check_pool(key_pool, keys, "K"));
+      |                                       ^
+C:\Users\antmi\LSE\include\lse/core/status.hpp(98,34): note: expanded from macro 'LSE_RETURN_IF_ERROR'
+   98 |     ::lse::Status _lse_status = (expr);              \
+      |                                  ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(424,33): warning: implicit conversion changes signedness: 'const difference_type' (aka 'const long long') to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  424 |                 unsigned(actual[at]), unsigned(expected[at]));
+      |                          ~~~~~~ ^~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(442,57): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  442 |                 score += q[(h * queries + t) * dim + d] * decode(keys[index(h / 2, static_cast<int>(j), d)]);
+      |                       ~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(442,52): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+  442 |                 score += q[(h * queries + t) * dim + d] * decode(keys[index(h / 2, static_cast<int>(j), d)]);
+      |                          ~ ~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(450,42): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  450 |                 numerator += scores[j] * decode(values[index(h / 2, static_cast<int>(j), d)]);
+      |                                        ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(453,48): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  453 |               worst = std::max(worst, std::abs(got[at] - numerator / denominator));
+      |                                                ^~~~~~~ ~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(678,36): warning: declaration shadows a local variable [-Wshadow]
+  678 |     } else if (const std::uint32_t rows = policy.tree_exploring(); rows != 0) {
+      |                                    ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(676,29): note: previous declaration is here
+  676 |     if (const std::uint32_t rows = policy.exploring(); rows != 0) {
+      |                             ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(1339,24): warning: implicit conversion increases floating-point precision: 'const float' to 'const double' [-Wdouble-promotion]
+ 1339 |     const double top = *std::max_element(x, x + n);
+      |                  ~~~   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(1819,24): warning: lambda capture 'pool_blocks' is not required to be captured for this use [-Wunused-lambda-capture]
+ 1819 |     const auto phys = [pool_blocks](std::int32_t b) {
+      |                        ^~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2856,25): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 2855 |             expected += static_cast<double>(x[row * static_cast<std::size_t>(k) + at]) *
+      |                                                                                        ~
+ 2856 |                         std::fma(static_cast<float>(code), scale, bias);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2908,54): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2908 |     std::vector<float> query(batch * heads * queries * dim), keys(pool_blocks * block * dim, poison);
+      |                        ~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2908,87): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2908 |     std::vector<float> query(batch * heads * queries * dim), keys(pool_blocks * block * dim, poison);
+      |                                                              ~~~~ ~~~~~~~~~~~~~~~~~~~~^~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2909,65): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2909 |     std::vector<float> values(keys.size(), poison), table(batch * stride, 999999.0f);
+      |                                                     ~~~~~ ~~~~~~^~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2914,28): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2914 |         table[row * stride + bi] = static_cast<float>(1 + row * blocks + blocks - bi - 1);
+      |         ~~~~~ ~~~~~~~~~~~~~^~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2916,66): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2916 |         const int physical = static_cast<int>(table[row * stride + key / block]);
+      |                                               ~~~~~ ~~~~~~~~~~~~~^~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2976,70): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2976 |             const int physical = static_cast<int>(table[row * stride + key / block]);
+      |                                                   ~~~~~ ~~~~~~~~~~~~~^~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2979,97): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 2979 |               dot += static_cast<double>(query[((row * heads + h) * queries + qi) * dim + d]) * keys[base + d];
+      |                                                                                               ~ ^~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2979,109): warning: implicit conversion changes signedness: 'int' to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+ 2979 |               dot += static_cast<double>(query[((row * heads + h) * queries + qi) * dim + d]) * keys[base + d];
+      |                                                                                                           ~ ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2979,89): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2979 |               dot += static_cast<double>(query[((row * heads + h) * queries + qi) * dim + d]) * keys[base + d];
+      |                                          ~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2980,19): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2980 |             score[key] = dot * .0625;
+      |             ~~~~~ ^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2981,47): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2981 |             maximum = std::max(maximum, score[key]);
+      |                                         ~~~~~ ^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2986,38): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2986 |             if (!std::isfinite(score[key])) continue;
+      |                                ~~~~~ ^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2987,48): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2987 |             const auto weight = std::exp(score[key] - maximum);
+      |                                          ~~~~~ ^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2989,70): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2989 |             const int physical = static_cast<int>(table[row * stride + key / block]);
+      |                                                   ~~~~~ ~~~~~~~~~~~~~^~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2991,53): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2991 |             for (int d = 0; d < dim; ++d) numerator[d] += weight * values[base + d];
+      |                                           ~~~~~~~~~ ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2991,68): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 2991 |             for (int d = 0; d < dim; ++d) numerator[d] += weight * values[base + d];
+      |                                                                  ~ ^~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2991,82): warning: implicit conversion changes signedness: 'int' to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+ 2991 |             for (int d = 0; d < dim; ++d) numerator[d] += weight * values[base + d];
+      |                                                                                ~ ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2994,63): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2994 |             const auto expected = denominator > 0 ? numerator[d] / denominator : 0;
+      |                                                     ~~~~~~~~~ ^
+C:\Users\antmi\LSE\tests\test_runtime.cpp(2995,78): warning: implicit conversion changes signedness: 'int' to 'size_type' (aka 'unsigned long long') [-Wsign-conversion]
+ 2995 |             const auto got = actual[((row * heads + h) * queries + qi) * dim + d];
+      |                              ~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(3589,41): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+ 3589 |       LSE_EXPECT_NEAR(got[c], expected, 2e-6f);
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+C:\Users\antmi\LSE\tests\harness.hpp(156,31): note: expanded from macro 'LSE_EXPECT_NEAR'
+  156 |     if (std::fabs(_a - _b) > (tol))                                         \
+      |                            ~  ^~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(3869,26): warning: implicit conversion increases floating-point precision: 'const float' to 'const double' [-Wdouble-promotion]
+ 3869 |         const double a = dev.out[r * per + i];
+      |                      ~   ^~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\tests\test_runtime.cpp(3870,26): warning: implicit conversion increases floating-point precision: 'const float' to 'const double' [-Wdouble-promotion]
+ 3870 |         const double b = ref.out[r * per + i];
+      |                      ~   ^~~~~~~~~~~~~~~~~~~~
+60 warnings generated.
+[137/138] Linking CXX executable tests\test_runtime.exe

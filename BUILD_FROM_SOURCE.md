@@ -47,9 +47,13 @@ The HRX backend has no Windows runtime; configure forces `LSE_ENABLE_HRX=OFF`
 and the engine builds with the CPU reference backend only.
 
 ```powershell
-$env:CC  = "clang-cl"
 $env:CXX = "clang-cl"
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLSE_BUILD_TESTS=OFF
 cmake --build build
 # binaries: build\lse.exe, build\lse-server.exe
 ```
+
+Do not pass a C compiler (no CC env var, no `-DCMAKE_C_COMPILER`): the project
+is `LANGUAGES CXX` only. `-DLSE_BUILD_TESTS=OFF` is required for now —
+targeted test builds only until WP12; the canonical Windows guide is
+[`docs/WINDOWS.md`](docs/WINDOWS.md).

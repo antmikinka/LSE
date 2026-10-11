@@ -1,0 +1,25 @@
+# logs/m2a-configure.txt — tests-OFF configure transcript (REGENERATED post-SYNC-1)
+# Date: 2026-10-10  SHA: d3c2535 (upstream v0.6.1 merged, 90d66ab)
+# Regenerated per ID-C2-14/DOC-2: the original build-win-notests-configure.log was
+# gitignored (*.log) and pre-merge (0.6.0); this is the current authoritative transcript.
+-- HRX backend: not supported on Windows in Phase 1 (forced OFF)
+-- HRX backend: skipped (set -DLSE_HRX_ROOT=<install> to enable)
+-- fastokens_ffi native deps: legacy_stdio_definitions.lib;advapi32.lib;cfgmgr32.lib;kernel32.lib;user32.lib;ws2_32.lib;bcrypt.lib;advapi32.lib;kernel32.lib;ntdll.lib;userenv.lib;ws2_32.lib;dbghelp.lib
+-- 
+-- Lemon Seed Engine 0.6.1
+--   build type      : RelWithDebInfo
+--   host compiler   : Clang 21.0.0
+--   host std        : C++26
+--   device std      : C++20
+--   HRX backend     : OFF
+--   HIP available   : OFF
+--   comgr (JIT)     : OFF
+--   loomc (JIT)     : OFF 
+--   HRX linked      : OFF
+--   HSA runtime     : LSE_ROCM_RUNTIME_DIR-NOTFOUND
+--   GPU targets     : gfx1151;gfx1201;gfx942
+--   tests           : OFF
+-- 
+-- Configuring done (9.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: C:/Users/antmi/LSE/build-win-notests
