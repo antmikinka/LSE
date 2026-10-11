@@ -414,6 +414,32 @@ coverage. KEEP stands.
   `100% tests passed(, 0 tests failed)? out of 2` at BOTH fingerprint
   assertions (windows + linux-parity jobs). Acceptance moves to run 5 green
   on both jobs at the C9 SHA; the same-SHA rule (11 §6) applies.
+- **D-19 — large-io dispatch proof (38138800778 at `5b16e94`): FALSE RED on
+  BOTH jobs at "Main ctest (strict)" — workflow-only label-semantics defect,
+  zero product or test failures; the G-C2-5/M3 acceptance banked by run 5
+  (38137423880, green on both jobs at this same SHA) is untouched and NOT
+  reopened.** Mechanism: the dispatch input flipped `LSE_LARGE_IO_FLAG` to
+  `--label-include LARGE_IO`, but ctest's `--label-include` is a SELECTOR,
+  not an additive filter — it restricts execution to the labeled test(s)
+  only. ctest ran exactly 1 test (`test_large_file_io`) while the strict
+  cardinality assert (correctly expecting the ID-10(a) semantics "ON = full
+  suite INCLUDING LARGE_IO") demanded W=98 → `ran 1 expected 98`, exit 1,
+  both jobs. The intended ON state is NO label filter at all — which the old
+  env could not even express: in GitHub expressions `''` is falsy, so a
+  `cond && '' || fallback` toggle can never yield the empty string. Fix
+  (workflow-only, zero product diff, C10): boolean env `LARGE_IO_ON`
+  (`'true'`/`'false'`, set from `inputs.run_large_io == true ||
+  github.event_name == 'schedule'`) + bash-side ctest-flag derivation at all
+  four call sites — windows and linux-parity Main ctest
+  (`FLAG='--label-exclude LARGE_IO'; EXPECT=W−1`, flipping to `FLAG='';
+  EXPECT=W` when ON; linux keeps its additional `EXPECT−1` for the
+  `-E '^test_reflect$'` exclusion), the schedule-only flake-classification
+  step (flag dropped entirely — schedule is always full-suite), and the
+  step-summary echo. Lesson (extends L2): rehearse the exact flag STRING,
+  not its intent — ctest label filters select, they do not add; and never
+  branch on an empty string inside `${{ }}` — route through bash.
+  Acceptance: the re-dispatched `run_large_io=true` run green at the C10 SHA
+  (supplementary proof; the gate itself is already carried by run 5).
 
 ## 5. G-C2-3 (tests-ON 'all' builds; X = 0) — results
 
@@ -580,17 +606,49 @@ protocol re-executed at the C8 tree (§6 re-run note;
 `windows-enablement/logs/d17-crossdrive-repro.txt`,
 `windows-enablement/logs/c8-local-m3-rerun.txt`).
 
-**G-C2-5 stays PENDING-PUSH**: the run on the C8 push is the acceptance
-candidate — a run green on BOTH jobs at one SHA converts M3-PARTIAL → M3
-per D-12. C8 DOES touch product/test lines, so the carry-over argument no
-longer applies; it is replaced by the §6 C8 re-run (every local M3 gate
-green at the C8 tree) plus the linux-parity job re-running on the C8 SHA
-itself (the same-SHA rule is satisfied by run 4 covering both jobs). Plus
-dispatch proof with `run_large_io=true` (only if the runner disk guard
-passes — otherwise the schedule run is the LARGE_IO proof). Note: the
+The C8 push (`8fa9b9e..4893e8e`) triggered run **38135965357** at `4893e8e`
+(run 4): **linux-parity GREEN; windows FALSE RED** — the D-17 product fixes
+are PROVEN (the full main ctest passed on the runner and the T3 pair passed
+2/2 in-step), but the fingerprint-evidence step's grep expected the legacy
+ctest summary spelling while the runner's newer ctest omits
+`", 0 tests failed"` (**D-18**; local ctest 3.31.9 prints the legacy
+spelling, so local rehearsal could not catch it). Fixed in **C9 `5b16e94`**
+(format-tolerant regex at both fingerprint assertions, workflow-only).
+
+The C9 push (`4893e8e..5b16e94`) triggered run **38137423880** at `5b16e94`
+(run 5): **GREEN ON BOTH JOBS** — windows (W=98 census, main ctest 97/97
+strict, fingerprint 2/2, K=2, X=0) and linux-parity (Wₗ=100==WE+2, ctest
+100% with the labeled `test_reflect` exclusion, T3 cross-OS hash pair
+holds). The same-SHA rule (11 §6, D-12/A-3.3) is satisfied:
+**G-C2-5 PASS**, and M3-PARTIAL converts to **M3 ACHIEVED** (2026-10-11).
+
+The supplementary large-io dispatch (**38138800778** at `5b16e94`,
+`run_large_io=true`) then FALSE-RED both jobs on the workflow-only
+label-semantics defect **D-19** (`--label-include LARGE_IO` selects the 1
+labeled test; strict assert expected 98 — "ran 1 expected 98"). Zero
+product failures; the gate banked by run 5 is NOT reopened. Fixed in **C10**
+(`LARGE_IO_ON` boolean + bash-side flag derivation at all four sites).
+
+- C9 `5b16e94` — D-18 workflow fix (format-tolerant ctest-summary regex in
+  both fingerprint assertions) + §4 D-18 record + STATUS.md G-C2-5 run-4
+  update.
+- `1df3eec` — cycle-2 documentation refresh (tech-writer stage): STATUS.md,
+  docs/WINDOWS.md, 14-documentation-update.md (upstream-PR plan,
+  M4-deferred per the user's "Wait until M4" decision; PR-SPLIT
+  recommendation PR-A → stacked PR-B).
+- C10 (this record's commit) — D-19 workflow fix (`LARGE_IO_ON` toggle),
+  §4 D-19 + §8 run-4/run-5/dispatch records, STATUS.md G-C2-4 →
+  **M3 ACHIEVED** / G-C2-5 → **PASS**, BUILD_FROM_SOURCE.md stale
+  "tests-OFF required until WP12" correction.
+
+Push target for C10: `fork feature/windows-enablement` (carries `1df3eec`).
+After the C10 push run completes, re-dispatch `run_large_io=true` at the C10
+SHA as the D-19 acceptance proof (only if the runner disk guard passes —
+otherwise the weekly schedule run is the LARGE_IO proof). Note: the
 concurrency group (`win-${{ github.ref }}`, cancel-in-progress) means no
 further push or dispatch may be made to this branch while a run is in
-flight, or the evidence run is cancelled.
+flight, or the evidence run is cancelled — the dispatch waits for the push
+run.
 
 ## 9. Remaining work toward M4
 

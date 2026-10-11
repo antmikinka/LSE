@@ -54,6 +54,7 @@ cmake --build build
 ```
 
 Do not pass a C compiler (no CC env var, no `-DCMAKE_C_COMPILER`): the project
-is `LANGUAGES CXX` only. `-DLSE_BUILD_TESTS=OFF` is required for now —
-targeted test builds only until WP12; the canonical Windows guide is
+is `LANGUAGES CXX` only. The full test tree builds on Windows (WP12 complete,
+zero compile exclusions): omit `-DLSE_BUILD_TESTS=OFF` to build it and run
+`ctest --test-dir build`; the canonical Windows guide is
 [`docs/WINDOWS.md`](docs/WINDOWS.md).

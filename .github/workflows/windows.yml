@@ -73,10 +73,14 @@ concurrency:
 
 env:
   # ID-10(a): a real toggle. Schedule always includes LARGE_IO; dispatch asks.
-  # NEVER --label-include LARGE_IO on hosted push/PR runs (hosted disks are
-  # small; the local machine runs the >2GiB fixture — 04 §3/§7, S4).
-  LSE_LARGE_IO_FLAG: ${{ (inputs.run_large_io == true || github.event_name == 'schedule')
-                          && '--label-include LARGE_IO' || '--label-exclude LARGE_IO' }}
+  # D-19: 'true' means NO label filter (full suite INCLUDING the LARGE_IO
+  # test); the old '--label-include LARGE_IO' RESTRICTED ctest to the labeled
+  # test only (ran 1, expected 98 — dispatch proof 38138800778). NEVER turn
+  # LARGE_IO on for hosted push/PR runs (hosted disks are small; the local
+  # machine runs the >2GiB fixture — 04 §3/§7, S4). Bash steps derive the
+  # ctest flag from this string; a literal empty-string env branch is
+  # impossible in GitHub expressions ('' is falsy), hence 'true'/'false'.
+  LARGE_IO_ON: ${{ (inputs.run_large_io == true || github.event_name == 'schedule') && 'true' || 'false' }}
   # Cargo output must stay plain: LSERust.cmake captures rustc's
   # native-static-libs note at configure time, and a forced-color run leaks
   # ANSI resets into the parsed token list (see the rust-cache deviation in
@@ -194,11 +198,12 @@ jobs:
       - name: Main ctest (strict; mirrors §5.2 step 2)
         run: |
           set -euo pipefail
+          FLAG='--label-exclude LARGE_IO'; EXPECT=$((W - 1))
+          if [[ "$LARGE_IO_ON" == "true" ]]; then FLAG=''; EXPECT=$W; fi
           ctest --test-dir build --output-on-failure --timeout 300 \
-                ${{ env.LSE_LARGE_IO_FLAG }} 2>&1 | tee ctest.log
+                $FLAG 2>&1 | tee ctest.log
           grep -q "100% tests passed" ctest.log
           NRAN=$(sed -nE 's/.*out of ([0-9]+).*/\1/p' ctest.log | tail -1)
-          if [[ "${{ env.LSE_LARGE_IO_FLAG }}" == *include* ]]; then EXPECT=$W; else EXPECT=$((W - 1)); fi
           [ "$NRAN" -eq "$EXPECT" ] || { echo "ran $NRAN expected $EXPECT"; exit 1; }
 
       - name: Fingerprint + canary evidence (ID-5 / ID-12, T3 pair)
@@ -213,9 +218,11 @@ jobs:
         if: github.event_name == 'schedule'
         continue-on-error: true
         run: |
+          # Schedule-only step: LARGE_IO_ON is always 'true' here — D-19:
+          # "include" means NO label filter (full suite incl. LARGE_IO).
           ctest --test-dir build --output-on-failure --timeout 300 \
                 --repeat until-pass:3 --repeat until-fail:0 \
-                ${{ env.LSE_LARGE_IO_FLAG }} 2>&1 | tee ctest-classification.log
+                2>&1 | tee ctest-classification.log
 
       - name: W/K/X status + guard assertions
         run: |
@@ -234,7 +241,7 @@ jobs:
             echo "Windows entry in KNOWN_FAILURES.md — K is the only ledger"; exit 1
           fi
           echo "## W/K/X = $W/$K/0" >> "$GITHUB_STEP_SUMMARY"
-          echo "LARGE_IO flag this run: \`${{ env.LSE_LARGE_IO_FLAG }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "LARGE_IO on this run: \`$LARGE_IO_ON\`" >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -302,12 +309,13 @@ jobs:
       - name: Main ctest (strict; test_reflect excluded — see header)
         run: |
           set -euo pipefail
+          FLAG='--label-exclude LARGE_IO'; EXPECT=$((WL - 1))
+          if [[ "$LARGE_IO_ON" == "true" ]]; then FLAG=''; EXPECT=$WL; fi
+          EXPECT=$((EXPECT - 1))   # the labeled test_reflect exclusion
           ctest --test-dir build --output-on-failure --timeout 300 \
-                ${{ env.LSE_LARGE_IO_FLAG }} -E '^test_reflect$' 2>&1 | tee ctest.log
+                $FLAG -E '^test_reflect$' 2>&1 | tee ctest.log
           grep -q "100% tests passed" ctest.log
           NRAN=$(sed -nE 's/.*out of ([0-9]+).*/\1/p' ctest.log | tail -1)
-          if [[ "${{ env.LSE_LARGE_IO_FLAG }}" == *include* ]]; then EXPECT=$WL; else EXPECT=$((WL - 1)); fi
-          EXPECT=$((EXPECT - 1))   # the labeled test_reflect exclusion
           [ "$NRAN" -eq "$EXPECT" ] || { echo "ran $NRAN expected $EXPECT"; exit 1; }
 
       - name: Fingerprint + canary evidence (T3 pair — hashes MUST equal the windows job's)
