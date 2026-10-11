@@ -377,12 +377,17 @@ if(NOT TARGET lse_backend_hrx)
 endif()
 
 if(TARGET lse_backend_cpu)
+  # COMPILE_EXCLUSIONS.md (X): test_launch_template.cpp:122 calls setenv(),
+  # which the UCRT does not declare; WP12 ports it via tests/compat.hpp.
+  # Additive guard — no effect on Linux/macOS.
+  if(NOT WIN32)
   lse_add_test(test_launch_template lse_graph lse_kernels lse_ir lse_backend_cpu)
   target_sources(test_launch_template PRIVATE
     ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_emitter.cpp
     ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_print.cpp
     ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp
     ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_sources.cpp)
+  endif()
   lse_add_test(test_scheduler_epilogue lse_graph lse_kernels lse_ir lse_backend_cpu)
   target_sources(test_scheduler_epilogue PRIVATE
     ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_emitter.cpp

@@ -11,7 +11,7 @@ its dependent `target_sources` / `target_compile_definitions` /
 uses KNOWN_FAILURES.md (which disables execution only and cannot absorb a
 compile failure). POSIX configure is byte-for-byte unaffected.
 
-- **X = 2** (target 0; X ≤ 5 without escalation per ID-6).
+- **X = 3** (target 0; X ≤ 5 without escalation per ID-6).
 - Each is a whole-binary exclusion: the failure is in the test's own `.cpp`
   (`#include <unistd.h>`), not in the loomc/hipc translation units it compiles
   (those built clean under clang-cl).
@@ -23,6 +23,7 @@ compile failure). POSIX configure is byte-for-byte unaffected.
 |---|---|---|---|
 | `test_loom_cache` | `lse_add_test(test_loom_cache …)` + `target_sources` + `target_compile_definitions` block, wrapped in `if(NOT WIN32)` | `windows: capability — test_loom_cache.cpp:19 includes <unistd.h> for ::getpid/::setenv/::unsetenv (UCRT has none)` | pending WP12 (tests/compat.hpp) — review-by 2027-01-08 |
 | `test_dflash2` | `lse_add_test(test_dflash2 …)` + `if(TARGET lse_runtime)` + `if(NOT TARGET lse_backend_hrx) target_sources` + shared `set_tests_properties`, wrapped in `if(NOT WIN32)`/`else()` (else keeps `test_feature_taps` ENVIRONMENT on Windows) | `windows: capability — test_dflash2.cpp:30 includes <unistd.h> for getpid (UCRT has none)` | pending WP12 (tests/compat.hpp) — review-by 2027-01-08 |
+| `test_launch_template` | `lse_add_test(test_launch_template …)` + `target_sources` block inside `if(TARGET lse_backend_cpu)`, wrapped in `if(NOT WIN32)` | `windows: capability — test_launch_template.cpp:122 calls setenv() (UCRT declares none; no <unistd.h> include — arrives via SYNC-1 upstream v0.6.1, 90d66ab)` | pending WP12 (tests/compat.hpp via harness include) — review-by 2027-01-08 |
 
 ## Not excluded (verified green under clang-cl at M2a)
 

@@ -6,6 +6,7 @@ test_dflash2_walk
 test_gdn_pair
 test_gdn_scheduler
 test_kv_cache
+test_launch_template
 test_loom_cache
 test_loom_concat
 test_loom_conv
