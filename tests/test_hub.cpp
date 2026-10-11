@@ -639,16 +639,33 @@ LSE_TEST(scan_lists_only_supported_mlx_models_with_every_cached_revision) {
   LSE_EXPECT_EQ(j["models"].size(), 2u);
   LSE_EXPECT(j["models"][0]["mtp"]["status"] == "none");
 
-  // A checkpoint outside the cache, through --dir / $LSE_MODEL_DIRS.
+  // Checkpoints outside the cache, through --dir / $LSE_MODEL_DIRS. Two of
+  // them, so the list form below has something to separate.
   const fs::path local = cache.root() / "models" / "tinyqwen-q4";
-  fs::create_directories(local);
-  for (const auto& [p, content] : target_files()) {
-    fs::create_directories((local / p).parent_path());
-    std::ofstream(local / p, std::ios::binary) << content;
+  const fs::path second = cache.root() / "models" / "tinyqwen-q4-second";
+  for (const fs::path& dir : {local, second}) {
+    fs::create_directories(dir);
+    for (const auto& [p, content] : target_files()) {
+      fs::create_directories((dir / p).parent_path());
+      std::ofstream(dir / p, std::ios::binary) << content;
+    }
   }
   ScopedEnv dirs("LSE_MODEL_DIRS", (cache.root() / "models").string().c_str());
   const hub::Listing with_local = hub::scan();
-  LSE_EXPECT_EQ(with_local.models.size(), 3u);
+  LSE_EXPECT_EQ(with_local.models.size(), 4u);
+
+  // The same two directories as an explicit list. On windows this is the form
+  // where a plain ':' split cuts every absolute path in half ("C" +
+  // "\models\...") and the halves resolve against the process's current
+  // drive, so the separator has to survive drive letters.
+#ifdef _WIN32
+  const std::string joined = local.string() + ";" + second.string();
+#else
+  const std::string joined = local.string() + ":" + second.string();
+#endif
+  ScopedEnv listed("LSE_MODEL_DIRS", joined.c_str());
+  const hub::Listing from_list = hub::scan();
+  LSE_EXPECT_EQ(from_list.models.size(), 4u);
 }
 
 LSE_TEST(a_revision_resolves_by_ref_commit_or_unique_prefix) {

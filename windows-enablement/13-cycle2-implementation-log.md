@@ -129,6 +129,21 @@ docs/WINDOWS.md → this log → commit + push.
 7. `ci-expected-w.txt` regenerated 94 → **98** (generated from `ctest -N`
    parse, never typed, per ID-C2-10).
 8. STATUS.md refresh + docs/WINDOWS.md coherence pass (§7).
+9. **CI run triage + product defects #5–#6** (found by run 3, 38132306765):
+   the windows job built fully green (D-15/D-16 fixes proven: Configure
+   guards passed, `lse.exe` linked, census 98==98) and then failed exactly
+   two ctest binaries — `test_hub` (1 case) and `test_communication` (9
+   cases, every pipe-URL listen). Both trace to ONE defect class: an
+   absolute windows path degrading to a drive-relative path that resolves
+   against the process's current drive — invisible locally (everything on
+   C:), fatal on the hosted runner (checkout+cwd on D:, %TEMP% on C:).
+   Reproduced locally with `subst X:` (old code: identical signature —
+   9 FAILs + "19 passed, 3 skipped / 31"; test_hub "got 2"), fixed, and
+   re-verified under the same cross-drive conditions (§4 D-17; evidence
+   `windows-enablement/logs/d17-crossdrive-repro.txt`). Committed as C8
+   (`src/communication/socket.cpp`, `src/hub/cache.cpp`,
+   `tests/test_hub.cpp` — the last extended so the separator logic is
+   regression-covered on BOTH platforms).
 
 ## 3. `compiler_image_identity.hpp` — disposition: KEEP
 
@@ -350,6 +365,39 @@ coverage. KEEP stands.
   Rust-std Nt* switch and lacks ntdll.lib; deliberately NOT modified here
   (minimal diff; with the query succeeding the fallback is dead code, and an
   unexercisable change would ship untested).
+- **D-17 — third CI run (38132306765 at `8fa9b9e`): linux-parity GREEN;
+  windows green through build/census, FAILED main ctest 95/97 — two PRODUCT
+  defects (#5, #6), one class: drive-relative path degradation.** The D-15/
+  D-16 workflow fixes are proven (Configure ntdll guards passed, full build
+  green, W census 98==98); the remaining failures are in the product. On the
+  runner the checkout/cwd is `D:\a\LSE\LSE` while %TEMP% is on `C:` — the
+  first environment where the two drives differ, which the single-volume dev
+  box could never exercise. **#5 `src/communication/socket.cpp`**:
+  `Endpoint::parse` splits `unix://C:/…/x.sock` at the first `/` → authority
+  `"C:"`, path `"/…/x.sock"`; `unix_address()` memcpy'd only the path into
+  `sun_path`, so `bind()` got a drive-relative name resolving against the
+  CURRENT drive → `D:\Users\RUNNER~1\…` → every pipe-URL listen fails (9
+  cases: `ln.ok()`/`good.ok()` at :249/:382/:425/:492/:671/:723/:833/:1094/
+  :1482; TCP and resolve-only cases unaffected — exactly the runner
+  pattern). The `listen_impl` exists-precheck stat'ed the same wrong volume.
+  Fix: `unix_socket_name(ep)` re-attaches a single-letter drive authority
+  (`X:`) to the path, `_WIN32`-only, used by both sites. **#6
+  `src/hub/cache.cpp`**: `scan()` split `LSE_MODEL_DIRS` unconditionally on
+  `':'` → `C:\…\models` became `"C"` + `"\…\models"`, the half resolving
+  against D: → `scan_lists_only_supported_mlx_models…` saw 2 models, not 3.
+  Fix: Windows splits on `';'` and on `':'` only when not a drive colon
+  (letter at token pos 0); POSIX keeps the `getline(':')` path verbatim.
+  **Local repro (gold standard)**: `subst X: C:\Users\antmi\LSE`, cwd `X:\`,
+  old code → test_communication **9 FAILs, "19 passed, 3 skipped / 31"**
+  (byte-identical to the runner signature) and test_hub "got 2 vs 4" on both
+  assertions; fixed code under the same conditions → 28+3/31 and 17/17; full
+  suite (`--label-exclude LARGE_IO`, D-11 hide-cache) **97/97, 73.89 s**; K
+  scrape unchanged (2 distinct keys). `tests/test_hub.cpp` extended: TWO
+  local checkpoints + an explicit-list assertion (`dir1;dir2` win /
+  `dir1:dir2` posix) that fails under the old split on both platforms, so
+  the separator is regression-covered everywhere, not just on CI. Evidence:
+  `windows-enablement/logs/d17-crossdrive-repro.txt`. No skips added; K
+  stays 2; W/X unchanged (98/0).
 
 ## 5. G-C2-3 (tests-ON 'all' builds; X = 0) — results
 
@@ -424,6 +472,15 @@ main-run LastTest.log snapshot; the raw `.log` stays local per the repo's
 The K/X checks and the M3 COMPLETE line are emitted by the protocol script
 itself.
 
+**C8 re-run (post-D-17).** C8 changes product lines (`socket.cpp`,
+`cache.cpp`) and one test (`test_hub.cpp`), so the ff28a1d protocol evidence
+does not carry over by argument — every local M3 gate was re-executed at the
+C8 tree: census **98**; main run **"100% tests passed, 0 tests failed out of
+97"** in **73.89 s** (D-11 hide-cache); LARGE_IO **1/1** (0.10 s);
+fingerprint pair **2/2**; K scrape **2 distinct keys** (3+1 lines); X = 0.
+Record: `windows-enablement/logs/c8-local-m3-rerun.txt`. The M3-PARTIAL →
+M3 conversion now waits only on a CI run green on BOTH jobs at the C8 SHA.
+
 ## 7. Documentation updates
 
 - **STATUS.md**: gate-table rows G-C2-1…G-C2-5 set from real outcomes;
@@ -459,9 +516,14 @@ staged), on top of the prior-session `4e584aa`…`91a4fdf`:
 - C6 `632508b` — D-15 CI fixes in `windows.yml` (Git coreutils PATH sink;
   rust-cache dropped; `CARGO_TERM_COLOR: never`) + the §2.1/§2.2
   attribution correction + §8 run-1 observations.
-- C7 (this record's commit) — D-16 fix in `windows.yml` (Configure-step
-  PATH sink + native-deps ntdll guards) + the §8 run-2 record + STATUS.md
-  G-C2-5 row.
+- C7 `8fa9b9e` — D-16 fix in `windows.yml` (Configure-step PATH sink +
+  native-deps ntdll guards) + the §8 run-2 record + STATUS.md G-C2-5 row.
+- C8 (this record's commit) — D-17 product defects #5–#6
+  (`src/communication/socket.cpp` drive-letter re-attach for unix binds;
+  `src/hub/cache.cpp` drive-aware `LSE_MODEL_DIRS` split), the
+  `tests/test_hub.cpp` two-dir/list-form extension, evidence
+  (`d17-crossdrive-repro.txt`, `c8-local-m3-rerun.txt`), and the §2.3/§4/§6/
+  §8 records.
 
 Push target: `fork feature/windows-enablement` (antmikinka/LSE), executed
 immediately after C5: `71be5a5..ff28a1d` (2026-10-11). The push triggered
@@ -490,11 +552,24 @@ the Configure step, so LSERust's native-libs query fell back to a set
 without `ntdll.lib`; diagnosed from the run logs and fixed per **D-16**
 (Configure-step sink + fail-fast guards), committed as C7.
 
-**G-C2-5 stays PENDING-PUSH**: the run on the C7 push is the acceptance
+The C7 push (`632508b..8fa9b9e`) triggered run **38132306765** at `8fa9b9e`:
+**linux-parity GREEN again**; **windows** passed Configure (both D-16 ntdll
+guards green — the fallback branch never engaged), the full tests-ON build,
+and the W census (98==98), then FAILED the main ctest **95/97**: `test_hub`
+(1 case) and `test_communication` (9 cases). Diagnosed to product defects
+#5–#6 — the drive-relative-path class, visible only where cwd and %TEMP%
+sit on different drives (**D-17**) — reproduced locally via `subst X:` with
+the old code (identical signatures), fixed in C8, and the full local M3
+protocol re-executed at the C8 tree (§6 re-run note;
+`windows-enablement/logs/d17-crossdrive-repro.txt`,
+`windows-enablement/logs/c8-local-m3-rerun.txt`).
+
+**G-C2-5 stays PENDING-PUSH**: the run on the C8 push is the acceptance
 candidate — a run green on BOTH jobs at one SHA converts M3-PARTIAL → M3
-per D-12 (the C6/C7 deltas over the M3 SHA `ff28a1d` are workflow + docs
-only, zero product/test lines, so the local M3 evidence carries over
-verbatim and the linux-parity half is ALREADY green at `632508b`) plus
+per D-12. C8 DOES touch product/test lines, so the carry-over argument no
+longer applies; it is replaced by the §6 C8 re-run (every local M3 gate
+green at the C8 tree) plus the linux-parity job re-running on the C8 SHA
+itself (the same-SHA rule is satisfied by run 4 covering both jobs). Plus
 dispatch proof with `run_large_io=true` (only if the runner disk guard
 passes — otherwise the schedule run is the LARGE_IO proof). Note: the
 concurrency group (`win-${{ github.ref }}`, cancel-in-progress) means no

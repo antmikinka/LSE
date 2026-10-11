@@ -301,6 +301,17 @@ platforms or `#ifdef _WIN32`-additive; details in
    shared `.tmp<pid>` let the loser's error-path remove delete the winner's
    temp so the profile never landed (POSIX hid the collision). Repro 3/50 →
    0/100 post-fix (13-log D-14).
+5. `src/communication/socket.cpp` — a `unix://C:/path/x.sock` endpoint parses
+   with the drive in the authority slot; the bind used the bare `/path/...`,
+   a drive-relative name that Windows resolves against the process's CURRENT
+   drive. Invisible when code and %TEMP% share a letter, fatal when they do
+   not (CI: checkout on D:, sockets on C:). The socket name now re-attaches
+   the drive letter (`_WIN32` only; POSIX untouched) — 13-log D-17.
+6. `src/hub/cache.cpp` — `LSE_MODEL_DIRS` split unconditionally on `':'`,
+   which cuts every absolute Windows path in half (`C` + `\models\...`, the
+   half again resolving against the current drive). On Windows the list now
+   splits on `';'` and on `':'` only where it is not a drive colon; POSIX
+   keeps the `':'` behavior verbatim — 13-log D-17.
 
 ## 7. Troubleshooting
 

@@ -352,9 +352,29 @@ Listing scan(std::span<const std::string> dirs) {
   }
   std::vector<std::string> extra(dirs.begin(), dirs.end());
   if (const char* env = env_value("LSE_MODEL_DIRS")) {
+#ifdef _WIN32
+    // ':' separates POSIX path lists, but a windows path carries its own
+    // colon ("C:\models"), and a token cut there degrades to a drive-relative
+    // path that resolves against the process's current drive. Split on ';'
+    // and on any ':' that is not a drive colon (one letter into a token).
+    std::string token;
+    for (const char* p = env;; ++p) {
+      const char c = *p;
+      const bool drive_colon = c == ':' && token.size() == 1 &&
+                               std::isalpha(static_cast<unsigned char>(token[0]));
+      if (c == '\0' || c == ';' || (c == ':' && !drive_colon)) {
+        if (!token.empty()) extra.push_back(token);
+        token.clear();
+        if (c == '\0') break;
+      } else {
+        token.push_back(c);
+      }
+    }
+#else
     std::stringstream ss(env);
     for (std::string d; std::getline(ss, d, ':');)
       if (!d.empty()) extra.push_back(d);
+#endif
   }
   for (const std::string& d : extra) scan_dir(out, d, seen);
   const auto by_name = [](const Checkpoint& a, const Checkpoint& b) { return a.name() < b.name(); };

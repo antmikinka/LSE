@@ -1,0 +1,79 @@
+D-17 cross-drive repro — run 38132306765 (windows job, SHA 8fa9b9e) post-mortem
+================================================================================
+Captured 2026-10-11 on the local Windows 11 box (single volume C:), using
+`subst X: C:\Users\antmi\LSE` to reproduce the hosted runner's drive split:
+current drive != %TEMP% drive (runner: checkout+cwd on D:, TEMP on C:).
+
+1. RUNNER FAILURE SIGNATURE (job 114448973696, main ctest, exit 8)
+-------------------------------------------------------------------
+  36 - test_hub (Failed):
+     FAIL scan_lists_only_supported_mlx_models_with_every_cached_revision
+       at tests\test_hub.cpp:651  with_local.models.size() == 3u (got 2 vs 3)
+     16/17 passed
+  56 - test_communication (Failed): 9 FAILs, all at `ln.ok()`/`good.ok()`
+     immediately after `listen(must_parse(pipe_url(...)))`:
+       :249 a_typo_on_the_second_peer_of_a_scheme_is_refused_too
+       :382 a_pipe_name_reaches_the_same_peer_as_an_address_does
+       :425 a_large_transfer_is_segmented_and_reassembled
+       :492 the_receiving_region_is_written_exactly_once_and_only_where_told
+       :671 an_unanswered_offer_faults_the_channel_by_deadline
+       :723 a_full_control_ring_refuses_and_then_says_when_it_is_writable
+       :833 a_stale_ticket_never_aliases_a_live_one
+      :1094 a_transfer_that_misses_its_deadline_is_cancelled
+      :1482 a_stalled_offer_with_a_hung_up_peer_still_lets_the_loop_sleep
+     summary: 19 passed, 3 skipped / 31   (the 3 skips = K#1, correct)
+  Every TCP-endpoint test and every resolve-only test PASSED on the runner.
+
+2. ROOT CAUSE (code-level; one class, two sites)
+------------------------------------------------
+Both sites produce a drive-relative path ("/Users/...") from an absolute
+windows path and hand it to an API that resolves it against the process's
+CURRENT DRIVE. Locally everything lives on C: so the bug is invisible; on the
+runner cwd is D:\a\LSE\LSE and the resolved location is on the wrong volume.
+
+  (a) src/communication/socket.cpp unix_address(): Endpoint::parse splits
+      "unix://C:/Users/.../x.sock" at the first '/' -> authority "C:", path
+      "/Users/.../x.sock". unix_address() memcpy'd ONLY path into sun_path
+      (drive dropped) -> bind() targets D:\Users\... -> fails -> all 9
+      pipe-URL tests die at ln.ok().
+  (b) src/hub/cache.cpp scan(): LSE_MODEL_DIRS split unconditionally on ':'
+      -> "C:\Users\...\models" became tokens "C" and "\Users\...\models";
+      the second resolves to D:\Users\...\models -> not found -> the local
+      checkpoint contributes 0 models -> 2 instead of 3.
+
+3. LOCAL REPRO WITH OLD PRODUCT CODE (stash of the two fixes; enhanced
+   test_hub fixture kept), cwd = X:\, TEMP still C:\Users\antmi\...
+-------------------------------------------------------------------
+  test_hub.exe:
+    FAIL scan_lists_only_supported_mlx_models_with_every_cached_revision
+      with_local.models.size() == 4u (got 2 vs 4)
+      from_list.models.size()  == 4u (got 2 vs 4)
+  test_communication.exe:
+    9 FAILs (same case list as the runner)
+    19 passed, 3 skipped / 31     <- byte-identical to the runner signature
+
+4. FIXED CODE, SAME CROSS-DRIVE CONDITIONS (cwd = X:\)
+------------------------------------------------------
+  test_hub.exe:            17/17 passed
+  test_communication.exe:  28 passed, 3 skipped / 31
+  Full suite (ctest --test-dir build-win --output-on-failure --timeout 300
+  --label-exclude LARGE_IO, HF_HUB_CACHE hidden per D-11):
+    100% tests passed, 0 tests failed out of 97 — 73.89 s
+  K scrape unchanged: [test_communication:loopback-backpressure] x3,
+  [test_reflect:p2996] x1 -> KD = 2 (no new skips; nothing quarantined).
+
+5. FIXES (Windows product defects #5 and #6; both _WIN32-guarded, zero
+   POSIX diff; details in 13-cycle2-implementation-log.md D-17)
+-------------------------------------------------------------------
+  (a) socket.cpp: new unix_socket_name(ep) re-attaches a single-letter
+      drive authority to the path on Windows; used by unix_address() AND by
+      the listen_impl() exists-precheck (which previously stat'ed the wrong
+      volume too).
+  (b) cache.cpp: on Windows LSE_MODEL_DIRS splits on ';' and on ':' only
+      where it is not a drive colon (letter at token position 0, ':' at
+      position 1). POSIX keeps the std::getline(':') path verbatim.
+  (c) tests/test_hub.cpp: scan test extended — TWO local checkpoints and a
+      second assertion through the explicit-list form ("dir1;dir2" on
+      Windows, "dir1:dir2" on POSIX). Under old code this fails on BOTH
+      platforms' list forms locally (got 2 vs 4 / would-be 3 vs 4), so the
+      separator logic is now regression-covered everywhere.

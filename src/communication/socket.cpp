@@ -108,9 +108,28 @@ Result<Address> inet_address(std::string_view authority) {
                    "handing an endpoint to listen() or connect()");
 }
 
-Result<Address> unix_address(const Endpoint& ep) {
+// The filesystem name of a unix endpoint. "unix://C:/temp/lse.sock" parses
+// with the drive in the authority slot (the authority ends at the first '/'),
+// and binding the bare path "/temp/lse.sock" resolves it against the
+// process's current drive: the right volume when the checkout and %TEMP%
+// share a letter, the wrong one when they do not (CI: code on D:, %TEMP% on
+// C:). On Windows the drive is put back on the path; POSIX has no drive
+// letters and is untouched.
+std::string unix_socket_name(const Endpoint& ep) {
   std::string name(ep.path());
+#ifdef _WIN32
+  const std::string_view auth = ep.authority();
+  if (!name.empty() && auth.size() == 2 && auth[1] == ':' &&
+      ((auth[0] >= 'A' && auth[0] <= 'Z') || (auth[0] >= 'a' && auth[0] <= 'z'))) {
+    name = std::string(auth) + name;
+  }
+#endif
   if (name.empty()) name = std::string(ep.authority());
+  return name;
+}
+
+Result<Address> unix_address(const Endpoint& ep) {
+  const std::string name = unix_socket_name(ep);
   if (name.empty()) {
     return LSE_ERROR(kInvalidArgument,
                      "a unix endpoint names a socket path or an @abstract name");
@@ -438,10 +457,12 @@ class SocketTransport {
     LSE_ASSIGN_OR(const LinkOptions opt, link_options_from(ep));
     LSE_ASSIGN_OR(const Address addr, address_of(ep));
 
-    if (addr.family == AF_UNIX && !ep.path().empty() &&
-        ep.path().front() != '@') {
-      if (platform::exists(ep.path())) {
-        return LSE_ERROR(kAlreadyExists, "'", std::string(ep.path()),
+    if (addr.family == AF_UNIX) {
+      // The same name the bind below will use — on Windows a drive-relative
+      // path here would stat the wrong volume and miss a real collision.
+      const std::string name = unix_socket_name(ep);
+      if (!name.empty() && name.front() != '@' && platform::exists(name)) {
+        return LSE_ERROR(kAlreadyExists, "'", name,
                          "' already exists; this transport never unlinks a "
                          "path it did not create");
       }

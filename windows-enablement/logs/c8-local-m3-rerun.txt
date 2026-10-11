@@ -1,0 +1,35 @@
+C8 local M3 re-run (post-D-17 product fixes) — 2026-10-11
+=============================================================
+C8 changes PRODUCT lines (src/communication/socket.cpp, src/hub/cache.cpp)
+and one test (tests/test_hub.cpp), so the M3 protocol evidence taken at
+ff28a1d does not carry over by argument — it was re-executed at the C8 tree
+on the same box (single volume C:; the cross-drive proof is separately in
+d17-crossdrive-repro.txt under `subst X:`).
+
+  ctest --test-dir build-win -N
+    Total Tests: 98                                    (W = 98 == ci-expected-w.txt)
+
+  HF_HUB_CACHE='C:/Users/antmi/hf-empty-c8/hub' (empty; D-11 hide-cache)
+  ctest --test-dir build-win --output-on-failure --timeout 300 --label-exclude LARGE_IO
+    100% tests passed, 0 tests failed out of 97        (NRAN = 97)
+    Total Test time (real) = 73.89 sec                 (M3 baseline: 76.25 s)
+
+  ctest --test-dir build-win -L LARGE_IO --output-on-failure
+    1/1 passed, LARGE_IO = 0.10 sec*proc               (test_large_file_io)
+
+  ctest --test-dir build-win -R "test_numerics_fingerprint|test_fp_model"
+    100% tests passed, 0 tests failed out of 2         (fingerprint pair)
+
+  K scrape (build-win/Testing/Temporary/LastTest.log, "windows: capability"):
+    3 [test_communication:loopback-backpressure]
+    1 [test_reflect:p2996]
+    -> KD = 2 distinct keys (K-ledger unchanged, ceiling 5)
+
+  X = 0 (unchanged; no guards added or removed)
+
+Cross-drive spot runs (cwd = X:\ via subst, old-code repro then fixed code):
+  see d17-crossdrive-repro.txt sections 3-4.
+
+Conclusion: every local M3 gate holds at the C8 tree; the M3-PARTIAL ->
+M3 conversion now waits only on a CI run green on BOTH jobs at the C8 SHA
+(D-12 same-SHA rule).
