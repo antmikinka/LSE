@@ -26,6 +26,7 @@ commit(s) land first; counting opens at the RC push run).
 | [38138800778](https://github.com/antmikinka/LSE/actions/runs/38138800778) | `5b16e94` (C9) | dispatch (`run_large_io=true`) | failure (both jobs, "Main ctest (strict)") | **no** | Workflow-only false-red **D-19** (`--label-include` selects; diagnosed + recorded in 13-log §4 before the next run started) — non-countable, breaks no chain |
 | [38141203856](https://github.com/antmikinka/LSE/actions/runs/38141203856) | `209d025` (C10) | push | **success** (both jobs; 14 m 28 s wall, windows job 12 m 44 s) | **no** | Rehearsal-class (D3-iii: first run after workflow-only edit C10) — non-counted regardless of outcome; conclusion filled in post-hoc, classification pre-dated |
 | [38142179205](https://github.com/antmikinka/LSE/actions/runs/38142179205) | `209d025` (C10) | dispatch (`run_large_io=true`) | **success** (both jobs; 20 m 06 s wall; windows ran the FULL suite incl. the >2 GiB `test_large_file_io` — hosted-disk guard passed; linux-parity green at WL−1 incl. LARGE_IO) | **no** | Supplementary D-19 acceptance proof — **MET**; doubles as the LARGE_IO-on-hosted proof ahead of the first armed cron run |
+| [38143804384](https://github.com/antmikinka/LSE/actions/runs/38143804384) | `bd31995` (C12) | push | **success** (both jobs) | **no** | Pre-RC evidence at a records-only SHA (RC not declared — A4 ordering: SYNC-2 lands first). Third consecutive green on the board (38141203856 → 38142179205 → 38143804384); recorded within 24 h per DP-A |
 
 ## Counted greens (RC window)
 
