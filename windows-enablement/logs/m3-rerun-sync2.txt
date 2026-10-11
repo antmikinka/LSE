@@ -1,0 +1,35 @@
+SYNC-2 local M3 protocol re-run (post-merge final tree) — 2026-10-11
+=====================================================================
+Mirrors windows-enablement/logs/c8-local-m3-rerun.txt. Tree = bf542cf (C13,
+SYNC-2 merge of origin/master 61f1cf0). The merge changed PRODUCT sources
+(workgroup.cpp, sdpa.cpp, draft_width.{hpp,cpp}, generator.cpp) + 3 test
+files, so M3 evidence carry-over is void by argument (C8 precedent) — the
+full protocol was re-executed at the merged tree on the same box (single
+volume C:). Compiler: clang-cl 21.1.8 (A-4 pin). HF_HUB_CACHE hidden (D-11).
+
+  ctest --test-dir build-win -N
+    Total Tests: 98                                    (W = 98 == ci-expected-w.txt = 98)
+
+  HF_HUB_CACHE='C:/Users/antmi/hf-empty-sync2/hub' (empty; D-11 hide-cache)
+  ctest --test-dir build-win --output-on-failure --timeout 300 --label-exclude LARGE_IO
+    100% tests passed, 0 tests failed out of 97        (NRAN = 97 = W-1)
+    Total Test time (real) = 74.46 sec                 (M3 baseline 76.25 s; C8 73.89 s)
+
+  ctest --test-dir build-win -R '^test_large_file_io$' --output-on-failure
+    1/1 passed, LARGE_IO = 0.06 sec*proc               (test_large_file_io)
+
+  ctest --test-dir build-win -R '^(test_fp_model|test_numerics_fingerprint)$'
+    100% tests passed, 0 tests failed out of 2         (fingerprint pair 2/2)
+
+  K scrape (build-win/Testing/Temporary/LastTest.log, 'windows: capability'):
+    3 [test_communication:loopback-backpressure]
+    1 [test_reflect:p2996]
+    -> KD = 2 distinct keys (K-ledger K=2 unchanged, ceiling 5)
+
+  X = 0 (grep -c 'if(NOT WIN32)' tests/CMakeLists.txt = 0; COMPILE_EXCLUSIONS.md 'X = 0')
+  KNOWN_FAILURES.md windows entries = 0 (I-5)
+
+Conclusion: every local M3 gate holds at the SYNC-2 merged tree (bf542cf).
+W=98 census, NRAN=97 100% in 74.46 sec, LARGE_IO 1/1, fingerprint 2/2,
+K=2 distinct skip keys, X=0. Linux parity (step 7) = CI-provided per A-3.3
+(R4 recorded no-go; not attempted on WSL).

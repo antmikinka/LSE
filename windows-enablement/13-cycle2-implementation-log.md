@@ -691,6 +691,78 @@ their PRE-DATED classifications (conclusions filled in post-hoc; the
 non-counted classification was committed at C11 before either result was
 observed).
 
+**SYNC-2 (thin M4-execution cycle, stage 5) — C13/C14/C15, LOCAL commits
+only (the orchestrator owns the push; a push while a run is in flight cancels
+the evidence run, C6).** Per the 15-analysis A4 ordering (SYNC-2 +
+release-protocol records land BEFORE the RC SHA is declared, or the 3×
+evidence is orphaned), the merge ritual (09 §3.2–3.6) ran against
+`origin/master` = `61f1cf0`: **N = 8** (`git rev-list --count
+HEAD..origin/master`, unchanged from the 15-analysis morning measure; well
+under the 150/week L6 trigger). Pre-sync tag `pre-sync/2026-10-12` at
+`bd31995` (local only); `git merge --no-commit --no-ff origin/master`
+auto-resolved via ort with **0 conflicts** (A-2a `--diff-filter=U` empty; no
+seam file and none of the 4 hotspots touched → no 09 §3.6 abort criterion),
+committed as **C13 `bf542cf`** (parents `bd31995` + `61f1cf0`). The 8
+upstream commits (FlashPrefill V2 last-tile read, width-policy pricing from
+the measured ends / warm-up device-time / MTP-depth interpolation,
+workgroup-slot bounded allocation chunks) touch 5 product sources
+(`workgroup.cpp`, `sdpa.cpp`, `draft_width.{hpp,cpp}`, `generator.cpp`) + **3
+EXISTING test files** (`test_inplace_owner`, `test_runtime`,
+`test_sparse_attention` — all Modified, none Added). `tests/CMakeLists.txt`
+**untouched** → no new registrations → **W stays 98**; `ci-expected-w.txt`
+(98) and `COMPILE_EXPOSURE.txt` (40 names) unchanged — `gen_compile_exposure.sh`
+regeneration is byte-identical (no drift), so no C4 in-merge ledger update was
+required. A-2e: added test lines carry **no new POSIX coupling** (only
+`+#include <utility>`, standard C++), so the **X = 0 invariant is preserved**
+and no `tests/compat*` port was needed; empirical clang-cl compile is proven by
+the R3 tests-ON full build (0 errors). A-2b = **0** manual resolution hunks,
+A-2c = **no** deletes/renames, A-2d grep battery **all green** (pins intact —
+`ffp-contract=off` at `LSECompilerFlags.cmake:75`, `_CRT_*` at `:87-88`,
+raw-dylib `windows.[0-9]` filter at `LSERust.cmake:82` + `ws2_32 bcrypt
+userenv` fallback at `:99`, HRX force-OFF WIN32 guard at
+`LSEOptions.cmake:16-21`; configure summary still prints `HRX backend: OFF` +
+`host std: C++26`). The **D-13 +2 parity offset is intact** (the UNIX-only
+`compiler_identity_default/override` registrations remain inside `if(UNIX)`,
+`tests/CMakeLists.txt:502-525`, untouched → linux Wₗ = WE + 2 = 100).
+**Second consecutive 0-conflict sync** (SYNC-1: 0, SYNC-2: 0) — no datapoint
+toward the PR1 >2-conflicting-files trigger.
+
+The **G-C2-0 regression suite was re-run at the merged tree** (R1/R2/R3
+**PASS**; R4 = recorded no-go per A-3.3, parity from CI, WSL not attempted):
+R1 tests-OFF configure+build green (HRX force-OFF line, `[24/24]` incremental,
+0 `error:`/`FAILED:`, `lse.exe` + `lse-server.exe` link); R2 FP canary A/B/B′
+all green (`build-win-notests` 169 edges / **167 pinned / 0 viol** — identical
+to SYNC-1; `build-win` tests tree 576 / **476 pinned / 0 viol**; `lse_core`
+**11/11**); R3 tests-ON full build + full ctest green (W census **98 ==
+`ci-expected-w.txt`**; main ctest **97/97 100%** in 77.42 s with
+`--label-exclude LARGE_IO` + `HF_HUB_CACHE` hidden per D-11; standalone
+`test_large_file_io` **1/1**). **No merge-induced product breakage → no new
+D-defect** (D-20 not opened). Evidence:
+`windows-enablement/logs/sync2-r{1,2,3}-*.txt`. Because the merge changed
+PRODUCT lines, M3 evidence carry-over is void by argument (C8 precedent) → the
+**full local M3 protocol was re-run at the merged tree**
+(`windows-enablement/logs/m3-rerun-sync2.txt`): W = 98 census, NRAN = 97 100%
+in 74.46 s, LARGE_IO 1/1, fingerprint pair **2/2** (`test_fp_model` +
+`test_numerics_fingerprint`), K scrape = exactly **2 distinct skip keys**
+(3× `[test_communication:loopback-backpressure]` + 1× `[test_reflect:p2996]`),
+X = 0, `KNOWN_FAILURES.md` Windows entries = 0. The **DP-C release-protocol
+record** (`logs/m4-release-protocol.md`) captures the pinned-toolchain
+identities (clang-cl/lld-link **21.1.8** — NOT the PATH Compute-Mirrors
+21.0.0git shadow, which the build-tree cache bypasses by absolute path; rustc/
+cargo 1.93.1, cmake 3.31.9, ninja 1.13.0, WinSDK 10.0.26100.0), the HONEST
+`--version` finding (neither `lse.exe` nor `lse-server.exe` implements
+`--version`/`-v` in v0.6.1 — both print "unknown option", exit 0 — so version
+evidence = project **0.6.1** + `git describe` + source-tree SHA, never
+invented), and the sc4-script.md generation transcript at the final tree (CLI
+§2 + server §3, both PASS; fallback model `mlx-community/Qwen3.5-0.8B-4bit`
++ port 8931 per the G-C2-2 deviation precedent). *Concurrency note:* the
+orchestrator's records-only commit `6f28c35` (`logs/m4-ci-evidence.md`, bd31995
+push run 38143804384 GREEN) landed on top of C13 mid-stage; it touches no
+product/build file, so the release-protocol binaries (built at `bf542cf`) are
+product-identical at HEAD. The RC SHA is NOT declared here (prohibition; A4 —
+the orchestrator declares it and opens the DP-A 3× counted-green window after
+these records land).
+
 ## 9. Remaining work toward M4
 
 1. **G-C2-5**: push; observe first `windows` workflow run green on BOTH jobs
@@ -698,12 +770,30 @@ observed).
    with `run_large_io=true` as the LARGE_IO-on-hosted proof (only if the
    runner disk guard passes — otherwise the schedule run is the proof);
    cron verification line captured.
+   - **[CLOSED 2026-10-11, thin M4 cycle — supersession note per 15-analysis
+     F4; historical entry NOT rewritten.]** G-C2-5 is **PASS** and M3 is
+     **ACHIEVED** (run 5 `38137423880` green on BOTH jobs at `5b16e94`,
+     same-SHA rule; STATUS.md gate table). The LARGE_IO-on-hosted proof is
+     **MET** via dispatch `38142179205` (full suite incl. `test_large_file_io`
+     on the hosted disk). The remaining M4 work is NOT this item but the
+     **3× counted greens at one declared RC SHA** (DP-A) — see 15-iteration3
+     **A1** (evidence accumulation) and the **A4** ordering (SYNC-2 →
+     release-protocol → RC declaration → counted-green window), executed by
+     this stage's C13–C15 + the orchestrator's RC push.
 2. **test_model duration on CI vs local**: hosted runners have no model
    cache → heavy cases self-skip (fast). Local machines WITH the cache face a
    >2 h CPU-interpreter run in the heavy real-model cases; the local M3
    protocol therefore hides the cache (`HF_HUB_CACHE` → an empty `.../hub`
    dir, D-11 — no TIMEOUT property was added). If CI shows anything else,
    triage before M4.
+   - **[CLOSED 2026-10-11, thin M4 cycle — supersession note per 15-analysis
+     F4; historical entry NOT rewritten.]** Resolved exactly as D-11
+     predicted: across all five CI runs `test_model` was fast on the cache-less
+     hosted runners (heavy real-model cases self-skip; no TIMEOUT needed), and
+     the local protocol's `HF_HUB_CACHE`-hide reproduces that (re-verified at
+     SYNC-2: main ctest 97/97 in 74–77 s, `m3-rerun-sync2.txt`). There is no
+     "anything else" to triage. Superseded by the 15-iteration3 **A1–A4** M4
+     runbook (this item is discharged, not pending).
 3. **M4 release protocol** (02-program-plan): 3× release-candidate runs on
    Windows artifacts (`lse.exe`, `lse-server.exe`), version pinning, and the
    same-SHA rule (11 §6: both jobs green on the identical commit counts).
