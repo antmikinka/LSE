@@ -398,6 +398,22 @@ coverage. KEEP stands.
   the separator is regression-covered everywhere, not just on CI. Evidence:
   `windows-enablement/logs/d17-crossdrive-repro.txt`. No skips added; K
   stays 2; W/X unchanged (98/0).
+- **D-18 — fourth CI run (38135965357 at `4893e8e`): linux-parity GREEN;
+  windows FALSE RED at the fingerprint-evidence step — zero product or test
+  failures.** The D-17 product fixes (#5–#6) are PROVEN on the runner: the
+  full main ctest passed (the run reached the post-ctest evidence step) and
+  both T3 tests passed 2/2 in-step (`test_fp_model`, `test_numerics_
+  fingerprint`; runner log shows "100% tests passed out of 2"). The step
+  died on its own assertion: the grep expects the legacy ctest summary
+  spelling `"100% tests passed, 0 tests failed out of 2"`, but the runner's
+  newer ctest omits `", 0 tests failed"` when nothing failed — grep exits 1
+  under `set -euo pipefail`. Local ctest (3.31.9) prints the legacy
+  spelling, which is why every local rehearsal of this assertion passed
+  (lesson-L2 gap: rehearsed against one ctest version only). Fix
+  (workflow-only, zero product diff, C9): format-tolerant regex
+  `100% tests passed(, 0 tests failed)? out of 2` at BOTH fingerprint
+  assertions (windows + linux-parity jobs). Acceptance moves to run 5 green
+  on both jobs at the C9 SHA; the same-SHA rule (11 §6) applies.
 
 ## 5. G-C2-3 (tests-ON 'all' builds; X = 0) — results
 

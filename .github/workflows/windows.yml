@@ -207,7 +207,7 @@ jobs:
           mkdir -p logs
           ctest --test-dir build -R "^(test_fp_model|test_numerics_fingerprint)$" \
                 --output-on-failure 2>&1 | tee logs/m3-fingerprint-windows.txt
-          grep -q "100% tests passed, 0 tests failed out of 2" logs/m3-fingerprint-windows.txt
+          grep -qE "100% tests passed(, 0 tests failed)? out of 2" logs/m3-fingerprint-windows.txt
 
       - name: Flake classification (schedule only, NON-gating — §6 flake policy)
         if: github.event_name == 'schedule'
@@ -316,7 +316,7 @@ jobs:
           mkdir -p logs
           ctest --test-dir build -R "^(test_fp_model|test_numerics_fingerprint)$" \
                 --output-on-failure 2>&1 | tee logs/m3-fingerprint-linux.txt
-          grep -q "100% tests passed, 0 tests failed out of 2" logs/m3-fingerprint-linux.txt
+          grep -qE "100% tests passed(, 0 tests failed)? out of 2" logs/m3-fingerprint-linux.txt
 
       - name: ID-11 registration smoke baseline (A-3.4/m-6)
         run: |
