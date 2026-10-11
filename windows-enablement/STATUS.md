@@ -122,6 +122,17 @@ flight) — a counting rule written after results is rule-shopping
 - **DP-D (adopted in principle, executed at filing):** PR-A re-cut to the
   220-line cross-platform hygiene core; LSERust windows-msvc branch + WIN32
   HRX guard move to PR-B (15-iteration3 E1).
+- **RC DECLARED 2026-10-11 (C16):** RC SHA = the C16 declaration commit
+  (records-only atop reviewed `77aa128`; A4 ordering satisfied — SYNC-2 C13
+  `bf542cf` + regression evidence C14 `b32995b` + release protocol C15
+  `77aa128` landed first; thin-cycle reviewer stage **PASS-WITH-NOTES**,
+  all 5 groups green, RC confirmed). Window: #1 = RC push run; #2 = Mon
+  2026-10-12 06:17 UTC schedule run at the RC SHA (armed per DP-B; C1
+  fallback = manual dispatch counts identically); #3 = dispatch into an idle
+  queue. Window discipline (C6): no pushes/fork ref moves/dispatches-while-
+  in-flight until the 3rd counted green; in-window ledger rows accumulate as
+  LOCAL records-only commits, pushed with the M4 declaration. Ledger:
+  `logs/m4-ci-evidence.md`.
 
 ## Cycle-2 completion note (C2-WP12a/b + G-C2-3 + M3, 2026-10-11)
 

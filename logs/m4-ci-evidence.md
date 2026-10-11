@@ -15,8 +15,27 @@ edit is rehearsal-class (non-counted regardless of outcome).
 commits, and no push/dispatch while a run is in flight (the concurrency
 group `win-${{ github.ref }}` cancels the evidence run).
 
-**RC SHA: NOT YET DECLARED** (A4 ordering: SYNC-2 merge + release-protocol
-commit(s) land first; counting opens at the RC push run).
+**RC SHA: DECLARED 2026-10-11 = the C16 declaration commit itself**
+(records-only atop the reviewed `77aa128`; A4 ordering satisfied — SYNC-2
+merge C13 `bf542cf`, regression evidence C14 `b32995b`, release-protocol
+record C15 `77aa128` all landed first; reviewer stage PASS-WITH-NOTES,
+confirming `77aa128` as the reviewed tree). Resolve the exact SHA with
+`git rev-parse` at the C16 commit; the fork ref after the RC push is
+authoritative. Counting opens at the RC push run.
+
+**Window discipline (C6, spelled out at declaration):** from the RC push
+until the 3rd counted green — no pushes, no fork-side ref moves, no
+dispatches while any run is in flight (dispatch only into an idle queue);
+the RC tree on the fork stays byte-identical. Ledger rows for runs
+concluding inside the window accumulate as LOCAL records-only commits
+(they cannot cancel runs or move the fork ref) and are pushed with the M4
+declaration commit.
+
+**Window plan:** #1 = RC push run (Sun 2026-10-11); #2 = the Monday
+2026-10-12 06:17 UTC `schedule` run at the RC SHA (armed via DP-B; trap C1:
+if the tick is skipped because a run is in flight — or GitHub drops it — a
+manual dispatch substitutes and counts identically); #3 = a dispatch into
+an idle queue after #2 concludes.
 
 ## Pre-classified runs (on the board at adoption time)
 
@@ -32,9 +51,9 @@ commit(s) land first; counting opens at the RC push run).
 
 | # | Run URL | RC SHA | Trigger | Both jobs | Duration | Recorded (≤24 h) |
 |---|---|---|---|---|---|---|
-| 1 | — | — | — | — | — | — |
-| 2 | — | — | — | — | — | — |
-| 3 | — | — | — | — | — | — |
+| 1 | (pending — triggered by the RC push) | C16 | push | — | — | — |
+| 2 | (pending — Monday 06:17 UTC cron, or substitute dispatch per C1) | C16 | schedule | — | — | — |
+| 3 | (pending — dispatch into idle queue) | C16 | dispatch | — | — | — |
 
 *Maintenance: rows are added within 24 h of the run; the table above the
 line is historical and only gains conclusion values for pending rows.*

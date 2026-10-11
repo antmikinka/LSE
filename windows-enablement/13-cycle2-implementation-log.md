@@ -763,6 +763,35 @@ product-identical at HEAD. The RC SHA is NOT declared here (prohibition; A4 —
 the orchestrator declares it and opens the DP-A 3× counted-green window after
 these records land).
 
+**RC DECLARATION (thin M4 cycle, C16 — this record's commit).** The
+stage-5 bundle (SYNC-2 merge C13 `bf542cf`, regression evidence + SYNC-2
+note C14 `b32995b`, M3 re-run + DP-C release protocol C15 `77aa128`, with
+the orchestrator's records-only ledger commit `6f28c35` interleaved between
+C13 and C14) passed the thin-cycle reviewer stage: **PASS-WITH-NOTES**, all
+5 verification groups green — (1) L5 evidence completeness (every cited
+file tracked; the numbers in the records match the transcripts: R2 canary
+167/0 + 476/0 + 11/11, R3 census 98==98 + 97/97, M3 re-run NRAN 97/74.46 s
++ LARGE_IO 1/1 + fingerprint 2/2 + exactly 2 skip keys); (2) merge integrity
+(parents `bd31995` + `61f1cf0`) + invariants (X=0 guard count, K=2 rows,
+W=98, KNOWN_FAILURES clean, A-2d pins); (3) rule compliance (no push — fork
+at `bd31995`; frozen 01–12 untouched; workflow untouched since C10; no junk
+staged; RC not prematurely declared); (4) DP-C record quality (pinned
+21.1.8 identities with the PATH-shadow disclaimer, honest `--version`
+finding, sc4 transcripts + fallback deviation); (5) record consistency
+(STATUS/13-log/ledgers agree with git reality; |RE| = 41 arithmetic
+checks). Notes were cosmetic (untracked `chroma_data/` in the worktree —
+never staged; release-protocol at root `logs/` — consistent). **RC SHA =
+this declaration commit** (records-only atop reviewed `77aa128`; the A4
+ordering is satisfied — sync + regression + release-protocol records all
+landed before declaration). The DP-A window opens at push: counted #1 = RC
+push run, #2 = the Monday 2026-10-12 06:17 UTC `schedule` run at the RC SHA
+(armed by the DP-B default-branch flip; trap-C1 fallback: a manual dispatch
+substitutes and counts identically), #3 = a dispatch into an idle queue.
+Window discipline (C6, spelled out in `logs/m4-ci-evidence.md`): no pushes,
+no fork ref moves, no dispatches while a run is in flight; in-window ledger
+rows accumulate as LOCAL records-only commits and ride the M4 declaration
+push.
+
 ## 9. Remaining work toward M4
 
 1. **G-C2-5**: push; observe first `windows` workflow run green on BOTH jobs
