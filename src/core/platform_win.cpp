@@ -377,9 +377,31 @@ std::int64_t fd_size(int fd) {
 }
 
 std::int64_t path_size(std::string_view path) {
-  struct _stat64 st {};
-  if (::_wstat64(to_wide(path).c_str(), &st) != 0) return -1;
-  return static_cast<std::int64_t>(st.st_size);
+  // NOT _wstat64/GetFileAttributesExW: for symlinks — the HuggingFace cache
+  // layout links snapshots/<rev>/ files at blobs/<sha> — the attribute-only
+  // APIs can report size 0 for the link depending on process context (observed
+  // inside lse.exe on WSL/Python-created relative symlinks), while CreateFileW
+  // always resolves the target. POSIX stat() follows symlinks; this mirrors
+  // that contract exactly. BACKUP_SEMANTICS lets the query work on directories
+  // too (size then reports 0, matching the file-oriented callers' needs).
+  HANDLE h = ::CreateFileW(to_wide(path).c_str(), 0,
+                           FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                           nullptr, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS,
+                           nullptr);
+  if (h == INVALID_HANDLE_VALUE) {
+    errno = (ERROR_FILE_NOT_FOUND == ::GetLastError() || ERROR_PATH_NOT_FOUND == ::GetLastError())
+                ? ENOENT
+                : EACCES;
+    return -1;
+  }
+  LARGE_INTEGER li {};
+  const BOOL ok = ::GetFileSizeEx(h, &li);
+  ::CloseHandle(h);
+  if (!ok) {
+    errno = EIO;
+    return -1;
+  }
+  return static_cast<std::int64_t>(li.QuadPart);
 }
 
 bool truncate_fd(int fd, std::int64_t size) {

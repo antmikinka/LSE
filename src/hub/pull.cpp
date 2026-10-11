@@ -506,6 +506,13 @@ Status download_blob(const RepoInfo& info, const RepoSpec& spec, const File& f, 
                      f.etag(), "; the corrupt download was deleted, run the pull again");
   }
   if (!platform::sync_fd(fd)) return LSE_ERROR(kIoError, "fsync ", part.string(), ": ", std::strerror(errno));
+#ifdef _WIN32
+  // Windows refuses to rename a file that has an open handle (POSIX permits
+  // it): the download is complete and synced, so release our descriptor
+  // before the move. The Closer then skips its double close.
+  platform::close_fd(fd);
+  closer.fd = -1;
+#endif
   fs::rename(part, blob, ec);
   if (ec) return LSE_ERROR(kIoError, "cannot move ", part.string(), " into place: ", ec.message());
   report(true);

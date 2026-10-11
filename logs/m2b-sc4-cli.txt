@@ -1,0 +1,7 @@
+lse: kernel cache C:\Users\antmi/.lse/cache
+KV cache: bf16; attention accumulation fp32 (target/MTP paged cache)
+model: qwen3.5 (24 layers, hidden 1024)
+lse: refused 153 tensor(s) under 'vision_tower.' (191.9 MiB): this build decodes text only; the Qwen3.5 vision tower is not implemented, so image and video tokens cannot be encoded
+lse: this checkpoint declares an MTP module but none was found beside it; pass --mtp to name one
+ Paris, and the capital of the United States is Washington, D.C.
+

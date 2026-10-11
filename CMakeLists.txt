@@ -496,6 +496,17 @@ if(TARGET lse_tokenizer AND NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
   endif()
   target_link_libraries(lse-server PRIVATE lse_api)
   lse_apply_common_flags(lse-server)
+
+  # With no HRX backend in the link, nothing else pulls in lse_kernels (see the
+  # identical trap fixed for test_runtime in tests/CMakeLists.txt), so the
+  # self-registered dispatch primitives — matmul, rope, sdpa, gdn.* and friends
+  # — never reach the executables and every generation fails with
+  # "no primitive named ...". HRX builds get the archive via lse_backend_hrx.
+  # Guarded to Windows: no effect on Linux/macOS link lines.
+  if(WIN32 AND NOT TARGET lse_backend_hrx)
+    target_link_libraries(lse PRIVATE lse_kernels)
+    target_link_libraries(lse-server PRIVATE lse_kernels)
+  endif()
 endif()
 
 # ---------------------------------------------------------------------------

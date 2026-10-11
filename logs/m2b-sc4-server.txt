@@ -1,0 +1,32 @@
+# SC4 server transcript — 2026-10-10, branch feature/windows-enablement
+# Command (per windows-enablement/sc4-script.md §3; PORT DEVIATION: 8080 is
+# held by an unrelated Windows system service (AgentService.exe) on this
+# machine — lse-server's bind failed there, so the run used 8931. Script
+# intent (loopback HTTP transcript) unchanged):
+#   ./build-win-notests/lse-server.exe --model mlx-community/Qwen3.5-0.8B-4bit \
+#     --offline --host 127.0.0.1 --port 8931 &
+#   curl.exe -s http://127.0.0.1:8931/v1/models
+#   curl.exe -s http://127.0.0.1:8931/v1/chat/completions -H "Content-Type: application/json" -d '{"model":"mlx-community/Qwen3.5-0.8B-4bit","messages":[{"role":"user","content":"Reply with the single word: Paris"}],"max_tokens":16,"temperature":0}'
+#   kill $SERVER_PID
+# Model note: primary fixture Qwen/Qwen3-0.6B was rejected by v0.6.1
+# ("unsupported architecture; tried: qwen3.5-moe, qwen3.5, lemonseed") — the
+# sc4-script.md fallback path was invoked: lse.exe pull
+# mlx-community/Qwen3.5-0.8B-4bit (12 files, 621.8 MiB, PULL_EXIT=0).
+
+=== GET /v1/models ===
+{"data":[{"context_length":4096,"created":1791690303,"draft":null,"generation_defaults":{"max_length":null,"max_new_tokens":null,"min_p":0.0,"presence_penalty":0.0,"repetition_penalty":1.0,"sources":{"max_length":"lse_default","max_new_tokens":"lse_default","min_p":"lse_default","presence_penalty":"lse_default","repetition_penalty":"lse_default","temperature":"lse_default","top_k":"lse_default","top_p":"lse_default"},"temperature":1.0,"top_k":0,"top_p":1.0},"id":"mlx-community/Qwen3.5-0.8B-4bit","kv_cache_dtype":"bf16","kv_len":4096,"max_position_embeddings":262144,"max_tokens":null,"object":"model","owned_by":"lse","thinking":{"default_level":"none","effort":null,"levels":[{"default":true,"enable_thinking":false,"id":"none","instruction":null,"opens_reasoning":false,"reasoning_effort":null},{"default":false,"enable_thinking":true,"id":"on","instruction":null,"opens_reasoning":true,"reasoning_effort":null}],"source":"C:\\Users\\antmi/.cache/huggingface/hub\\models--mlx-community--Qwen3.5-0.8B-4bit\\snapshots\\da28692b5f139cb0ec58a356b437486b7dac7462\\chat_template.jinja","supported":true,"toggle":"enable_thinking"}}],"object":"list"}
+
+=== POST /v1/chat/completions ===
+{"choices":[{"finish_reason":"stop","index":0,"logprobs":null,"message":{"content":"Paris","role":"assistant"},"stop_reason":"stop_token"}],"created":1791690303,"id":"chatcmpl-17916903030","lse_context":{"context_length":4096,"tokens_remaining":4076,"tokens_used":20},"model":"mlx-community/Qwen3.5-0.8B-4bit","object":"chat.completion","timings":{"decode_ms":6287.7634,"decode_n":0,"decode_per_second":0.0,"device_groups":0,"dflash2_depth":0,"generated_n":1,"host_fallbacks":0,"host_groups":944,"jit_compile_ms_total":0.0,"jit_compiles_total":0,"jit_disk_hits_total":0,"jit_memory_hits_total":0,"mtp_depth":0,"predicted_ms":6287.7634,"predicted_n":0,"predicted_per_second":0.0,"prompt_cached_n":0,"prompt_ms":137289.1473,"prompt_n":19,"prompt_per_second":0.1383940418719463,"spec_method":"none"},"usage":{"completion_tokens":1,"prompt_tokens":19,"prompt_tokens_details":{"cached_tokens":0},"total_tokens":20}}
+
+=== server log tail ===
+lse-server: mlx-community/Qwen3.5-0.8B-4bit on http://127.0.0.1:8931
+lse-server: device memory after request: 0.53 GiB live (peak 0.71 GiB): other 0.00 GiB (peak 0.00 GiB), weights 0.50 GiB (peak 0.50 GiB), kv_cache 0.00 GiB (peak 0.00 GiB), state 0.00 GiB (peak 0.02 GiB), outputs 0.02 GiB (peak 0.19 GiB)
+lse-server: prompt 19 in 137.29s (0.1 tok/s) | decode 0 in 6.29s (0.0 tok/s)
+# note: "no code-generating backend came up; running on 'cpu' through the
+# host interpreter, which is far slower" — expected on Windows (no HRX/JIT);
+# host_groups=944, host_fallbacks=0 confirms the interpreter dispatch path.
+
+PASS criteria (sc4-script.md §3): /v1/models returned JSON listing the model;
+/v1/chat/completions returned HTTP 200 JSON with non-empty
+choices[0].message.content ("Paris", finish_reason=stop).
