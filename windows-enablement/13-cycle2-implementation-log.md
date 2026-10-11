@@ -675,6 +675,22 @@ presence — an F2 overclaim, now reworded in STATUS.md. C11 stays LOCAL
 (unpushed) until the watcher chain completes: pushing while it is in flight
 would cancel the evidence runs (C6).
 
+**Watcher chain outcome (both GREEN, recorded at C12):** the C10 push run
+**38141203856** at `209d025` passed on BOTH jobs (14 m 28 s wall; windows
+job 12 m 44 s) — the D-19 refactor preserves the default path exactly as
+designed (rehearsal-class under DP-A, non-counted). The chained
+`run_large_io=true` dispatch **38142179205** at `209d025` passed on BOTH
+jobs (20 m 06 s wall): the windows job ran the FULL suite INCLUDING the
+>2 GiB `test_large_file_io` on the hosted disk (the runner disk guard
+passes; the +7 min vs the push run is the fixture), and linux-parity passed
+at the LARGE_IO-inclusive count with `test_reflect` still excluded.
+**D-19 acceptance is MET**, and the LARGE_IO-on-hosted proof is established
+ahead of Monday's first armed cron run (which sets `LARGE_IO_ON=true` by
+schedule). Both results were entered into `logs/m4-ci-evidence.md` against
+their PRE-DATED classifications (conclusions filled in post-hoc; the
+non-counted classification was committed at C11 before either result was
+observed).
+
 ## 9. Remaining work toward M4
 
 1. **G-C2-5**: push; observe first `windows` workflow run green on BOTH jobs
