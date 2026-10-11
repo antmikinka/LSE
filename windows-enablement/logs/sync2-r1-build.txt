@@ -1,0 +1,120 @@
+# SYNC-2 G-C2-0 R1 — tests-OFF configure + incremental build (build-win-notests)
+# Date: 2026-10-11 (tag pre-sync/2026-10-12). Merged tree HEAD = bf542cf (C13).
+# Compiler: C:/Users/antmi/LLVM-21.1.8/bin/clang-cl.exe (official LLVM 21.1.8 pin, A-4)
+# PASS criteria: configure HRX force-OFF line present + summary HRX OFF; build 0 error:/FAILED:; lse.exe + lse-server.exe link.
+
+===================== CONFIGURE =====================
+-- HRX backend: not supported on Windows in Phase 1 (forced OFF)
+-- HRX backend: skipped (set -DLSE_HRX_ROOT=<install> to enable)
+-- fastokens_ffi native deps: legacy_stdio_definitions.lib;advapi32.lib;cfgmgr32.lib;kernel32.lib;user32.lib;ws2_32.lib;bcrypt.lib;advapi32.lib;kernel32.lib;ntdll.lib;userenv.lib;ws2_32.lib;dbghelp.lib
+-- 
+-- Lemon Seed Engine 0.6.1
+--   build type      : RelWithDebInfo
+--   host compiler   : Clang 21.1.8
+--   host std        : C++26
+--   device std      : C++20
+--   HRX backend     : OFF
+--   HIP available   : OFF
+--   comgr (JIT)     : OFF
+--   loomc (JIT)     : OFF 
+--   HRX linked      : OFF
+--   HSA runtime     : LSE_ROCM_RUNTIME_DIR-NOTFOUND
+--   GPU targets     : gfx1151;gfx1201;gfx942
+--   tests           : OFF
+-- 
+-- Configuring done (13.2s)
+-- Generating done (0.2s)
+-- Build files have been written to: C:/Users/antmi/LSE/build-win-notests
+
+===================== BUILD (incremental) =====================
+[0/2] Re-checking globbed directories...
+[1/24] Hashing engine sources for the kernel launch index
+[2/24] Building CXX object CMakeFiles\lse_graph.dir\generated\lse_build_identity.cpp.obj
+[3/24] Building CXX object CMakeFiles\lse_runtime.dir\src\runtime\draft_width.cpp.obj
+[4/24] Building CXX object CMakeFiles\lse_communication.dir\src\communication\socket.cpp.obj
+[5/24] Linking CXX static library lse_communication.lib
+[6/24] Building CXX object CMakeFiles\lse_graph.dir\src\graph\workgroup.cpp.obj
+[7/24] Linking CXX static library lse_graph.lib
+[8/24] Building CXX object CMakeFiles\lse_runtime.dir\src\runtime\perplexity.cpp.obj
+C:\Users\antmi\LSE\src\runtime\perplexity.cpp(70,23): warning: implicit conversion increases floating-point precision: 'const float' to 'const double' [-Wdouble-promotion]
+   70 |     const double lp = base_logprobs[i], lq = current_logprobs[i];
+      |                  ~~   ^~~~~~~~~~~~~~~~
+1 warning generated.
+[9/24] Building CXX object CMakeFiles\lse_runtime.dir\src\runtime\batch.cpp.obj
+[10/24] Building CXX object CMakeFiles\lse.dir\src\cli\main.cpp.obj
+[11/24] Building CXX object CMakeFiles\lse-server.dir\src\cli\server_main.cpp.obj
+[12/24] Building CXX object CMakeFiles\lse_runtime.dir\src\runtime\generator.cpp.obj
+C:\Users\antmi\LSE\src\runtime\generator.cpp(660,37): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+  660 |         const double value = norm - r[2];
+      |                                   ~ ^~~~
+C:\Users\antmi\LSE\src\runtime\generator.cpp(666,80): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+  666 |         for (std::size_t q = 0; q < probe_k; ++q) out.probe_logprobs.push_back(r[3 + q] - norm);
+      |                                                                                ^~~~~~~~ ~
+C:\Users\antmi\LSE\src\runtime\generator.cpp(668,57): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  668 |           out.top_logprobs.push_back(static_cast<float>(top[(i * top_k + q) * 2] - norm));
+      |                                                         ^~~~~~~~~~~~~~~~~~~~~~~~ ~
+C:\Users\antmi\LSE\src\runtime\generator.cpp(1040,62): warning: implicit conversion increases floating-point precision: 'const float' to 'double' [-Wdouble-promotion]
+ 1040 |       const double temperature = sampled ? sampler_.params().temperature : 1.0;
+      |                    ~~~~~~~~~~~             ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+4 warnings generated.
+[13/24] Linking CXX static library lse_runtime.lib
+[14/24] Building CXX object CMakeFiles\lse_hub.dir\src\hub\cache.cpp.obj
+[15/24] Linking CXX static library lse_hub.lib
+[16/24] Building CXX object CMakeFiles\lse_kernels.dir\src\kernels\sdpa.cpp.obj
+In file included from C:\Users\antmi\LSE\src\kernels\sdpa.cpp:8:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\sdpa.cpp:8:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\kernels\sdpa.cpp:8:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+3 warnings generated.
+[17/24] Building CXX object CMakeFiles\lse_api.dir\src\api\lse.cpp.obj
+In file included from C:\Users\antmi\LSE\src\api\lse.cpp:14:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:16:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/generic.hpp(24,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+   24 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\api\lse.cpp:14:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:17:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1151.hpp(231,1): warning: missing field 'quant_matrix_shapes' initializer [-Wmissing-designated-field-initializers]
+  231 | };
+      | ^
+In file included from C:\Users\antmi\LSE\src\api\lse.cpp:14:
+In file included from C:\Users\antmi\LSE\include\lse/dispatch/arch/tuning.hpp:18:
+C:\Users\antmi\LSE\include\lse/dispatch/arch/gfx1201.hpp(188,1): warning: missing field 'q4_panel_shapes' initializer [-Wmissing-designated-field-initializers]
+  188 | };
+      | ^
+C:\Users\antmi\LSE\src\api\lse.cpp(133,48): warning: implicit conversion loses integer precision: 'std::size_t' (aka 'unsigned long long') to 'unsigned int' [-Wshorten-64-to-32]
+  133 |       if (echo >= 0) (void)!::write(echo, buf, static_cast<std::size_t>(n));
+      |                             ~~                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\antmi\LSE\src\api\lse.cpp(1010,52): warning: implicit conversion changes signedness: 'int' to 'std::size_t' (aka 'unsigned long long') [-Wsign-conversion]
+ 1010 |       for (int b = 0; b < 4; ++b) id_bytes[i * 4 + b] = static_cast<char>((tokens[i] >> (8 * b)) & 0xffu);
+      |                                                  ~ ^
+5 warnings generated.
+[18/24] Linking CXX static library lse_kernels.lib
+[19/24] Linking CXX executable lse.exe
+[20/24] Building CXX object CMakeFiles\lse_server.dir\src\server\router.cpp.obj
+[21/24] Linking CXX static library lse_server.lib
+[22/24] Linking CXX static library LSE.lib
+[23/24] Linking CXX executable lse-server.exe
+
+===================== RESULT =====================
+configure exit: 0
+build exit: 0
+error:/FAILED: lines: 0
+ninja edges: [24/24] incremental
+lse.exe: build-win-notests/lse.exe
+present
+lse-server.exe: build-win-notests/lse-server.exe
+present
+HRX force-OFF line: present
+R1: PASS

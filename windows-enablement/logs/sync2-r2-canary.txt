@@ -1,0 +1,19 @@
+# SYNC-2 G-C2-0 R2 — FP-flag canary (layers A/B/B′), merged tree bf542cf
+# PASS: A pin present; B violations=0 & pinned>=100; B′ NL==NP & NL>=1.
+
+===== Layer A — source pin survives =====
+CANARY-A PASS: /clang:-ffp-contract=off present in cmake/LSECompilerFlags.cmake
+75:      /clang:-fno-fast-math /clang:-ffp-contract=off)
+
+===== Layer B — build-win-notests/build.ninja FLAGS edges =====
+FLAGS edges total=169  pinned=167  violations=0
+CANARY-B PASS (build-win-notests)
+  (unpinned FLAGS edges = linker edges for lse/lse-server, lack -fno-fast-math too)
+
+===== Layer B′ — driver-level dry run (lse_core) =====
+lse_core compile commands: total=11  pinned=11
+CANARY-B' PASS (11/11)
+
+===== Layer B — build-win/build.ninja FLAGS edges (tests tree) =====
+FLAGS edges total=576  pinned=476  violations=0
+CANARY-B PASS (build-win tests tree)
