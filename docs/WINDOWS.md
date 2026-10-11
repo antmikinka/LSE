@@ -360,7 +360,12 @@ HRX, remains the authoritative GPU and P2996 gate). Acceptance: run **5
 **Triggers:** `pull_request`; `push` to `feature/windows-enablement`;
 `schedule` — cron `17 6 * * 1`, the weekly **toolchain-drift alarm** (a
 silent C++26/compiler break shows up within a week; verify the line with
-`gh workflow view windows.yml --repo antmikinka/LSE --ref feature/windows-enablement --yaml | grep cron`);
+`gh workflow view windows.yml --repo antmikinka/LSE --ref feature/windows-enablement --yaml | grep cron`).
+GitHub fires `on.schedule` only from the workflow file on the repo's
+**default branch** — the fork's default branch is
+`feature/windows-enablement` (flipped 2026-10-11, 15-iteration3 A2), which
+arms the cron; arming is confirmed by the first observed `schedule`-event
+run;
 `workflow_dispatch` with one input, **`run_large_io`** (boolean, default
 false).
 
@@ -368,10 +373,14 @@ false).
 any push or dispatch to the branch while a run is in flight **cancels the
 evidence run**. Do not push during an acceptance run.
 
-**LARGE_IO policy** (workflow env `LSE_LARGE_IO_FLAG`): push/PR runs
-`--label-exclude LARGE_IO` (hosted disks are small); the weekly schedule
-always `--label-include`s it; a dispatch includes it only with
-`run_large_io=true`. The authoritative local run is §4's separate
+**LARGE_IO policy** (workflow env `LARGE_IO_ON`, renamed at C10 — D-19:
+ctest's `--label-include` *selects* the labeled test(s) instead of adding
+them, so ON is expressed as NO label filter): push/PR runs use
+`--label-exclude LARGE_IO` (`LARGE_IO_ON=false`; hosted disks are small);
+the weekly schedule is always ON (full suite including the LARGE_IO test);
+a dispatch is ON only with `run_large_io=true`. Bash steps derive the ctest
+flag from the boolean (GitHub expressions cannot yield an empty string —
+`''` is falsy). The authoritative local run is §4's separate
 `ctest -R '^test_large_file_io$'`.
 
 **`windows` job** (windows-latest, 60-min budget) mirrors the local gate

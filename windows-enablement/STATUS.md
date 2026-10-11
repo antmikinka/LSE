@@ -47,7 +47,59 @@ artifacts 01–12 are never edited for live state; corrections land here.*
 | G-C2-2 | **PASS** (C2-WP3, commits `8732b3d` + `c73c6bb`; M2b SC4) | 2026-10-10 | `logs/m2b-acceptance.md`, `logs/m2b-sc4-*.txt` |
 | G-C2-3 | **PASS** (tests-ON 'all' green both trees; X = 0; W = 98 == WE; K = 2 ≤ 5; canary A/B/B′ viol = 0; P8 4/4) | 2026-10-11 | `windows-enablement/logs/g-c2-3-{builds,x,canary,census,p8}.txt` |
 | G-C2-4 (M3) | **M3 ACHIEVED** (converted 2026-10-11) — protocol green locally (W=98 NRAN=97, 100% passed 76.25 s; LARGE_IO 1/1; fingerprint 2/2; K = 2, distinct skip keys = 2; X = 0), AND the conversion condition is met: run 5 (**38137423880** at C9 `5b16e94`) is **green on BOTH jobs at ONE SHA** (D-12/A-3.3 same-SHA rule). C8 changed product lines (D-17), so the protocol was fully re-run at the C8 tree: 97/97 73.89 s, LARGE_IO 1/1, fingerprint 2/2, K=2, W=98 — local evidence current at C8 | 2026-10-11 | `logs/m3-ctest-N.txt`, `logs/m3-ctest-windows.txt`, `logs/m3-large-file-io.txt`, `logs/m3-fingerprint-windows.txt`, `logs/m3-k-skips.txt`; `windows-enablement/logs/c8-local-m3-rerun.txt`; run **38137423880** |
-| G-C2-5 | **PASS** — run 5 (**38137423880** at `5b16e94`) green on BOTH jobs; pushed 2026-10-11. Run 1 (**38129070094** at `ff28a1d`) FAILED both jobs on workflow-environment defects (D-15: Git coreutils `link(1)` shadowed MSVC link.exe; rust-cache's global `CARGO_TERM_COLOR=always` leaked ANSI into LSERust's native-libs capture → `ld: cannot find -lc`). Run 2 (**38130378891** at `632508b`): **linux-parity GREEN** (Wₗ=100==WE+2; ctest 100% w/ labeled test_reflect exclusion; T3 fingerprint pair holds; smoke green) — the D-12 parity evidence; **windows FAILED** at the lse.exe link (D-16: configure-time LSERust query hit the same shadow → fallback lib set lacked ntdll.lib). Run 3 (**38132306765** at `8fa9b9e`): linux-parity GREEN; windows Configure/build/census all green (D-15/D-16 fixes proven), main ctest **95/97** — `test_hub` + `test_communication` failed on PRODUCT defects #5–#6 (D-17: drive-relative path degradation; runner cwd D: vs %TEMP% C:; reproduced locally via `subst X:` with byte-identical signatures). C8 fixes both (`socket.cpp` unix drive re-attach; `cache.cpp` drive-aware LSE_MODEL_DIRS split) + test extension; local M3 protocol fully re-run at the C8 tree (97/97 73.89 s, LARGE_IO 1/1, fingerprint 2/2, K=2, W=98). Run 4 (**38135965357** at `4893e8e`): **linux-parity GREEN; windows FALSE RED** — the D-17 product fixes are proven (full main ctest passed on the runner; T3 pair passed 2/2 in-step), but the fingerprint-evidence step's grep expected the legacy ctest summary spelling while the runner's newer ctest omits ", 0 tests failed" (D-18, workflow-only; local ctest 3.31.9 prints the legacy spelling, so local rehearsal could not catch it). C9 = format-tolerant regex at both fingerprint assertions. Run 5 (**38137423880** at C9 `5b16e94`): **GREEN on BOTH jobs → G-C2-5 PASS** (same-SHA rule, 11 §6) → M3 ACHIEVED. Supplementary large-io dispatch (**38138800778**, same SHA) then FALSE-RED both jobs on a workflow-only label-semantics defect (D-19: `--label-include LARGE_IO` SELECTS the 1 labeled test — "ran 1 expected 98"; zero product failures; the gate is NOT reopened). C10 = `LARGE_IO_ON` boolean + bash-side flag derivation at all 4 sites; large-io proof re-dispatched at the C10 SHA. Cron verified (`17 6 * * 1`) | 2026-10-11 | runs 38129070094/38130378891/38132306765/38135965357/**38137423880**/38138800778 (antmikinka/LSE Actions), 13-log D-15/D-16/D-17/D-18/D-19/§8, `logs/d17-crossdrive-repro.txt`, `logs/c8-local-m3-rerun.txt` |
+| G-C2-5 | **PASS** — run 5 (**38137423880** at `5b16e94`) green on BOTH jobs; pushed 2026-10-11. Run 1 (**38129070094** at `ff28a1d`) FAILED both jobs on workflow-environment defects (D-15: Git coreutils `link(1)` shadowed MSVC link.exe; rust-cache's global `CARGO_TERM_COLOR=always` leaked ANSI into LSERust's native-libs capture → `ld: cannot find -lc`). Run 2 (**38130378891** at `632508b`): **linux-parity GREEN** (Wₗ=100==WE+2; ctest 100% w/ labeled test_reflect exclusion; T3 fingerprint pair holds; smoke green) — the D-12 parity evidence; **windows FAILED** at the lse.exe link (D-16: configure-time LSERust query hit the same shadow → fallback lib set lacked ntdll.lib). Run 3 (**38132306765** at `8fa9b9e`): linux-parity GREEN; windows Configure/build/census all green (D-15/D-16 fixes proven), main ctest **95/97** — `test_hub` + `test_communication` failed on PRODUCT defects #5–#6 (D-17: drive-relative path degradation; runner cwd D: vs %TEMP% C:; reproduced locally via `subst X:` with byte-identical signatures). C8 fixes both (`socket.cpp` unix drive re-attach; `cache.cpp` drive-aware LSE_MODEL_DIRS split) + test extension; local M3 protocol fully re-run at the C8 tree (97/97 73.89 s, LARGE_IO 1/1, fingerprint 2/2, K=2, W=98). Run 4 (**38135965357** at `4893e8e`): **linux-parity GREEN; windows FALSE RED** — the D-17 product fixes are proven (full main ctest passed on the runner; T3 pair passed 2/2 in-step), but the fingerprint-evidence step's grep expected the legacy ctest summary spelling while the runner's newer ctest omits ", 0 tests failed" (D-18, workflow-only; local ctest 3.31.9 prints the legacy spelling, so local rehearsal could not catch it). C9 = format-tolerant regex at both fingerprint assertions. Run 5 (**38137423880** at C9 `5b16e94`): **GREEN on BOTH jobs → G-C2-5 PASS** (same-SHA rule, 11 §6) → M3 ACHIEVED. Supplementary large-io dispatch (**38138800778**, same SHA) then FALSE-RED both jobs on a workflow-only label-semantics defect (D-19: `--label-include LARGE_IO` SELECTS the 1 labeled test — "ran 1 expected 98"; zero product failures; the gate is NOT reopened). C10 = `LARGE_IO_ON` boolean + bash-side flag derivation at all 4 sites; large-io proof re-dispatched at the C10 SHA. Cron line present (`17 6 * * 1`); **arming corrected 2026-10-11** — fork default branch flipped to the feature branch (15-iteration3 A2/F2: GitHub fires `on.schedule` only from the DEFAULT branch, so the cron was disarmed while the fork defaulted to `master`; earlier "cron verified" checks proved YAML text only). Arming confirmed by the first observed `schedule`-event run (due Mon 2026-10-12 06:17 UTC) | 2026-10-11 | runs 38129070094/38130378891/38132306765/38135965357/**38137423880**/38138800778 (antmikinka/LSE Actions), 13-log D-15/D-16/D-17/D-18/D-19/§8, `logs/d17-crossdrive-repro.txt`, `logs/c8-local-m3-rerun.txt` |
+
+## M4 evidence protocol (adopted 2026-10-11 — DP-A/DP-B/DP-C of 15-iteration3)
+
+*Recorded BEFORE the conclusion of run 38141203856 was observed (the
+orchestrator's watcher reports only at chain end; this section and
+`logs/m4-ci-evidence.md` were committed at C11 while that run was in
+flight) — a counting rule written after results is rule-shopping
+(15-iteration3 B1).*
+
+- **DP-A — counting rule (B2, adopted).** A **counted green** = one
+  `windows.yml` run, any trigger (push / schedule / dispatch), in which BOTH
+  jobs pass strictly (cardinality asserts included) at the run's SHA,
+  duration < 45 min, recorded in `logs/m4-ci-evidence.md` (URL + SHA +
+  trigger + duration) within 24 h. **M4 requires 3 counted greens on 3
+  CONSECUTIVE runs at ONE declared RC SHA.** Chain-break exception: a failed
+  run classified as *workflow-only false-red* (zero product/test failures;
+  defect D-numbered; diagnosis recorded BEFORE the next run starts — never
+  retroactively) is NON-COUNTABLE: it neither adds a green nor breaks the
+  chain. First run after any workflow-only edit is **rehearsal-class**
+  (D3-iii) — non-counted regardless of outcome.
+- **Pre-classification of the runs already on the board (B3):** run 5
+  (38137423880 @ `5b16e94`) stays banked as the G-C2-5/M3 acceptance and is
+  NOT counted toward the 3× (different SHA); the D-19 dispatch (38138800778)
+  is a pre-recorded workflow-only false-red at the pre-C10 workflow —
+  non-countable; the C10 push run (38141203856 @ `209d025`) is
+  rehearsal-class (first run after workflow-only edit C10); the chained
+  large-io dispatch at `209d025` is the supplementary D-19 acceptance proof.
+  **Counting starts at the post-SYNC-2 RC push run** (A4 ordering: SYNC-2 +
+  release-protocol commits land BEFORE the RC SHA is declared, or the 3×
+  evidence is orphaned).
+- **DP-B — schedule armed (executed 2026-10-11).** Fork default branch set
+  to `feature/windows-enablement` (`gh repo edit`; zero repo diff,
+  reversible) — GitHub fires `on.schedule` only from the default branch, so
+  the Monday 06:17 UTC cron (drift alarm + LARGE_IO-on-hosted proof) was
+  disarmed before this (A2). Confirmed only by an observed `schedule`-event
+  run. Trap C1: GitHub skips a scheduled tick while a run is in flight on
+  the ref — recover with a manual dispatch (counts identically under DP-A).
+- **DP-C — release protocol (minimal definition ratified).** No fork-side
+  versioning scheme is invented (versioning is upstream's call at PR time).
+  RC SHA = the declared M4 candidate. RC record = `--version` transcripts of
+  `lse.exe` + `lse-server.exe` built at the RC SHA, the sc4-script.md
+  generation transcript, and toolchain identities (clang-cl 21.1.8, Rust
+  stable-msvc, CMake/Ninja from the `toolchain.txt` artifacts), committed as
+  `logs/m4-release-protocol.md`. "3× RC runs" = the 3 counted CI runs at the
+  RC SHA (they build and exercise the artifacts) + one local artifact-run
+  record. Written BEFORE the RC SHA is declared (A3).
+- **Window rule (C6):** between RC declaration and the 3rd counted green —
+  no commits; no push or dispatch while a run is in flight (concurrency
+  group cancels the evidence run); dispatch only into an idle queue.
+- **DP-D (adopted in principle, executed at filing):** PR-A re-cut to the
+  220-line cross-platform hygiene core; LSERust windows-msvc branch + WIN32
+  HRX guard move to PR-B (15-iteration3 E1).
 
 ## Cycle-2 completion note (C2-WP12a/b + G-C2-3 + M3, 2026-10-11)
 

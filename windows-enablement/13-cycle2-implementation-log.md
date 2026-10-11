@@ -650,6 +650,31 @@ further push or dispatch may be made to this branch while a run is in
 flight, or the evidence run is cancelled — the dispatch waits for the push
 run.
 
+The C10 push (`5b16e94..209d025`) triggered run **38141203856** at
+`209d025`; a watcher re-dispatches `run_large_io=true` at the same SHA
+automatically after that run completes (concurrency rule above). While the
+chain was in flight, the iteration-3 stage-1 analysis landed
+(`windows-enablement/15-iteration3-loopback-analysis.md`, 27 items A1–F6;
+verdict **THIN M4-execution cycle**), and the following were committed as
+**C11 (this record's commit)**: the M4 evidence protocol adopted in
+STATUS.md (DP-A counting rule + pre-classification of every run on the
+board — recorded BEFORE run 38141203856's conclusion was observed; DP-B
+schedule arming; DP-C minimal release protocol; C6 window rule), the
+`logs/m4-ci-evidence.md` ledger opened with those pre-classifications, and
+`docs/WINDOWS.md` staleness fixes (F1: `LSE_LARGE_IO_FLAG` → `LARGE_IO_ON`
+rename + D-19 semantics; cron-arming note). **DP-B executed 2026-10-11:**
+the fork's default branch had been `master`, silently DISARMING the weekly
+cron — GitHub fires `on.schedule` only from the workflow file on the default
+branch (A2). Flipped via `gh repo edit antmikinka/LSE --default-branch
+feature/windows-enablement` (settings-only, zero repo diff, reversible);
+arming is confirmed only by an observed `schedule`-event run (next window
+Mon 2026-10-12 06:17 UTC; trap C1: a tick is skipped if a run is in flight
+— recover by manual dispatch, counts identically under DP-A). The earlier
+"Cron verified" checks (the A-7/m-2 grep quoted above) proved only YAML-text
+presence — an F2 overclaim, now reworded in STATUS.md. C11 stays LOCAL
+(unpushed) until the watcher chain completes: pushing while it is in flight
+would cancel the evidence runs (C6).
+
 ## 9. Remaining work toward M4
 
 1. **G-C2-5**: push; observe first `windows` workflow run green on BOTH jobs
