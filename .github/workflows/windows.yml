@@ -1,0 +1,285 @@
+# C2-WP6 interim Windows gate (11-cycle2-test-plan §6; G-C2-5).
+#
+# L2: the run steps mirror the LOCAL gate commands (§2/§5.2) verbatim — same
+# configure line, same canary layer A/B assertions, same ctest invocations and
+# count assertions. B-1: every count comes from a committed/generated file or
+# is computed in-step, never typed twice. A-4: LLVM pinned --exact 21.1.8
+# (recorded in docs/WINDOWS.md §1 alongside the local toolchain; same LLVM
+# major across both jobs = the T3 controlled pair). C2-5: 60-min job budgets.
+#
+# Deviations from the §6 template, all recorded in 13-cycle2-implementation-log:
+#  * shell: bash everywhere (per the WP6 work order); the template's PowerShell
+#    configure/assert steps are expressed as bash equivalents (grep, not
+#    Select-String), same commands and same assertions.
+#  * artifact `path:` uses a block scalar; the template's single-quoted
+#    'a\nb\n' scalar would pass literal backslash-n to upload-artifact.
+#  * linux-parity adds -DCMAKE_BUILD_TYPE=RelWithDebInfo (the template left it
+#    empty ⇒ -O0) so both jobs of the T3 pair run the same optimization class.
+#  * linux-parity excludes ^test_reflect$ with adjusted count arithmetic:
+#    P2996 is g++-16's domain — LLVM 21 has no -freflection at all (probe:
+#    clang-cl "unknown argument ignored", clang --driver-mode=g++ "error:
+#    unknown argument"), so the test's #else hard-fail branch compiles there.
+#    Upstream ci.yml (g++-16, self-hosted) remains the authoritative P2996 and
+#    GPU gate; on Windows the same gap is K-ledger #2.
+#  * the weekly schedule adds a SECOND, non-gating ctest run with
+#    --repeat until-pass:3 for flake classification only (§6 flake policy);
+#    the gating run stays strict on every event.
+#  * ilammy/msvc-dev-cmd@v1 (x64) loads the MSVC environment before configure:
+#    clang-cl needs INCLUDE/LIB (docs/WINDOWS.md §2); the template omitted it
+#    and the compiler probe would fail on a bare runner shell.
+#  * LastTest.log artifact path corrected to build/Testing/Temporary/ (ctest
+#    --test-dir puts Testing/ at the binary-dir root, verified locally);
+#    KNOWN_FAILURES.md grep corrected to tests/KNOWN_FAILURES.md (a grep on a
+#    missing path exits 2 and would silently skip the I-5 check).
+name: windows
+
+on:
+  pull_request:
+  push:
+    branches: [feature/windows-enablement]
+  schedule:
+    - cron: '17 6 * * 1'   # weekly R3 C++26-drift alarm; verified via
+                           # `gh workflow view windows.yml --yaml | grep cron` (A-7/m-2)
+  workflow_dispatch:
+    inputs:
+      run_large_io:
+        type: boolean
+        default: false
+
+concurrency:
+  group: win-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # ID-10(a): a real toggle. Schedule always includes LARGE_IO; dispatch asks.
+  # NEVER --label-include LARGE_IO on hosted push/PR runs (hosted disks are
+  # small; the local machine runs the >2GiB fixture — 04 §3/§7, S4).
+  LSE_LARGE_IO_FLAG: ${{ (inputs.run_large_io == true || github.event_name == 'schedule')
+                          && '--label-include LARGE_IO' || '--label-exclude LARGE_IO' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  windows:
+    runs-on: windows-latest      # Server 2022+ ⇒ AF_UNIX path sockets (1803 floor met)
+    timeout-minutes: 60          # C2-5: interim gate well under; <45-min binds at M4
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pin LLVM 21.1.8 (A-4 / ID-C2-14)
+        run: |
+          set -euo pipefail
+          winget install --id LLVM.LLVM --version 21.1.8 --exact \
+            --silent --accept-source-agreements --accept-package-agreements
+          # The installer's machine PATH is invisible to this session; publish it.
+          echo 'C:\Program Files\LLVM\bin' >> "$GITHUB_PATH"
+
+      # clang-cl cannot find the MSVC STL/UCRT without INCLUDE/LIB (docs/
+      # WINDOWS.md §2); runner shells do not pre-load vcvars — the §6 template
+      # missed this and configure would fail its compiler probe.
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Toolchain identity (T3 pair, left half)
+        run: |
+          set -euo pipefail
+          command -v ninja >/dev/null || winget install --id Ninja-build.Ninja -e --silent \
+            --accept-source-agreements --accept-package-agreements
+          clang-cl --version | tee toolchain.txt
+          grep -q "version 21" toolchain.txt
+          cmake --version | head -1   # >= 3.30 required (CMakeLists.txt:1)
+          ninja --version
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - uses: Swatinem/rust-cache@v2
+      # NO manual fastokens clone: cmake/LSERust.cmake clones reference/fastokens at
+      # its pinned SHA automatically at configure (verified on this branch) — S4
+      # §5.1's clone step is redundant; deviation recorded. NASM not needed
+      # (06 §5.13: ring builds without it).
+
+      - name: Configure (mirrors the LOCAL gate command, L2)
+        run: |
+          set -euo pipefail
+          cmake -S . -B build -G Ninja -DCMAKE_CXX_COMPILER=clang-cl \
+                -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLSE_BUILD_TESTS=ON 2>&1 | tee configure.log
+          # HRX has no Windows port; cmake/LSEOptions.cmake forces it OFF (the
+          # cache may say ON — the configure summary is the truth):
+          grep -qE "HRX backend.*OFF" configure.log
+
+      - name: FP canary layers A/B (§2.2 — same assertions as local)
+        run: |
+          set -euo pipefail
+          grep -q '/clang:-ffp-contract=off' cmake/LSECompilerFlags.cmake
+          VIOL=$(grep -E '^  FLAGS = ' build/build.ninja | grep -v 'ffp-contract=off' \
+                   | grep -c 'fno-fast-math' || true)
+          [ "$VIOL" -eq 0 ]
+          PINNED=$(grep -cE '^  FLAGS = .*ffp-contract=off' build/build.ninja)
+          echo "fp-canary: layerA=pinned layerB violations=$VIOL pinned-rules=$PINNED"
+
+      - name: Build tests-ON 'all'
+        run: |
+          set -euo pipefail
+          cmake --build build 2>&1 | tee build-log.txt
+
+      - name: W census + expected-count assertion (B-1)
+        run: |
+          set -euo pipefail
+          ctest --test-dir build -N | tee ctest-N.txt
+          W=$(sed -nE 's/^Total Tests: ([0-9]+).*/\1/p' ctest-N.txt)
+          WE=$(cat windows-enablement/logs/ci-expected-w.txt)
+          [ "$W" -eq "$WE" ] || { echo "W=$W != expected $WE — silent test loss/gain"; exit 1; }
+          echo "W=$W" >> "$GITHUB_ENV"
+
+      - name: Main ctest (strict; mirrors §5.2 step 2)
+        run: |
+          set -euo pipefail
+          ctest --test-dir build --output-on-failure --timeout 300 \
+                ${{ env.LSE_LARGE_IO_FLAG }} 2>&1 | tee ctest.log
+          grep -q "100% tests passed" ctest.log
+          NRAN=$(sed -nE 's/.*out of ([0-9]+).*/\1/p' ctest.log | tail -1)
+          if [[ "${{ env.LSE_LARGE_IO_FLAG }}" == *include* ]]; then EXPECT=$W; else EXPECT=$((W - 1)); fi
+          [ "$NRAN" -eq "$EXPECT" ] || { echo "ran $NRAN expected $EXPECT"; exit 1; }
+
+      - name: Fingerprint + canary evidence (ID-5 / ID-12, T3 pair)
+        run: |
+          set -euo pipefail
+          mkdir -p logs
+          ctest --test-dir build -R "^(test_fp_model|test_numerics_fingerprint)$" \
+                --output-on-failure 2>&1 | tee logs/m3-fingerprint-windows.txt
+          grep -q "100% tests passed, 0 tests failed out of 2" logs/m3-fingerprint-windows.txt
+
+      - name: Flake classification (schedule only, NON-gating — §6 flake policy)
+        if: github.event_name == 'schedule'
+        continue-on-error: true
+        run: |
+          ctest --test-dir build --output-on-failure --timeout 300 \
+                --repeat until-pass:3 --repeat until-fail:0 \
+                ${{ env.LSE_LARGE_IO_FLAG }} 2>&1 | tee ctest-classification.log
+
+      - name: W/K/X status + guard assertions
+        run: |
+          set -euo pipefail
+          K=$(grep -cE '^\| `' windows-enablement/K-LEDGER.md || true)
+          [ "$K" -le 5 ] || { echo "K=$K exceeds the frozen ceiling of 5"; exit 1; }
+          XG=$(grep -c 'if(NOT WIN32)' tests/CMakeLists.txt || true)
+          [ "$XG" -eq 0 ] || { echo "X-guards remain in tests/CMakeLists.txt"; exit 1; }
+          grep -q "X = 0" windows-enablement/COMPILE_EXCLUSIONS.md
+          # I-5: KNOWN_FAILURES.md never gains a Windows entry (K is the only
+          # ledger). Path corrected from §5.2's bare spelling — the file lives
+          # at tests/KNOWN_FAILURES.md (harness reads it via
+          # LSE_KNOWN_FAILURES_FILE); a grep on a missing path would exit 2
+          # and silently skip the check.
+          if grep -in "windows" tests/KNOWN_FAILURES.md; then
+            echo "Windows entry in KNOWN_FAILURES.md — K is the only ledger"; exit 1
+          fi
+          echo "## W/K/X = $W/$K/0" >> "$GITHUB_STEP_SUMMARY"
+          echo "LARGE_IO flag this run: \`${{ env.LSE_LARGE_IO_FLAG }}\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-evidence
+          path: |
+            toolchain.txt
+            configure.log
+            build-log.txt
+            ctest-N.txt
+            ctest.log
+            ctest-classification.log
+            logs/m3-fingerprint-windows.txt
+            build/Testing/Temporary/LastTest.log
+          if-no-files-found: warn
+
+  linux-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # SCOPE LIMIT (C2-4, honest labeling): NO ROCm/GPU here — upstream ci.yml
+    # (self-hosted, g++-16, HRX) remains the authoritative GPU and P2996 gate.
+    # This job verifies: clang++-21 CPU build (same LLVM major as the windows
+    # job = T3 controlled pair), full tests-ON ctest, -ffp-contract parity,
+    # the fingerprint HASH-EQ cross-OS pair, ID-11 census.
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang++-21 (apt.llvm.org — T3 pair, right half)
+        run: |
+          set -euo pipefail
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key \
+            | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc >/dev/null
+          sudo add-apt-repository -y \
+            "deb http://apt.llvm.org/$(lsb_release -cs)/ llvm-toolchain-$(lsb_release -cs)-21 main"
+          sudo apt-get update
+          sudo apt-get install -y clang-21 ninja-build
+          clang++-21 --version | tee toolchain.txt
+          grep -q "version 21" toolchain.txt
+
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Configure + build (CI-level -ffp-contract=off pin, SC6)
+        run: |
+          set -euo pipefail
+          cmake -S . -B build -G Ninja -DCMAKE_CXX_COMPILER=clang++-21 -DLSE_ENABLE_HRX=OFF \
+                -DLSE_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+                -DCMAKE_CXX_FLAGS=-ffp-contract=off
+          grep -q "ffp-contract=off" build/build.ninja   # pin reached the rules
+          cmake --build build 2>&1 | tee build-log.txt
+
+      - name: W census (parity offset is structural, B-1)
+        run: |
+          set -euo pipefail
+          ctest --test-dir build -N | tee ctest-N.txt
+          WL=$(sed -nE 's/^Total Tests: ([0-9]+).*/\1/p' ctest-N.txt)
+          WE=$(cat windows-enablement/logs/ci-expected-w.txt)
+          # UNIX registers exactly 2 ctest entries Windows does not:
+          # compiler_identity_default/override (tests/CMakeLists.txt if(UNIX)
+          # block). Any other delta is silent test loss/gain → fail.
+          [ "$WL" -eq "$((WE + 2))" ] || { echo "W=$WL != expected $((WE + 2))"; exit 1; }
+          echo "WL=$WL" >> "$GITHUB_ENV"
+
+      - name: Main ctest (strict; test_reflect excluded — see header)
+        run: |
+          set -euo pipefail
+          ctest --test-dir build --output-on-failure --timeout 300 \
+                ${{ env.LSE_LARGE_IO_FLAG }} -E '^test_reflect$' 2>&1 | tee ctest.log
+          grep -q "100% tests passed" ctest.log
+          NRAN=$(sed -nE 's/.*out of ([0-9]+).*/\1/p' ctest.log | tail -1)
+          if [[ "${{ env.LSE_LARGE_IO_FLAG }}" == *include* ]]; then EXPECT=$WL; else EXPECT=$((WL - 1)); fi
+          EXPECT=$((EXPECT - 1))   # the labeled test_reflect exclusion
+          [ "$NRAN" -eq "$EXPECT" ] || { echo "ran $NRAN expected $EXPECT"; exit 1; }
+
+      - name: Fingerprint + canary evidence (T3 pair — hashes MUST equal the windows job's)
+        run: |
+          set -euo pipefail
+          mkdir -p logs
+          ctest --test-dir build -R "^(test_fp_model|test_numerics_fingerprint)$" \
+                --output-on-failure 2>&1 | tee logs/m3-fingerprint-linux.txt
+          grep -q "100% tests passed, 0 tests failed out of 2" logs/m3-fingerprint-linux.txt
+
+      - name: ID-11 registration smoke baseline (A-3.4/m-6)
+        run: |
+          set -euo pipefail
+          ./build/tests/test_registration_smoke | tee smoke-linux.txt
+
+      - name: W/K/X status
+        run: |
+          set -euo pipefail
+          K=$(grep -cE '^\| `' windows-enablement/K-LEDGER.md || true)
+          echo "## linux-parity W/K/X = $WL/$K/0 (test_reflect excluded, labeled)" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-parity-evidence
+          path: |
+            toolchain.txt
+            build-log.txt
+            ctest-N.txt
+            ctest.log
+            logs/m3-fingerprint-linux.txt
+            smoke-linux.txt
+            build/Testing/Temporary/LastTest.log
+          if-no-files-found: warn
