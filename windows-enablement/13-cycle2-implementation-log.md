@@ -29,11 +29,17 @@ docs/WINDOWS.md → this log → commit + push.
 - SYNC-1 merge of upstream v0.6.1 (`5a99199`), pre-sync tag, G-C2-0 evidence,
   STATUS.md, doc-drift fixes D-1/D-2 (`4e584aa`, `d3c2535`).
 - SC4 gate script + K-LEDGER creation (`c73c6bb`).
-- Product defect #1: `src/hub/pull.cpp` — Windows cannot delete/rename a file
-  with an open handle; close-fd-before-remove pattern.
-- Product defect #2: `src/communication/winsock_compat.hpp` — `WSASendMsg` is
-  broken on Windows stream sockets (WSAEINVAL); `sock_sendmsg` remapped to
-  `WSASend`.
+- The three SC4-blocking product defects of WP3 (`8732b3d`, self-numbered in
+  that commit): `platform_win.cpp` `path_size` (HF-cache symlink sizes
+  reported 0 — CreateFileW+GetFileSizeEx resolves the target),
+  `hub/pull.cpp` close-descriptor-before-`fs::rename` (Windows refuses a
+  rename over an open handle), and the `CMakeLists.txt` `lse_kernels` link
+  edge for CPU-only builds (generation died: "no primitive named
+  gdn.silu_l2norm.v1"; platform-independent gap flagged for M4 upstream
+  feedback). NOTE: these are distinct from the WP12-series defects #1–#4
+  numbered in §2.2/§2.3 and docs/WINDOWS.md §6 — an earlier draft of this
+  section misattributed #1/#2 to `8732b3d`; the git record
+  (`git log -- src/communication/winsock_compat.hpp`) is the truth.
 - M2b acceptance: executables + tokenizer sentinel end-to-end (`8732b3d`).
 - C2-WP4: L1 keep-going tests-ON build census of record (`91a4fdf`).
 
@@ -57,6 +63,15 @@ docs/WINDOWS.md → this log → commit + push.
   test_loom_cache, test_model, test_model_info, test_q4_gemm,
   test_tree_verify, test_variant_book, test_compiler_identity,
   test_flash_prefill, test_gdn_rows).
+- Product defects #1–#2 of the WP12 series, authored in the prior session
+  but left uncommitted in the stack ([cont] verified and committed both in
+  `7d6e230`): **#1** `src/hub/pull.cpp` — close the descriptor before
+  `fs::remove` on the CHECKSUM-MISMATCH path as well (the `8732b3d` fix
+  covered only the rename path; Windows cannot delete an open file, so the
+  promised "corrupt download was deleted" was silently false); **#2**
+  `src/communication/winsock_compat.hpp` — `sock_sendmsg` remapped to
+  `WSASend` (`WSASendMsg` answers WSAEINVAL on stream sockets,
+  probe-verified on 10.0.26100).
 
 ### 2.3 [cont] — continuation-session work
 
@@ -279,6 +294,37 @@ coverage. KEEP stands.
   (minimal, platform-neutral diff). Verification: **0 failures in 100** runs
   post-fix and the M3 main run green 97/97 (attempt 4). Counted as cycle-2
   product defect #4 (§2.3).
+- **D-15 — first CI run (38129070094 at `ff28a1d`) failed BOTH jobs; both
+  failures are workflow-environment defects, fixed in `windows.yml` with a
+  zero product diff** (LSERust.cmake and all sources untouched; the local
+  vcvars shell never reproduces either — both are hosted-runner-specific).
+  - `windows` job — died in the tests-ON build at the fastokens_ffi `cargo
+    build`: rustc spawned `C:\Program Files\Git\usr\bin\link.exe` (coreutils
+    link(1): "/usr/bin/link: extra operand") instead of the MSVC linker. The
+    hosted `bash` shell PREPENDS Git's coreutils dirs to PATH for every step,
+    shadowing the VC Tools bin that `msvc-dev-cmd` published; configure,
+    canary A/B and 174 C++ TUs were green before it. Fix: the Build step
+    sinks `/usr/bin`, `/bin`, `/usr/local/bin` to the END of PATH (nothing
+    removed — the shell's own grep/tee keep working; MSVC/LLVM win name
+    collisions), plus a `command -v link.exe` diagnostic line.
+  - `linux-parity` job — `/usr/bin/ld: cannot find -lc` linking
+    `lse`/`lse-server`. `Swatinem/rust-cache@v2` exports
+    `CARGO_TERM_COLOR=always` into GITHUB_ENV for ALL later steps; the
+    configure-time `_lse_rust_native_libs` capture (cmake/LSERust.cmake:60,
+    `cargo rustc -- --print native-static-libs`) then kept the trailing ANSI
+    reset glued to the last token — configure log proof: "fastokens_ffi
+    native deps: pcre2-8;util;rt;pthread;dl;c[0m" — which slipped the
+    `^(c|gcc_s|m)$` filter and landed a colored `-lc` on the link line. The
+    Windows capture is immune (its `[A-Za-z0-9_.\-]+\.lib` regex cannot match
+    an ESC). Fix: drop rust-cache from BOTH jobs (its default `./target`
+    workspace does not exist pre-configure — fastokens-ffi is cloned at
+    configure — so the cache never worked and its cargo-metadata probe
+    exited 101 anyway) and pin `CARGO_TERM_COLOR: never` at workflow env
+    (which also pre-empts any future action's "if unset, default always").
+  - Rejected alternative: hardening LSERust.cmake (`cargo --color never`) —
+    upstream ci.yml uses no rust actions and is unaffected; the color leak
+    was introduced by this workflow's action choice, so the fix belongs to
+    the workflow (minimal diff, no POSIX behavior change).
 
 ## 5. G-C2-3 (tests-ON 'all' builds; X = 0) — results
 
@@ -382,18 +428,36 @@ staged), on top of the prior-session `4e584aa`…`91a4fdf`:
   census removed (`c2-wp12-census.txt` deleted; superseded, history retains).
 - `fcc6295` — C2-WP6: interim Windows CI gate + linux-parity hoist (A-3.3)
   (`.github/workflows/windows.yml`).
-- C5 (this file's commit) — C2-WP5: M3 protocol green locally (M3-PARTIAL);
-  M3 evidence to root `logs/`, STATUS.md refresh, docs/WINDOWS.md coherence,
-  this log. Its own hash is necessarily self-referential — `git log`
-  immediately after it.
+- C5 `ff28a1d` — C2-WP5: M3 protocol green locally (M3-PARTIAL); M3
+  evidence to root `logs/`, STATUS.md refresh, docs/WINDOWS.md coherence,
+  this log.
+- C6 (this correction's commit) — D-15 CI fixes in `windows.yml` (Git
+  coreutils PATH sink; rust-cache dropped; `CARGO_TERM_COLOR: never`) + the
+  §2.1/§2.2 attribution correction + these §8 observations.
 
 Push target: `fork feature/windows-enablement` (antmikinka/LSE), executed
-immediately after C5. **G-C2-5 stays PENDING-PUSH** until the workflow is
-observed on the pushed SHA: first run green on BOTH jobs at the same SHA
-(which also converts M3-PARTIAL → M3 per D-12), dispatch proof with
+immediately after C5: `71be5a5..ff28a1d` (2026-10-11). The push triggered
+the `windows` workflow, run **38129070094** at `ff28a1d`: **FAILED on both
+jobs** — `windows` at the fastokens_ffi cargo link (Git coreutils link(1)
+shadowed MSVC link.exe; configure/canary/174 C++ TUs were green first) and
+`linux-parity` at the `lse`/`lse-server` link (`cannot find -lc` — the
+rust-cache action's global `CARGO_TERM_COLOR=always` leaked an ANSI reset
+into LSERust's configure-time native-libs capture). Both are workflow
+defects, diagnosed from the run logs and fixed per **D-15**; no product or
+test code changed, so the local M3 evidence at `ff28a1d` stands untouched.
+The cron line is verified per A-7/m-2: `gh workflow view windows.yml --repo
+antmikinka/LSE --ref feature/windows-enablement --yaml | grep cron` →
+`cron: '17 6 * * 1'` (windows.yml:41).
+
+**G-C2-5 stays PENDING-PUSH**: the fixed workflow re-runs on the C6 push;
+acceptance remains a run green on BOTH jobs at one SHA (which also converts
+M3-PARTIAL → M3 per D-12 — the C6 delta over the M3 SHA `ff28a1d` is
+workflow + docs only, zero product/test lines) plus dispatch proof with
 `run_large_io=true` (only if the runner disk guard passes — otherwise the
-schedule run is the LARGE_IO proof), and the cron line verified via
-`gh workflow view windows.yml --repo antmikinka/LSE --yaml | grep cron`.
+schedule run is the LARGE_IO proof). Note: the concurrency group
+(`win-${{ github.ref }}`, cancel-in-progress) means no further push or
+dispatch may be made to this branch while a run is in flight, or the
+evidence run is cancelled.
 
 ## 9. Remaining work toward M4
 

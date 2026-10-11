@@ -47,7 +47,7 @@ artifacts 01–12 are never edited for live state; corrections land here.*
 | G-C2-2 | **PASS** (C2-WP3, commits `8732b3d` + `c73c6bb`; M2b SC4) | 2026-10-10 | `logs/m2b-acceptance.md`, `logs/m2b-sc4-*.txt` |
 | G-C2-3 | **PASS** (tests-ON 'all' green both trees; X = 0; W = 98 == WE; K = 2 ≤ 5; canary A/B/B′ viol = 0; P8 4/4) | 2026-10-11 | `windows-enablement/logs/g-c2-3-{builds,x,canary,census,p8}.txt` |
 | G-C2-4 (M3) | **M3-PARTIAL** — protocol green locally (W=98 NRAN=97, 100% passed 76.25 s; LARGE_IO 1/1; fingerprint 2/2; K = 2, distinct skip keys = 2; X = 0); linux parity pending the `linux-parity` CI job on the same pushed SHA (D-12/A-3.3) | 2026-10-11 | `logs/m3-ctest-N.txt`, `logs/m3-ctest-windows.txt`, `logs/m3-large-file-io.txt`, `logs/m3-fingerprint-windows.txt`, `logs/m3-k-skips.txt` |
-| G-C2-5 | **PENDING-PUSH** (`windows.yml` complete; acceptance = first workflow green on both jobs, same SHA + dispatch proof with LARGE_IO + cron line) | — | `.github/workflows/windows.yml` |
+| G-C2-5 | **PENDING-PUSH** — pushed 2026-10-11 (`71be5a5..ff28a1d`); first run **38129070094 FAILED both jobs** on workflow-environment defects (Git coreutils `link(1)` shadowed MSVC link.exe; rust-cache's global `CARGO_TERM_COLOR=always` leaked ANSI into LSERust's native-libs capture → `ld: cannot find -lc`) — fixed in `windows.yml` per 13-log **D-15**, zero product diff, re-run pending on the fix SHA. Cron line verified (`gh workflow view … --yaml | grep cron` → `17 6 * * 1`). Acceptance = a run green on both jobs at one SHA + dispatch proof with LARGE_IO | 2026-10-11 | run 38129070094 (antmikinka/LSE Actions), 13-log D-15/§8 |
 
 ## Cycle-2 completion note (C2-WP12a/b + G-C2-3 + M3, 2026-10-11)
 

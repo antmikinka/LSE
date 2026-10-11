@@ -31,6 +31,21 @@
 #    --test-dir puts Testing/ at the binary-dir root, verified locally);
 #    KNOWN_FAILURES.md grep corrected to tests/KNOWN_FAILURES.md (a grep on a
 #    missing path exits 2 and would silently skip the I-5 check).
+#  * Swatinem/rust-cache DROPPED from both jobs and CARGO_TERM_COLOR pinned to
+#    `never` (first run 38129070094: the action exports CARGO_TERM_COLOR=always
+#    into GITHUB_ENV for ALL later steps; the ANSI reset then stuck to the last
+#    token of rustc's `native-static-libs` note, LSERust.cmake's configure-time
+#    capture kept `c<ESC>[0m` (its ^(c|gcc_s|m)$ filter missed it) and the final
+#    link died on `/usr/bin/ld: cannot find -lc`. Its default ./target workspace
+#    also does not exist pre-configure — fastokens-ffi is cloned at configure —
+#    so its cargo-metadata probe failed (exit 101) and the cache never worked.
+#    A cold cargo build costs ~2 min inside the 60-min budget.)
+#  * the windows Build step sinks Git Bash's /usr/bin to the END of PATH: the
+#    hosted bash shell prepends Git coreutils, whose link(1) shadowed MSVC's
+#    link.exe for rustc (first run: rustc spawned
+#    "C:\Program Files\Git\usr\bin\link.exe" → "/usr/bin/link: extra operand").
+#    Local vcvars shells put the MSVC dir first (docs/WINDOWS.md §2); the sink
+#    reproduces that order while keeping coreutils available to the shell.
 name: windows
 
 on:
@@ -56,6 +71,12 @@ env:
   # small; the local machine runs the >2GiB fixture — 04 §3/§7, S4).
   LSE_LARGE_IO_FLAG: ${{ (inputs.run_large_io == true || github.event_name == 'schedule')
                           && '--label-include LARGE_IO' || '--label-exclude LARGE_IO' }}
+  # Cargo output must stay plain: LSERust.cmake captures rustc's
+  # native-static-libs note at configure time, and a forced-color run leaks
+  # ANSI resets into the parsed token list (see the rust-cache deviation in
+  # the header — first-run failure). Pre-setting this also neutralizes any
+  # future action whose "if unset, default to always" would re-arm the bug.
+  CARGO_TERM_COLOR: never
 
 defaults:
   run:
@@ -96,11 +117,12 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: x86_64-pc-windows-msvc
-      - uses: Swatinem/rust-cache@v2
-      # NO manual fastokens clone: cmake/LSERust.cmake clones reference/fastokens at
-      # its pinned SHA automatically at configure (verified on this branch) — S4
-      # §5.1's clone step is redundant; deviation recorded. NASM not needed
-      # (06 §5.13: ring builds without it).
+      # NO rust-cache (dropped — header deviation: broken default workspace +
+      # the CARGO_TERM_COLOR=always export that corrupted the linux-parity
+      # link). NO manual fastokens clone: cmake/LSERust.cmake clones
+      # reference/fastokens at its pinned SHA automatically at configure
+      # (verified on this branch) — S4 §5.1's clone step is redundant;
+      # deviation recorded. NASM not needed (06 §5.13: ring builds without it).
 
       - name: Configure (mirrors the LOCAL gate command, L2)
         run: |
@@ -124,6 +146,15 @@ jobs:
       - name: Build tests-ON 'all'
         run: |
           set -euo pipefail
+          # Sink Git Bash's coreutils below the toolchain dirs: the hosted
+          # bash prepends /usr/bin, whose link(1) shadows MSVC's link.exe in
+          # every native child (first run: rustc spawned Git's link.exe and
+          # died). Nothing is removed — grep/tee/sed keep working — but MSVC
+          # and LLVM now win name collisions, matching the local vcvars shell.
+          kept=$(echo "$PATH" | tr ':' '\n' \
+                   | grep -vx -e /usr/bin -e /bin -e /usr/local/bin || true)
+          export PATH="$(echo "$kept" | paste -sd:):/usr/local/bin:/usr/bin:/bin"
+          command -v link.exe || true   # diagnostic: must land in VC\Tools\MSVC
           cmake --build build 2>&1 | tee build-log.txt
 
       - name: W census + expected-count assertion (B-1)
@@ -218,7 +249,9 @@ jobs:
           grep -q "version 21" toolchain.txt
 
       - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      # NO rust-cache — dropped, see the header deviation (its global
+      # CARGO_TERM_COLOR=always export is what broke this job's lse/lse-server
+      # link with `cannot find -lc` on the first run).
 
       - name: Configure + build (CI-level -ffp-contract=off pin, SC6)
         run: |
