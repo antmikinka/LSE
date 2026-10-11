@@ -325,6 +325,31 @@ coverage. KEEP stands.
     upstream ci.yml uses no rust actions and is unaffected; the color leak
     was introduced by this workflow's action choice, so the fix belongs to
     the workflow (minimal diff, no POSIX behavior change).
+- **D-16 — second CI run (38130378891 at `632508b`): linux-parity GREEN;
+  windows failed at the `lse.exe` link — same Git link(1) shadow, this time
+  at CONFIGURE.** The D-15 sink covered only the Build step: that step's
+  cargo compile indeed passed (the build reached [1092/1197] vs [169/1197]
+  in run 1), but LSERust.cmake's configure-time query (`cargo rustc --locked
+  --release --lib -- --print native-static-libs`, LSERust.cmake:60) also
+  compiles and LINKS Rust build scripts, and it runs in the unsunk Configure
+  step — rustc again spawned Git's link(1), the query failed, and
+  `_lse_rust_native_libs` silently took its hardcoded fallback branch
+  (LSERust.cmake:97 — both runs' logs: "could not query rustc for native
+  libs; resolving known host dependencies") = `ws2_32/bcrypt/userenv` only.
+  Locally the query succeeds (c2-sync-configure.txt: the full list incl.
+  **ntdll.lib**), which is why local `lse.exe` links; CI's current stable
+  Rust std references `NtReadFile`/`NtWriteFile` (handle.rs:310, fs.rs:389)
+  and requires consumers to link `ntdll.lib` → `lld-link: undefined symbol:
+  __declspec(dllimport) NtWriteFile/NtReadFile`. C++ edges were immune in
+  both runs (clang-cl drives lld-link by absolute path; no bare-name
+  lookup). Fix (workflow-only, zero product diff): the same PATH sink in the
+  Configure step + fail-fast guards (configure must print "fastokens_ffi
+  native deps: …ntdll…" and must NOT print the fallback warning — a silent
+  fallback can never again bake a broken lib list into build.ninja). M4
+  upstream-feedback note: the LSERust WIN32 fallback list predates the
+  Rust-std Nt* switch and lacks ntdll.lib; deliberately NOT modified here
+  (minimal diff; with the query succeeding the fallback is dead code, and an
+  unexercisable change would ship untested).
 
 ## 5. G-C2-3 (tests-ON 'all' builds; X = 0) — results
 
@@ -431,9 +456,12 @@ staged), on top of the prior-session `4e584aa`…`91a4fdf`:
 - C5 `ff28a1d` — C2-WP5: M3 protocol green locally (M3-PARTIAL); M3
   evidence to root `logs/`, STATUS.md refresh, docs/WINDOWS.md coherence,
   this log.
-- C6 (this correction's commit) — D-15 CI fixes in `windows.yml` (Git
-  coreutils PATH sink; rust-cache dropped; `CARGO_TERM_COLOR: never`) + the
-  §2.1/§2.2 attribution correction + these §8 observations.
+- C6 `632508b` — D-15 CI fixes in `windows.yml` (Git coreutils PATH sink;
+  rust-cache dropped; `CARGO_TERM_COLOR: never`) + the §2.1/§2.2
+  attribution correction + §8 run-1 observations.
+- C7 (this record's commit) — D-16 fix in `windows.yml` (Configure-step
+  PATH sink + native-deps ntdll guards) + the §8 run-2 record + STATUS.md
+  G-C2-5 row.
 
 Push target: `fork feature/windows-enablement` (antmikinka/LSE), executed
 immediately after C5: `71be5a5..ff28a1d` (2026-10-11). The push triggered
@@ -449,15 +477,29 @@ The cron line is verified per A-7/m-2: `gh workflow view windows.yml --repo
 antmikinka/LSE --ref feature/windows-enablement --yaml | grep cron` →
 `cron: '17 6 * * 1'` (windows.yml:41).
 
-**G-C2-5 stays PENDING-PUSH**: the fixed workflow re-runs on the C6 push;
-acceptance remains a run green on BOTH jobs at one SHA (which also converts
-M3-PARTIAL → M3 per D-12 — the C6 delta over the M3 SHA `ff28a1d` is
-workflow + docs only, zero product/test lines) plus dispatch proof with
-`run_large_io=true` (only if the runner disk guard passes — otherwise the
-schedule run is the LARGE_IO proof). Note: the concurrency group
-(`win-${{ github.ref }}`, cancel-in-progress) means no further push or
-dispatch may be made to this branch while a run is in flight, or the
-evidence run is cancelled.
+The C6 push (`ff28a1d..632508b`) triggered run **38130378891** at `632508b`:
+**linux-parity GREEN** — clang++-21 (apt.llvm.org) build; Wₗ = 100 == WE + 2
+(D-13 structural offset asserted); main ctest 100% with the labeled
+`test_reflect` exclusion; fingerprint + canary 2/2 (the T3 cross-OS hash
+pair holds — the embedded ID-5 constants reproduce under Linux clang-21);
+ID-11 smoke baseline green. That is the A-3.3/D-12 parity EVIDENCE on a tree
+whose product/test delta from the M3 SHA `ff28a1d` is zero (C6 touched only
+the workflow and docs). **windows FAILED** at the `lse.exe` link
+(`undefined symbol NtReadFile/NtWriteFile`) — the D-15 sink had not covered
+the Configure step, so LSERust's native-libs query fell back to a set
+without `ntdll.lib`; diagnosed from the run logs and fixed per **D-16**
+(Configure-step sink + fail-fast guards), committed as C7.
+
+**G-C2-5 stays PENDING-PUSH**: the run on the C7 push is the acceptance
+candidate — a run green on BOTH jobs at one SHA converts M3-PARTIAL → M3
+per D-12 (the C6/C7 deltas over the M3 SHA `ff28a1d` are workflow + docs
+only, zero product/test lines, so the local M3 evidence carries over
+verbatim and the linux-parity half is ALREADY green at `632508b`) plus
+dispatch proof with `run_large_io=true` (only if the runner disk guard
+passes — otherwise the schedule run is the LARGE_IO proof). Note: the
+concurrency group (`win-${{ github.ref }}`, cancel-in-progress) means no
+further push or dispatch may be made to this branch while a run is in
+flight, or the evidence run is cancelled.
 
 ## 9. Remaining work toward M4
 

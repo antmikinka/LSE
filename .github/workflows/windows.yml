@@ -40,12 +40,18 @@
 #    also does not exist pre-configure — fastokens-ffi is cloned at configure —
 #    so its cargo-metadata probe failed (exit 101) and the cache never worked.
 #    A cold cargo build costs ~2 min inside the 60-min budget.)
-#  * the windows Build step sinks Git Bash's /usr/bin to the END of PATH: the
-#    hosted bash shell prepends Git coreutils, whose link(1) shadowed MSVC's
-#    link.exe for rustc (first run: rustc spawned
+#  * the windows Configure AND Build steps sink Git Bash's /usr/bin to the END
+#    of PATH: the hosted bash shell prepends Git coreutils, whose link(1)
+#    shadowed MSVC's link.exe for rustc (first run: rustc spawned
 #    "C:\Program Files\Git\usr\bin\link.exe" → "/usr/bin/link: extra operand").
 #    Local vcvars shells put the MSVC dir first (docs/WINDOWS.md §2); the sink
 #    reproduces that order while keeping coreutils available to the shell.
+#    Configure needs it too (second run 38130378891): LSERust.cmake's
+#    configure-time `cargo rustc -- --print native-static-libs` query compiles
+#    build scripts, which hit the same shadow, so the query silently fell back
+#    to its hardcoded ws2_32/bcrypt/userenv set — missing the ntdll.lib that
+#    current Rust std requires (NtReadFile/NtWriteFile) — and lse.exe died at
+#    link. C++ edges are immune: clang-cl drives lld-link by absolute path.
 name: windows
 
 on:
@@ -127,11 +133,30 @@ jobs:
       - name: Configure (mirrors the LOCAL gate command, L2)
         run: |
           set -euo pipefail
+          # Same coreutils sink as the Build step (see the header deviation):
+          # LSERust's configure-time native-static-libs query compiles Rust
+          # build scripts, whose link.exe lookup must reach MSVC, not Git's
+          # link(1) — a silently failed query falls back to a lib set missing
+          # ntdll.lib and lse.exe dies at link (run 38130378891).
+          kept=$(echo "$PATH" | tr ':' '\n' \
+                   | grep -vx -e /usr/bin -e /bin -e /usr/local/bin || true)
+          export PATH="$(echo "$kept" | paste -sd:):/usr/local/bin:/usr/bin:/bin"
           cmake -S . -B build -G Ninja -DCMAKE_CXX_COMPILER=clang-cl \
                 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLSE_BUILD_TESTS=ON 2>&1 | tee configure.log
           # HRX has no Windows port; cmake/LSEOptions.cmake forces it OFF (the
           # cache may say ON — the configure summary is the truth):
           grep -qE "HRX backend.*OFF" configure.log
+          # Guard the rustc native-static-libs query actually succeeded. If it
+          # fell back (LSERust.cmake:97), ntdll.lib is missing from the lib set
+          # and lse.exe dies at link with "undefined symbol NtReadFile/NtWrite
+          # File" — fail here with the cause instead (run 38130378891).
+          if grep -q "could not query rustc for native libs" configure.log; then
+            echo "LSERust native-libs query fell back — link.exe likely not MSVC" >&2
+            exit 1
+          fi
+          grep -q "fastokens_ffi native deps:.*ntdll" configure.log \
+            || { echo "fastokens_ffi native deps lack ntdll — Rust std link" \
+                      "would fail"; exit 1; }
 
       - name: FP canary layers A/B (§2.2 — same assertions as local)
         run: |
