@@ -1,0 +1,76 @@
+=== ID-12 mutation acceptance transcript (fp-canary layer C) ===
+date: 2026-10-11T07:31:42Z
+
+--- STEP 1: baseline with /clang:-ffp-contract=off PINNED ---
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.02 sec
+--- STEP 2: MUTATED — /clang:-ffp-contract=off REMOVED from cmake/LSECompilerFlags.cmake ---
+[18/22] Linking CXX static library src\backends\lse_backend_registry.lib
+[19/22] Linking CXX executable tests\test_fp_model.exe
+  fp-canary f32: plain=0x0.0000000000000p+0 fused=0x1.0000000000000p-24 (expected 0x0p+0 / 0x1p-24)
+  ok   float_mul_add_stays_uncontracted
+  fp-canary f64: plain=0x0.0000000000000p+0 fused=0x1.0000000000000p-68 (expected 0x0p+0 / 0x1p-68)
+  ok   double_mul_add_stays_uncontracted
+
+2/2 passed
+exit=0
+--- STEP 3: pin RESTORED + canary hardened (target(avx,fma) helpers) ---
+[19/22] Linking CXX executable tests\test_fp_model.exe
+  fp-canary f32: plain=0x0.0000000000000p+0 fused=0x1.0000000000000p-24 (expected 0x0p+0 / 0x1p-24)
+  ok   float_mul_add_stays_uncontracted
+  fp-canary f64: plain=0x0.0000000000000p+0 fused=0x1.0000000000000p-68 (expected 0x0p+0 / 0x1p-68)
+  ok   double_mul_add_stays_uncontracted
+
+2/2 passed
+exit=0
+--- STEP 4: MUTATED again (pin removed) with hardened canary — MUST GO RED ---
+[19/22] Linking CXX executable tests\test_fp_model.exe
+  fp-canary f32: plain=0x0.0000000000000p+0 fused=0x1.0000000000000p-24 (expected 0x0p+0 / 0x1p-24)
+  ok   float_mul_add_stays_uncontracted
+  fp-canary f64: plain=0x0.0000000000000p+0 fused=0x1.0000000000000p-68 (expected 0x0p+0 / 0x1p-68)
+  ok   double_mul_add_stays_uncontracted
+
+2/2 passed
+exit=0
+--- STEP 5: canary guard fixed (__clang__ arm; clang-cl lacks __GNUC__), PIN RESTORED ---
+[19/22] Linking CXX executable tests\test_fp_model.exe
+  fp-canary f32: plain=0x0.0000000000000p+0 fused=0x1.0000000000000p-24 (expected 0x0p+0 / 0x1p-24)
+  ok   float_mul_add_stays_uncontracted
+  fp-canary f64: plain=0x0.0000000000000p+0 fused=0x1.0000000000000p-68 (expected 0x0p+0 / 0x1p-68)
+  ok   double_mul_add_stays_uncontracted
+
+2/2 passed
+exit=0
+--- STEP 6: MUTATED (pin removed) — expecting RED ---
+[19/22] Linking CXX executable tests\test_fp_model.exe
+  FAIL float_mul_add_stays_uncontracted
+    at C:\Users\antmi\LSE\tests\test_fp_model.cpp:95
+    expected: plain == 0.0f
+  FAIL float_mul_add_stays_uncontracted
+    at C:\Users\antmi\LSE\tests\test_fp_model.cpp:96
+    expected: plain != fused
+  FAIL double_mul_add_stays_uncontracted
+    at C:\Users\antmi\LSE\tests\test_fp_model.cpp:114
+    expected: plain == 0.0
+  FAIL double_mul_add_stays_uncontracted
+    at C:\Users\antmi\LSE\tests\test_fp_model.cpp:115
+    expected: plain != fused
+  fp-canary f32: plain=0x1.0000000000000p-24 fused=0x1.0000000000000p-24 (expected 0x0p+0 / 0x1p-24)
+  fp-canary f64: plain=0x1.0000000000000p-68 fused=0x1.0000000000000p-68 (expected 0x0p+0 / 0x1p-68)
+
+0/2 passed
+exit=1
+--- STEP 7: pin RESTORED — expecting GREEN ---
+[19/22] Linking CXX executable tests\test_fp_model.exe
+  fp-canary f32: plain=0x0.0000000000000p+0 fused=0x1.0000000000000p-24 (expected 0x0p+0 / 0x1p-24)
+  ok   float_mul_add_stays_uncontracted
+  fp-canary f64: plain=0x0.0000000000000p+0 fused=0x1.0000000000000p-68 (expected 0x0p+0 / 0x1p-68)
+  ok   double_mul_add_stays_uncontracted
+
+2/2 passed
+exit=0
+
+RESULT: mutation acceptance DEMONSTRATED — pin removal turns the canary red (STEP 6), restoration turns it green (STEP 7).
+Note: STEP 2 recorded an honest intermediate finding — the original canary was insensitive because the baseline x86-64 target has no FMA to contract into; hardened via __attribute__((target("avx,fma"))) helpers (STEP 4-5).

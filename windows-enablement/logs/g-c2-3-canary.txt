@@ -1,0 +1,4 @@
+-- canary layer A (source pin)
+75:      /clang:-fno-fast-math /clang:-ffp-contract=off)
+build-win: layerB viol=0 pinned-rules=476; layerB' lse_core 11/11
+build-win-notests: layerB viol=0 pinned-rules=167; layerB' lse_core 11/11

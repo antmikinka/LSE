@@ -3,7 +3,9 @@ test_attention_short
 test_cooperative_rms
 test_dflash2
 test_dflash2_walk
+test_flash_prefill
 test_gdn_pair
+test_gdn_rows
 test_gdn_scheduler
 test_kv_cache
 test_launch_template
@@ -21,6 +23,7 @@ test_loom_words
 test_perplexity
 test_pointwise_fusion
 test_q4_activation_panel
+test_q4_gemm
 test_q4_matrix_panel
 test_q8_matrix_dispatch
 test_q8_matrix_pack
@@ -32,5 +35,6 @@ test_scheduler_epilogue
 test_submission_constants
 test_submission_decode
 test_topk_parallel
+test_tree_verify
 test_typed_kernel
 test_wave32_l2

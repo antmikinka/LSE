@@ -1,0 +1,5 @@
+-- W census
+Total Tests: 98
+W=98 WE=98
+-- K ledger
+K=2 (ceiling 5)

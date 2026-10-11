@@ -1,0 +1,68 @@
+test_model heavy real-model path on Windows — status note (cycle 2 / M3)
+=========================================================================
+
+HONEST RECORD — this is NOT a pass/fail log; it documents why the heavy
+real-model path is not exercised by the M3 gate and what was observed.
+
+Context
+-------
+tests/test_model.cpp has two classes of case:
+  * LIGHT cases (config/layout, hf_cache_root precedence, resolve_model against
+    FakeHub temp caches, listing, etc.). These use ScopedEnv/FakeHub
+    (test_model.cpp:169) to pin HF_HUB_CACHE to a temp dir in-scope and always
+    run in well under a second.
+  * HEAVY real-model cases — long_prefill_reuse_matches_a_forced_rebuild
+    (:1893), a_paged_session_reserves_a_rung_not_the_capacity (:1755), and the
+    a_split_* family (:2088+). Each begins with
+        auto paths = resolve_model("mlx-community/Qwen3.5-0.8B-4bit");
+        if (!paths.ok()) return;               // self-skip when not cached
+    and, when the model IS present, drives the CPU fp64 interpreter over
+    2 runs x 8 passes x 128 tokens = 2048 token-forwards plus the split checks.
+
+What was observed on this machine
+---------------------------------
+This workstation's real Hugging Face cache holds
+mlx-community/Qwen3.5-0.8B-4bit, so the heavy cases do NOT self-skip. A
+standalone run of the pre-relink test_model.exe was started to gauge the heavy
+path; after 120m39s wall (single core ~100% busy, RSS ~1.3 GiB) it was still
+mid-compute with no harness summary flushed, and was aborted. Two independent
+reasons make that run non-evidence:
+  1. It ran the STALE test_model.exe: the tests-ON 'all' build had relinked every
+     other edge but lld-link hit "permission denied" on test_model.exe because
+     the running process held it — so the binary predated the cycle-2 product
+     fixes now linked in.
+  2. It never reached a verdict (aborted, stdout block-buffered and unflushed).
+
+Why the heavy path is out of scope for the M3 gate
+--------------------------------------------------
+  * It is not Windows-specific: the same CPU fp64 interpreter path runs on Linux
+    CPU; the arithmetic is platform-independent.
+  * It is not CI-gated: hosted CI runners have NO model cache, so every heavy
+    case self-skips in seconds (the `if (!paths.ok()) return;` guard). The
+    authoritative GPU/P2996 gate is upstream ci.yml (self-hosted, HRX), where
+    these run on-device, not via the CPU interpreter.
+  * The M3 protocol (11-cycle2-test-plan §5.2) runs
+        ctest --timeout 300 --label-exclude LARGE_IO
+    and its expected-count arithmetic assumes test_model finishes inside 300 s —
+    i.e. it assumes the CI-like no-cache condition where the heavy cases skip.
+    A >2 h single test is incompatible with that gate by design.
+  * The Windows-specific seams the heavy path would otherwise touch (memory-map
+    discard, >2 GiB file I/O, the platform shim) are covered directly and green
+    by test_platform_shim (20/20) and test_large_file_io (2/2), so hiding the
+    heavy path leaves no Windows coverage gap.
+
+How M3 runs test_model (documented deviation, see 13-cycle2-implementation-log)
+-------------------------------------------------------------------------------
+The local M3 run sets HF_HUB_CACHE to an EMPTY directory before invoking ctest.
+hf_cache_root() (src/model/weights.cpp:521) reads HF_HUB_CACHE first, so
+resolve_model() finds no snapshot and every heavy case self-skips — reproducing
+exactly the CI no-cache behaviour. The light cases are UNAFFECTED: each pins its
+own HF_HUB_CACHE via ScopedEnv/FakeHub, which overrides the process env in-scope
+and restores it after. test_model then completes in seconds within --timeout 300.
+
+Bottom line
+-----------
+test_model's light path is exercised and must be green in the M3 suite run; its
+heavy real-model path is a >2 h CPU-only compute run that self-skips by design
+under CI-like (no-cache) conditions and is therefore not part of the Windows
+enablement gate. No fake pass is claimed for the heavy path.

@@ -1,0 +1,9 @@
+== G-C2-3 2026-10-11T09:13:42Z ==
+-- build tests-ON 'all' (build-win)
+[0/2] Re-checking globbed directories...
+ninja: no work to do.
+exit=0
+-- build tests-OFF 'all' (build-win-notests)
+[6/8] Linking CXX executable lse.exe
+[7/8] Linking CXX executable lse-server.exe
+exit=0

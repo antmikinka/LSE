@@ -21,11 +21,22 @@ awk '
   # Remember the item list of the most recent foreach(<var> ...). CMake has two
   # forms: `foreach(v IN ITEMS a b c)` and the older `foreach(v a b c)`; both
   # appear here, so strip an optional leading "IN ITEMS" before collecting.
-  match($0, /foreach\(/) {
-    line=$0; sub(/.*foreach\(/, "", line); sub(/\).*/, "", line)
-    n=split(line, tok, /[ \t]+/); foreach_items=""; start=2
+  # The header may wrap across lines (the loomc foreach does), so accumulate
+  # until the closing paren before parsing.
+  function parse_foreach(buf,   n,tok,start,i) {
+    sub(/\).*/, "", buf)
+    n=split(buf, tok, /[ \t]+/); foreach_items=""; start=2
     if (tok[2]=="IN" && tok[3]=="ITEMS") start=4
     for(i=start;i<=n;i++) if(tok[i]!="") foreach_items=foreach_items tok[i] "\n"
+  }
+  match($0, /foreach\(/) {
+    line=$0; sub(/.*foreach\(/, "", line)
+    if (line ~ /\)/) { parse_foreach(line); next }
+    inforeach=1; foreach_buf=line; next
+  }
+  inforeach {
+    foreach_buf = foreach_buf " " $0
+    if ($0 ~ /\)/) { inforeach=0; parse_foreach(foreach_buf) }
     next
   }
   # Start of a target_sources(<name> ...) block.
