@@ -4,6 +4,7 @@
 #include <unistd.h>
 #endif
 
+#include <atomic>
 #include <cstdio>
 #include <cstdlib>
 #include <filesystem>
@@ -158,7 +159,22 @@ bool read_path_line(std::istringstream& in, ComputePath* p) {
 }
 
 void write_text_atomic(const fs::path& path, std::string_view text) {
-  const fs::path tmp = path.string() + ".tmp" + std::to_string(platform::pid());
+  // The temp name must be unique per CALL, not merely per process. Two threads
+  // that save the same key at once — e.g. the concurrent ranks of a pool
+  // qualification, which all agree on one fingerprint and so all write one
+  // profile — would otherwise share a single ".tmp<pid>" file. POSIX hides the
+  // collision (rename(2) overwrites atomically; unlinking an open inode is
+  // harmless), but Windows refuses to rename over or remove a file another
+  // thread holds open, so the loser's `fs::remove(tmp)` below can delete the
+  // winner's temp mid-flight and the final file never lands — seen as an
+  // intermittent test_probe failure (the saved pool profile is missing on the
+  // read-back at test_probe.cpp:1133). A per-call sequence keeps the temps
+  // disjoint on every platform; the first rename to a not-yet-existing target
+  // always succeeds, so the profile is guaranteed to land. Nothing else about
+  // the write changes (POSIX/macOS behavior is identical).
+  static std::atomic<unsigned long long> tmp_seq{0};
+  const fs::path tmp = path.string() + ".tmp" + std::to_string(platform::pid()) +
+                       "." + std::to_string(tmp_seq.fetch_add(1));
   {
     std::ofstream out(tmp);
     if (!out) return;

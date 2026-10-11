@@ -777,9 +777,22 @@ void file_unmap(void* ptr, std::size_t mapped_bytes) {
 
 void map_discard(void* ptr, std::size_t bytes) {
   if (ptr == nullptr || bytes == 0) return;
-  // MEM_RESET: "these pages' contents are no longer of interest" — the VM
-  // manager may drop them and re-fault from the backing file, which is the
-  // MADV_DONTNEED contract read-only checkpoint mappings rely on.
+  // Two discard semantics, tried in order (probe-verified on 10.0.26100):
+  //  - DiscardVirtualMemory is the MADV_DONTNEED analog for PRIVATE memory:
+  //    deterministic zero-fill on next access (what POSIX callers observe for
+  //    an anonymous discard). It needs a page-aligned base and a page-multiple
+  //    size, and it refuses file-backed views with ERROR_INVALID_PARAMETER —
+  //    which makes it a precise discriminator: success means private pages.
+  //  - MEM_RESET is the file-view path: "these pages' contents are no longer
+  //    of interest" — the VM manager may drop them and re-fault from the
+  //    backing file, which is the MADV_DONTNEED contract read-only checkpoint
+  //    mappings (release_pages) rely on. On private pages it is only a lazy
+  //    hint, but those were handled above.
+  const std::uintptr_t page = page_size();
+  if (reinterpret_cast<std::uintptr_t>(ptr) % page == 0) {
+    const std::size_t whole = (bytes + page - 1) / page * page;
+    if (::DiscardVirtualMemory(ptr, whole) == 0) return;
+  }
   (void)::VirtualAlloc(ptr, bytes, MEM_RESET, PAGE_READONLY);
 }
 

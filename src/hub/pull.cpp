@@ -501,6 +501,13 @@ Status download_blob(const RepoInfo& info, const RepoSpec& spec, const File& f, 
   }
   const std::string got = hash.hex();
   if (got != f.etag()) {
+#ifdef _WIN32
+    // As before the rename below, Windows refuses to delete a file that has
+    // an open handle: release the descriptor first so the corrupt partial is
+    // actually removed and the promised "deleted" message stays true.
+    platform::close_fd(fd);
+    closer.fd = -1;
+#endif
     fs::remove(part, ec);
     return LSE_ERROR(kIoError, "checksum mismatch for ", f.path, ": ", hash.name(), " ", got, ", expected ",
                      f.etag(), "; the corrupt download was deleted, run the pull again");

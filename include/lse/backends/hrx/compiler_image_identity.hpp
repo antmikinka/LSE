@@ -29,9 +29,20 @@ inline std::string hex_identity(std::uint64_t value) {
   return text;
 }
 
+#if defined(_WIN32)
+// UCRT's struct stat carries second-granularity time_t members only; the
+// synthesized timespec keeps the caller uniform (tv_nsec is always 0).
+// One shared type so `auto am = ..., ac = ...` deduces identically.
+struct WinFileTime {
+  long long tv_sec;
+  long tv_nsec;
+};
+#endif
 inline auto file_mtime(const struct stat &st) {
 #if defined(__APPLE__)
   return st.st_mtimespec;
+#elif defined(_WIN32)
+  return WinFileTime{static_cast<long long>(st.st_mtime), 0L};
 #else
   return st.st_mtim;
 #endif
@@ -39,6 +50,8 @@ inline auto file_mtime(const struct stat &st) {
 inline auto file_ctime(const struct stat &st) {
 #if defined(__APPLE__)
   return st.st_ctimespec;
+#elif defined(_WIN32)
+  return WinFileTime{static_cast<long long>(st.st_ctime), 0L};
 #else
   return st.st_ctim;
 #endif
@@ -46,10 +59,21 @@ inline auto file_ctime(const struct stat &st) {
 inline bool same_compiler_file(const struct stat &a, const struct stat &b) {
   const auto am = file_mtime(a), bm = file_mtime(b), ac = file_ctime(a),
              bc = file_ctime(b);
+#if defined(_WIN32)
+  // UCRT populates st_dev only for stat() (the drive number) and leaves it 0 in
+  // fstat(); st_ino is 0 in both. Comparing them would spuriously mismatch the
+  // very same file (fstat's fd view vs stat's named view), so Windows keys on
+  // size + mtime + ctime, which still reject a concurrent replacement. POSIX
+  // keeps the full dev/ino comparison untouched.
+  return a.st_size == b.st_size && am.tv_sec == bm.tv_sec &&
+         am.tv_nsec == bm.tv_nsec && ac.tv_sec == bc.tv_sec &&
+         ac.tv_nsec == bc.tv_nsec;
+#else
   return a.st_dev == b.st_dev && a.st_ino == b.st_ino &&
          a.st_size == b.st_size && am.tv_sec == bm.tv_sec &&
          am.tv_nsec == bm.tv_nsec && ac.tv_sec == bc.tv_sec &&
          ac.tv_nsec == bc.tv_nsec;
+#endif
 }
 
 // Content covers an equal-size rebuild with its original timestamp restored.
@@ -96,7 +120,9 @@ inline std::optional<std::string> compiler_file_identity(const char *path) {
   if (ec)
     return std::nullopt;
   struct stat named{};
-  if (::stat(resolved.c_str(), &named) != 0 ||
+  // .string().c_str(): fs::path::c_str() is wchar_t-based on Windows; the
+  // temporary outlives the full-expression call. Portable, POSIX-identical.
+  if (::stat(resolved.string().c_str(), &named) != 0 ||
       !same_compiler_file(after, named))
     return std::nullopt;
   const auto modified = file_mtime(after);

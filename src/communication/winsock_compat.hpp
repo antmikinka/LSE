@@ -17,7 +17,8 @@
 //    reads the same on both.
 //  * getsockopt(SO_ERROR) yields a WSA* code; the wrapper converts the
 //    retrieved value to an errno value so strerror() speaks one language.
-//  * No SIGPIPE exists, so MSG_NOSIGNAL is 0 and sendmsg maps to WSASendMsg.
+//  * No SIGPIPE exists, so MSG_NOSIGNAL is 0 and sendmsg maps to WSASend
+//    (WSASendMsg answers WSAEINVAL on stream sockets; see sock_sendmsg).
 //  * SOCK_NONBLOCK/SOCK_CLOEXEC are not socket() type flags; the wrappers
 //    strip them and apply FIONBIO (handles are non-inheritable by default on
 //    every Windows this engine targets).
@@ -187,8 +188,13 @@ inline ssize_t sock_send(int fd, const void* buf, std::size_t len, int flags) {
 
 inline ssize_t sock_sendmsg(int fd, const msghdr* msg, int flags) {
   (void)flags;
-  // The engine's only sendmsg is a two-entry scatter (frame header + payload);
-  // WSASendMsg keeps the partial-write semantics the caller splits on.
+  // The engine's only sendmsg is a two-entry scatter (frame header + payload)
+  // on a connected stream socket. WSASendMsg is the datagram/control-data
+  // path: on Windows it refuses stream sockets with WSAEINVAL (verified on
+  // 10.0.26100 for blocking and non-blocking alike, while the same call on a
+  // UDP socket succeeds), so the scatter goes to WSASend, which takes the
+  // same WSABUF array and keeps the partial-write semantics the caller
+  // splits on.
   constexpr std::size_t kMaxIov = 16;
   WSABUF bufs[kMaxIov];
   const std::size_t n = msg->msg_iovlen < kMaxIov ? msg->msg_iovlen : kMaxIov;
@@ -196,12 +202,9 @@ inline ssize_t sock_sendmsg(int fd, const msghdr* msg, int flags) {
     bufs[i].buf = static_cast<char*>(msg->msg_iov[i].iov_base);
     bufs[i].len = static_cast<ULONG>(msg->msg_iov[i].iov_len);
   }
-  WSAMSG m{};
-  m.lpBuffers = bufs;
-  m.dwBufferCount = static_cast<DWORD>(n);
   DWORD sent = 0;
-  if (::WSASendMsg(ws::to_socket(fd), &m, 0, &sent, nullptr, nullptr) ==
-      SOCKET_ERROR) {
+  if (::WSASend(ws::to_socket(fd), bufs, static_cast<DWORD>(n), &sent, 0,
+                nullptr, nullptr) == SOCKET_ERROR) {
     ws::set_errno_from_wsa();
     return -1;
   }
