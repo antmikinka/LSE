@@ -51,7 +51,7 @@ an idle queue after #2 concludes.
 
 | # | Run URL | RC SHA | Trigger | Both jobs | Duration | Recorded (≤24 h) |
 |---|---|---|---|---|---|---|
-| 1 | (pending — triggered by the RC push) | C16 | push | — | — | — |
+| 1 | [38148058757](https://github.com/antmikinka/LSE/actions/runs/38148058757) | `6781531` (C16) | push | **success** (linux-parity + windows, failed_steps=[]) | 20 m 40 s (start→updated upper bound; < 45 m gate) | 2026-10-11, same day (< 1 h after conclusion 14:59 UTC) |
 | 2 | (pending — Monday 06:17 UTC cron, or substitute dispatch per C1) | C16 | schedule | — | — | — |
 | 3 | (pending — dispatch into idle queue) | C16 | dispatch | — | — | — |
 
