@@ -32,25 +32,35 @@ artifacts 01–12 are never edited for live state; corrections land here.*
 
 **G-C2-0: PASS** (R1+R2+R3 green; R4 = recorded no-go invoking A-3.3, per ID-C2-2 Pass line) — declared 2026-10-10 at merge SHA + `d3c2535`.
 
-## W / X / K (current)
+## W / X / K (current — 2026-10-11, post-WP12/M3)
 
-- **W = 91** (`ctest --test-dir build-win -N`, post-merge; U = 0 — the single new upstream test is X-guarded). Anchor truth per ID-C2-10: **91 was measured at `71be5a5` on 2026-10-10 by Stage 3** (NOT "at M2a" — `logs/m2a-build.txt` contains no `ctest -N` census). Reconciliation: 04's predicted 92 + 1 (`test_registration_smoke`, fork-added) − 2 (X-guards) = 91; **92 is a stale prediction, never an anchor**.
-- **X = 3** (`test_dflash2`, `test_loom_cache`, `test_launch_template`) — all three are WP12 ports; target X = 0 at G-C2-3.
-- **K = 0** (`windows-enablement/K-LEDGER.md` created by C2-WP3).
+- **W = 98** (`ctest --test-dir build-win -N`; == `windows-enablement/logs/ci-expected-w.txt`). History per ID-C2-10 (anchor = measurement, never prediction): **91** at `71be5a5` (Stage 3, post-sync, 3 X-guards) → **94** after WP12a/b removed the 3 `if(NOT WIN32)` guards (`test_dflash2`, `test_loom_cache`, `test_launch_template` ported via `tests/compat*`) → **98** after the 4 P8 registrations (`test_fp_model`, `test_numerics_fingerprint`, `test_platform_shim`, `test_large_file_io`). Linux Wₗ = **100** (98 + 2 UNIX-only `compiler_identity_default/override`; the parity job asserts WE + 2, D-13).
+- **X = 0** (`COMPILE_EXCLUSIONS.md`; 0 `if(NOT WIN32)` guards remain in `tests/CMakeLists.txt`).
+- **K = 2** (`windows-enablement/K-LEDGER.md`, ceiling 5): #1 `[test_communication:loopback-backpressure]` (3 cases; Windows loopback TCP absorbs a single 32 MiB WSASend whole), #2 `[test_reflect:p2996]` (1 case; no pinned Windows compiler ships `-freflection`). Both review-by **2027-01-08**. M3 step-5 scrape sees exactly these 2 distinct skip keys.
 
 ## Gate table
 
 | Gate | Status | Date | Evidence |
 |---|---|---|---|
 | G-C2-0 | **PASS** (R4 no-go → A-3.3 hoist recorded) | 2026-10-10 | §above |
-| G-C2-1 | pending (C2-WP2) | — | — |
-| G-C2-2 | pending (C2-WP3) | — | — |
-| G-C2-3 | pending (C2-WP4) | — | — |
-| G-C2-4 (M3) | pending (C2-WP5) | — | — |
-| G-C2-5 | pending (C2-WP6; needs push observation) | — | — |
+| G-C2-1 | **PASS** (C2-WP1+WP2, commit `4e584aa`) | 2026-10-10 | §SYNC-1 note; `logs/m2a-build-resync.txt` |
+| G-C2-2 | **PASS** (C2-WP3, commits `8732b3d` + `c73c6bb`; M2b SC4) | 2026-10-10 | `logs/m2b-acceptance.md`, `logs/m2b-sc4-*.txt` |
+| G-C2-3 | **PASS** (tests-ON 'all' green both trees; X = 0; W = 98 == WE; K = 2 ≤ 5; canary A/B/B′ viol = 0; P8 4/4) | 2026-10-11 | `windows-enablement/logs/g-c2-3-{builds,x,canary,census,p8}.txt` |
+| G-C2-4 (M3) | **M3-PARTIAL** — protocol green locally (W=98 NRAN=97, 100% passed 76.25 s; LARGE_IO 1/1; fingerprint 2/2; K = 2, distinct skip keys = 2; X = 0); linux parity pending the `linux-parity` CI job on the same pushed SHA (D-12/A-3.3) | 2026-10-11 | `logs/m3-ctest-N.txt`, `logs/m3-ctest-windows.txt`, `logs/m3-large-file-io.txt`, `logs/m3-fingerprint-windows.txt`, `logs/m3-k-skips.txt` |
+| G-C2-5 | **PENDING-PUSH** (`windows.yml` complete; acceptance = first workflow green on both jobs, same SHA + dispatch proof with LARGE_IO + cron line) | — | `.github/workflows/windows.yml` |
+
+## Cycle-2 completion note (C2-WP12a/b + G-C2-3 + M3, 2026-10-11)
+
+- **WP12a/b finished**: full test tree ports (`tests/compat.hpp` + `tests/compat/` shim, `harness.hpp` include route, 16 ported test files), all 3 X-guards removed, `compiler_image_identity.hpp` KEPT (§3 of the 13-log). Tests-ON `all` builds green.
+- **4 Windows product defects found + fixed** (all minimal, platform-neutral): #1 `src/hub/pull.cpp`, #2 `src/communication/winsock_compat.hpp`, #3 `src/core/platform_win.cpp` (map-discard), #4 `src/probe/profile_store.cpp` (`write_text_atomic` per-CALL temp name — PID-only keying let concurrent same-process ranks race; POSIX-benign, Windows-fatal; repro 3/50 → 0/100 post-fix; D-14).
+- **FP canary mutation accepted** (ID-12): `windows-enablement/logs/id12-fp-canary-mutation.txt`.
+- **test_model heavy path** (D-11): >2 h CPU-interpreter run when the real HF cache holds the model; local M3 hides the cache (`HF_HUB_CACHE` → empty `.../hub`) reproducing CI no-cache behavior — 55/55 in ~1 s. Honest record: `windows-enablement/logs/test-model-heavy-path-note.txt`.
+- Full narrative + deviations D-1…D-14: `windows-enablement/13-cycle2-implementation-log.md`.
 
 ## Open incidents / risks
 
-- C2-7 (WSL clang++-21 unavailable) — **materialized**; descope path A-3.3 invoked (parity via CI job, same-SHA rule holds).
+- C2-7 (WSL clang++-21 unavailable) — **materialized**; descope path A-3.3 invoked (parity via CI job, same-SHA rule holds). M3 therefore stands at **M3-PARTIAL** until the `linux-parity` job is green on the pushed SHA.
 - R1′ PR1 trigger: 0 conflicting files this sync (no datapoint toward the 2-consecutive-syncs trigger).
-- `ci-expected-w.txt` lifecycle (ID-C2-10): file introduced at the G-C2-3 commit with value from `ctest -N` parse (never typed); updated in every registration-changing commit.
+- `ci-expected-w.txt` lifecycle (ID-C2-10): value from `ctest -N` parse, never typed; **94 → 98** when the 4 P8 tests registered; must be updated in every registration-changing commit (M3 step 1 and the parity job assert against it).
+- K-ledger reviews due **2027-01-08** (#1 loopback backpressure — retest against a future Windows networking change; #2 P2996 — recheck when a pinned LLVM ships `-freflection`).
+- Toolchain pin: official LLVM **21.1.8** (A-4; ROCm clang-cl 21.0.0git constexpr bug, ID-C2-14); weekly cron `windows.yml` job is the drift alarm; revisit at LLVM 22.

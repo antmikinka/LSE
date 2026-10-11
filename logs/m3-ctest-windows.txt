@@ -1,0 +1,200 @@
+Internal ctest changing into directory: C:/Users/antmi/LSE/build-win
+Test project C:/Users/antmi/LSE/build-win
+      Start  1: test_speculative_sampler
+ 1/97 Test  #1: test_speculative_sampler .........   Passed    0.01 sec
+      Start  2: test_draft_tree
+ 2/97 Test  #2: test_draft_tree ..................   Passed    8.25 sec
+      Start  3: test_generation_stats
+ 3/97 Test  #3: test_generation_stats ............   Passed    0.01 sec
+      Start  4: test_memory_reclaim
+ 4/97 Test  #4: test_memory_reclaim ..............   Passed    0.03 sec
+      Start  5: test_mtp_options
+ 5/97 Test  #5: test_mtp_options .................   Passed    0.01 sec
+      Start  6: test_http_timings
+ 6/97 Test  #6: test_http_timings ................   Passed    0.01 sec
+      Start  7: test_pointwise_fusion
+ 7/97 Test  #7: test_pointwise_fusion ............   Passed    0.06 sec
+      Start  8: test_dispatch_profile
+ 8/97 Test  #8: test_dispatch_profile ............   Passed    0.01 sec
+      Start  9: test_variant_book
+ 9/97 Test  #9: test_variant_book ................   Passed    0.05 sec
+      Start 10: test_dtype
+10/97 Test #10: test_dtype .......................   Passed    0.01 sec
+      Start 11: test_reflect
+11/97 Test #11: test_reflect .....................   Passed    0.01 sec
+      Start 12: test_kernel_env
+12/97 Test #12: test_kernel_env ..................   Passed    0.05 sec
+      Start 13: test_ir
+13/97 Test #13: test_ir ..........................   Passed    0.05 sec
+      Start 14: test_loom_print
+14/97 Test #14: test_loom_print ..................   Passed    0.01 sec
+      Start 15: test_loom_repeat
+15/97 Test #15: test_loom_repeat .................   Passed    0.05 sec
+      Start 16: test_loom_extent
+16/97 Test #16: test_loom_extent .................   Passed    0.01 sec
+      Start 17: test_loom_conv
+17/97 Test #17: test_loom_conv ...................   Passed    0.05 sec
+      Start 18: test_loom_gdn
+18/97 Test #18: test_loom_gdn ....................   Passed    0.13 sec
+      Start 19: test_loom_words
+19/97 Test #19: test_loom_words ..................   Passed    0.01 sec
+      Start 20: test_loom_flash
+20/97 Test #20: test_loom_flash ..................   Passed    0.20 sec
+      Start 21: test_loom_concat
+21/97 Test #21: test_loom_concat .................   Passed    0.05 sec
+      Start 22: test_loom_cache
+22/97 Test #22: test_loom_cache ..................   Passed    0.73 sec
+      Start 23: test_quant
+23/97 Test #23: test_quant .......................   Passed    0.01 sec
+      Start 24: test_quant_prefill
+24/97 Test #24: test_quant_prefill ...............   Passed    4.60 sec
+      Start 25: test_shape
+25/97 Test #25: test_shape .......................   Passed    0.01 sec
+      Start 26: test_sampling_defaults
+26/97 Test #26: test_sampling_defaults ...........   Passed    0.06 sec
+      Start 27: test_chat_template
+27/97 Test #27: test_chat_template ...............   Passed    0.23 sec
+      Start 28: test_server
+28/97 Test #28: test_server ......................   Passed    1.10 sec
+      Start 29: test_chat_protocol
+29/97 Test #29: test_chat_protocol ...............   Passed    0.06 sec
+      Start 30: test_api_parity
+30/97 Test #30: test_api_parity ..................   Passed    0.39 sec
+      Start 31: test_registration_smoke
+31/97 Test #31: test_registration_smoke ..........   Passed    0.04 sec
+      Start 32: test_model_info
+32/97 Test #32: test_model_info ..................   Passed    3.97 sec
+      Start 33: test_power
+33/97 Test #33: test_power .......................   Passed    0.05 sec
+      Start 34: test_server_shutdown
+34/97 Test #34: test_server_shutdown .............   Passed    0.27 sec
+      Start 35: test_model
+35/97 Test #35: test_model .......................   Passed    1.02 sec
+      Start 36: test_hub
+36/97 Test #36: test_hub .........................   Passed    1.35 sec
+      Start 37: test_gdn_rate
+37/97 Test #37: test_gdn_rate ....................   Passed    0.05 sec
+      Start 38: test_fp_model
+38/97 Test #38: test_fp_model ....................   Passed    0.01 sec
+      Start 39: test_platform_shim
+39/97 Test #39: test_platform_shim ...............   Passed    2.16 sec
+      Start 40: test_numerics_fingerprint
+40/97 Test #40: test_numerics_fingerprint ........   Passed    0.01 sec
+      Start 42: test_prefix_commit
+41/97 Test #42: test_prefix_commit ...............   Passed    0.06 sec
+      Start 43: test_feature_taps
+42/97 Test #43: test_feature_taps ................   Passed    0.07 sec
+      Start 44: test_hybrid_tokens
+43/97 Test #44: test_hybrid_tokens ...............   Passed    0.06 sec
+      Start 45: test_dflash2_convert
+44/97 Test #45: test_dflash2_convert .............   Passed    0.17 sec
+      Start 46: test_dflash2
+45/97 Test #46: test_dflash2 .....................   Passed    0.21 sec
+      Start 47: test_reference
+46/97 Test #47: test_reference ...................   Passed    0.05 sec
+      Start 48: test_runtime
+47/97 Test #48: test_runtime .....................   Passed    1.50 sec
+      Start 49: test_attention_layout
+48/97 Test #49: test_attention_layout ............   Passed    0.05 sec
+      Start 50: test_perplexity
+49/97 Test #50: test_perplexity ..................   Passed    2.49 sec
+      Start 51: test_memory_lifecycle
+50/97 Test #51: test_memory_lifecycle ............   Passed   23.79 sec
+      Start 52: test_tokenizer
+51/97 Test #52: test_tokenizer ...................   Passed    5.75 sec
+      Start 53: test_backend_cpu
+52/97 Test #53: test_backend_cpu .................   Passed    0.01 sec
+      Start 54: test_graph
+53/97 Test #54: test_graph .......................   Passed    0.16 sec
+      Start 55: test_primitive
+54/97 Test #55: test_primitive ...................   Passed    0.04 sec
+      Start 56: test_communication
+55/97 Test #56: test_communication ...............   Passed    5.21 sec
+      Start 57: test_dist
+56/97 Test #57: test_dist ........................   Passed    0.03 sec
+      Start 58: test_probe
+57/97 Test #58: test_probe .......................   Passed    0.13 sec
+      Start 59: test_cpu_fallback
+58/97 Test #59: test_cpu_fallback ................   Passed    0.05 sec
+      Start 60: test_trace
+59/97 Test #60: test_trace .......................   Passed    0.06 sec
+      Start 61: test_server_cli
+60/97 Test #61: test_server_cli ..................   Passed    4.11 sec
+      Start 62: test_probe_measurement
+61/97 Test #62: test_probe_measurement ...........   Passed    0.01 sec
+      Start 63: test_token_ids
+62/97 Test #63: test_token_ids ...................   Passed    0.01 sec
+      Start 64: test_probe_policy
+63/97 Test #64: test_probe_policy ................   Passed    0.05 sec
+      Start 65: test_submission_tuner
+64/97 Test #65: test_submission_tuner ............   Passed    0.01 sec
+      Start 66: test_submission_constants
+65/97 Test #66: test_submission_constants ........   Passed    0.05 sec
+      Start 67: test_decode_sample
+66/97 Test #67: test_decode_sample ...............   Passed    0.08 sec
+      Start 68: test_submission_decode
+67/97 Test #68: test_submission_decode ...........   Passed    0.12 sec
+      Start 69: test_attention_decode
+68/97 Test #69: test_attention_decode ............   Passed    0.14 sec
+      Start 70: test_hrx_copy_route
+69/97 Test #70: test_hrx_copy_route ..............   Passed    0.01 sec
+      Start 71: test_gdn_pair
+70/97 Test #71: test_gdn_pair ....................   Passed    0.10 sec
+      Start 72: test_launch_template
+71/97 Test #72: test_launch_template .............   Passed    0.39 sec
+      Start 73: test_scheduler_epilogue
+72/97 Test #73: test_scheduler_epilogue ..........   Passed    1.74 sec
+      Start 74: test_loom_matrix
+73/97 Test #74: test_loom_matrix .................   Passed    0.05 sec
+      Start 75: test_loom_dot
+74/97 Test #75: test_loom_dot ....................   Passed    0.05 sec
+      Start 76: test_gdn_scheduler
+75/97 Test #76: test_gdn_scheduler ...............   Passed    0.13 sec
+      Start 77: test_fp8_conversion
+76/97 Test #77: test_fp8_conversion ..............   Passed    0.05 sec
+      Start 78: test_q8_matrix_dispatch
+77/97 Test #78: test_q8_matrix_dispatch ..........   Passed    0.05 sec
+      Start 79: test_quant_dispatch
+78/97 Test #79: test_quant_dispatch ..............   Passed    0.05 sec
+      Start 80: test_sha256
+79/97 Test #80: test_sha256 ......................   Passed    0.03 sec
+      Start 81: test_compiler_identity
+80/97 Test #81: test_compiler_identity ...........   Passed    0.02 sec
+      Start 82: test_cooperative_rms
+81/97 Test #82: test_cooperative_rms .............   Passed    0.06 sec
+      Start 83: test_inplace_owner
+82/97 Test #83: test_inplace_owner ...............   Passed    0.06 sec
+      Start 84: test_wave32_l2
+83/97 Test #84: test_wave32_l2 ...................   Passed    0.06 sec
+      Start 85: test_topk_parallel
+84/97 Test #85: test_topk_parallel ...............   Passed    0.05 sec
+      Start 86: test_attention_short
+85/97 Test #86: test_attention_short .............   Passed    0.56 sec
+      Start 87: test_typed_kernel
+86/97 Test #87: test_typed_kernel ................   Passed    0.05 sec
+      Start 88: test_quant_swiglu
+87/97 Test #88: test_quant_swiglu ................   Passed    0.88 sec
+      Start 89: test_q4_activation_panel
+88/97 Test #89: test_q4_activation_panel .........   Passed    0.24 sec
+      Start 90: test_q4_matrix_panel
+89/97 Test #90: test_q4_matrix_panel .............   Passed    0.72 sec
+      Start 91: test_q4_gemm
+90/97 Test #91: test_q4_gemm .....................   Passed    0.69 sec
+      Start 92: test_gdn_rows
+91/97 Test #92: test_gdn_rows ....................   Passed    0.07 sec
+      Start 93: test_tree_verify
+92/97 Test #93: test_tree_verify .................   Passed    0.07 sec
+      Start 94: test_flash_prefill
+93/97 Test #94: test_flash_prefill ...............   Passed    0.05 sec
+      Start 95: test_q8_matrix_pack
+94/97 Test #95: test_q8_matrix_pack ..............   Passed    0.05 sec
+      Start 96: test_dflash2_walk
+95/97 Test #96: test_dflash2_walk ................   Passed    0.05 sec
+      Start 97: test_kv_memory
+96/97 Test #97: test_kv_memory ...................   Passed    0.01 sec
+      Start 98: test_kv_cache
+97/97 Test #98: test_kv_cache ....................   Passed    0.11 sec
+
+100% tests passed, 0 tests failed out of 97
+
+Total Test time (real) =  76.25 sec

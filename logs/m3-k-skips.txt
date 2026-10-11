@@ -1,0 +1,17 @@
+# M3 step-5 K-skip evidence — extracted from the main-run ctest snapshot
+# (build-win/Testing/Temporary/LastTest.log, copied to logs/m3-maintest-LastTest.log
+#  immediately after M3 protocol step 2; the raw .log stays local per the repo's
+#  *.log gitignore convention — same precedent as logs/m2b-sc4-server.log/.txt).
+# Source run: M3 main run 2026-10-11, 100% tests passed out of 97.
+
+## Full 'skip ... windows:' lines (4):
+  skip reflection_requires_gcc16_freflection (windows: capability — [test_reflect:p2996] no pinned Windows host compiler implements P2996 (clang-cl 21.1.8 has no -freflection) and the hard-fail case below asserts the reflection capability — #2 — review-by 2027-01-08)
+  skip a_queued_transfer_can_be_cancelled_and_a_moving_one_cannot (windows: capability — [test_communication:loopback-backpressure] Windows loopback TCP absorbs a single-call send whole (peer later reads back every byte of a 32 MiB WSASend), so post_send completes transfers that Linux loopback would stall in the socket buffer and the still-moving / still-queued / mid-transfer-death states never exist — #1 — review-by 2027-01-08)
+  skip a_peer_that_dies_mid_transfer_completes_every_ticket_then_closes (windows: capability — [test_communication:loopback-backpressure] Windows loopback TCP absorbs a single-call send whole (peer later reads back every byte of a 32 MiB WSASend), so post_send completes transfers that Linux loopback would stall in the socket buffer and the still-moving / still-queued / mid-transfer-death states never exist — #1 — review-by 2027-01-08)
+  skip a_ticket_on_a_dead_channel_reads_as_done (windows: capability — [test_communication:loopback-backpressure] Windows loopback TCP absorbs a single-call send whole (peer later reads back every byte of a 32 MiB WSASend), so post_send completes transfers that Linux loopback would stall in the socket buffer and the still-moving / still-queued / mid-transfer-death states never exist — #1 — review-by 2027-01-08)
+
+## Distinct bracketed keys (KD, protocol pattern sort -u | wc -l):
+[test_communication:loopback-backpressure]
+[test_reflect:p2996]
+
+KD = 2 (protocol asserts == 2)
