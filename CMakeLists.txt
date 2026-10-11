@@ -11,7 +11,7 @@ if(NOT WIN32 AND NOT CMAKE_CXX_COMPILER)
 endif()
 
 project(lse
-  VERSION 0.6.0
+  VERSION 0.6.1
   DESCRIPTION "Lemon Seed Engine — modular LLM training/inference engine on HRX"
   LANGUAGES CXX)
 
@@ -228,6 +228,7 @@ add_library(lse_graph
   src/graph/ops.cpp
   src/graph/partitioner.cpp
   src/graph/workgroup.cpp
+  src/graph/launch_template.cpp
   src/graph/program.cpp
   src/graph/primitive.cpp
   src/graph/primitives_builtin.cpp
