@@ -31,6 +31,9 @@ LSE_TEST(reflection_names_the_enumerator_not_the_display_string) {
 #else
 
 LSE_TEST(reflection_requires_gcc16_freflection) {
+#ifdef _WIN32
+  LSE_SKIP("windows: capability — [test_reflect:p2996] no pinned Windows host compiler implements P2996 (clang-cl 21.1.8 has no -freflection) and the hard-fail case below asserts the reflection capability — #2 — review-by 2027-01-08");
+#endif
   LSE_EXPECT(false && "host compiler has no P2996; expected g++-16 -freflection");
 }
 

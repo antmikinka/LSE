@@ -46,6 +46,56 @@ std::size_t thread_count() {
   return n;
 }
 
+#ifndef _WIN32
+// POSIX: the abstract namespace — no filesystem entry, so nothing is left
+// behind by a crash and no test races another for a path.
+std::string pipe_url(std::string name, std::string_view query = {}) {
+  std::string url = "unix://@" + name;
+  if (!query.empty()) {
+    url += "?";
+    url += query;
+  }
+  return url;
+}
+struct PipeGuard {
+  explicit PipeGuard(std::string_view) {}  // abstract sockets leave no entry
+};
+#else
+// Windows: AF_UNIX has no abstract namespace — src/communication/socket.cpp
+// declines '@' names with kUnimplemented — so the same intent is a
+// filesystem socket under %TEMP%. The transport refuses to bind over an
+// existing path and never unlinks, so PipeGuard removes it at teardown.
+// sockaddr_un.sun_path is capped at 108 bytes including the NUL; the
+// abort() is a test-authoring bug tripwire, unreachable with these names.
+std::string pipe_url(std::string name, std::string_view query = {}) {
+  std::filesystem::path p = std::filesystem::temp_directory_path();
+  p /= name + ".sock";
+  const std::string path = p.generic_string();
+  if (path.size() >= 108) {
+    std::fprintf(stderr, "pipe_url: '%s' exceeds the 107-byte sun_path cap\n",
+                 path.c_str());
+    std::abort();
+  }
+  std::string url = "unix://" + path;
+  if (!query.empty()) {
+    url += "?";
+    url += query;
+  }
+  return url;
+}
+struct PipeGuard {
+  std::string path;
+  explicit PipeGuard(std::string_view url) : path(url.substr(7)) {
+    const auto q = path.find('?');
+    if (q != std::string::npos) path.resize(q);
+  }
+  ~PipeGuard() {
+    std::error_code ec;
+    std::filesystem::remove(path, ec);
+  }
+};
+#endif
+
 // One reactor plus everything it has been told, with control payloads copied
 // out while they are still alive.
 struct Pump {
@@ -193,7 +243,9 @@ LSE_TEST(a_typo_on_the_second_peer_of_a_scheme_is_refused_too) {
              std::string::npos);
 
   // A knob that IS spelled right still opens on the same instance.
-  auto good = rx.listen(must_parse("unix://@lse-comm-late-option?frame_max=64"));
+  const auto late_url = pipe_url("lse-comm-late-option", "frame_max=64");
+  const PipeGuard late_guard(late_url);
+  auto good = rx.listen(must_parse(late_url));
   LSE_EXPECT(good.ok());
 }
 
@@ -321,10 +373,11 @@ LSE_TEST(a_pipe_name_reaches_the_same_peer_as_an_address_does) {
   Reactor server = sr.release();
   Reactor client = cr.release();
 
-  // An abstract name: no filesystem entry, so nothing is left behind by a
-  // crash and no test races another for a path.
+  // pipe_url(): the abstract namespace on POSIX (no filesystem entry, nothing
+  // left behind by a crash, no path races); a guarded %TEMP% socket on Windows.
   const std::string pipe =
-      "unix://@lse-comm-" + std::to_string(::getpid()) + "-pipe";
+      pipe_url("lse-comm-" + std::to_string(::getpid()) + "-pipe");
+  const PipeGuard pipe_guard(pipe);
   auto ln = server.listen(must_parse(pipe));
   LSE_EXPECT(ln.ok());
   if (!ln.ok()) return;
@@ -365,9 +418,10 @@ LSE_TEST(a_large_transfer_is_segmented_and_reassembled) {
   // 4091 is ODL_TB5_STREAM_PAYLOAD_MAX. Running the segmenter at that frame
   // size over a socket is how the DMA-ring path is reviewed before the ring
   // exists.
-  auto ln = server.listen(must_parse("unix://@lse-comm-seg-" +
-                                     std::to_string(::getpid()) +
-                                     "?frame_max=4091"));
+  const auto seg_url = pipe_url("lse-comm-seg-" + std::to_string(::getpid()),
+                                "frame_max=4091");
+  const PipeGuard seg_guard(seg_url);
+  auto ln = server.listen(must_parse(seg_url));
   LSE_EXPECT(ln.ok());
   if (!ln.ok()) return;
   auto c = client.connect(must_parse(std::string(ln->endpoint().str())));
@@ -431,8 +485,10 @@ LSE_TEST(the_receiving_region_is_written_exactly_once_and_only_where_told) {
   Reactor server = sr.release();
   Reactor client = cr.release();
 
-  auto ln = server.listen(must_parse("unix://@lse-comm-window-" +
-                                     std::to_string(::getpid())));
+  const auto window_url =
+      pipe_url("lse-comm-window-" + std::to_string(::getpid()));
+  const PipeGuard window_guard(window_url);
+  auto ln = server.listen(must_parse(window_url));
   LSE_EXPECT(ln.ok());
   if (!ln.ok()) return;
   auto c = client.connect(must_parse(std::string(ln->endpoint().str())));
@@ -608,9 +664,10 @@ LSE_TEST(an_unanswered_offer_faults_the_channel_by_deadline) {
   Reactor server = sr.release();
   Reactor client = cr.release();
 
-  auto ln = server.listen(must_parse("unix://@lse-comm-offer-" +
-                                     std::to_string(::getpid()) +
-                                     "?offer_ms=200"));
+  const auto offer_url = pipe_url("lse-comm-offer-" + std::to_string(::getpid()),
+                                  "offer_ms=200");
+  const PipeGuard offer_guard(offer_url);
+  auto ln = server.listen(must_parse(offer_url));
   LSE_EXPECT(ln.ok());
   if (!ln.ok()) return;
   auto c = client.connect(must_parse(std::string(ln->endpoint().str())));
@@ -660,7 +717,8 @@ LSE_TEST(a_full_control_ring_refuses_and_then_says_when_it_is_writable) {
   Reactor client = cr.release();
 
   const std::string base =
-      "unix://@lse-comm-ring-" + std::to_string(::getpid());
+      pipe_url("lse-comm-ring-" + std::to_string(::getpid()));
+  const PipeGuard ring_guard(base);
   auto ln = server.listen(must_parse(base + "?ctrl_ring=4096&max_inflight=65536"));
   LSE_EXPECT(ln.ok());
   if (!ln.ok()) return;
@@ -768,8 +826,9 @@ LSE_TEST(a_stale_ticket_never_aliases_a_live_one) {
   Reactor server = sr.release();
   Reactor client = cr.release();
 
-  const std::string base = "unix://@lse-comm-slot-" + std::to_string(::getpid()) +
-                           "?max_inflight=1";
+  const std::string base =
+      pipe_url("lse-comm-slot-" + std::to_string(::getpid()), "max_inflight=1");
+  const PipeGuard slot_guard(base);
   auto ln = server.listen(must_parse(base));
   LSE_EXPECT(ln.ok());
   if (!ln.ok()) return;
@@ -813,6 +872,9 @@ LSE_TEST(a_stale_ticket_never_aliases_a_live_one) {
 }
 
 LSE_TEST(a_queued_transfer_can_be_cancelled_and_a_moving_one_cannot) {
+#ifdef _WIN32
+  LSE_SKIP("windows: capability — [test_communication:loopback-backpressure] Windows loopback TCP absorbs a single-call send whole (peer later reads back every byte of a 32 MiB WSASend), so post_send completes transfers that Linux loopback would stall in the socket buffer and the still-moving / still-queued / mid-transfer-death states never exist — #1 — review-by 2027-01-08");
+#endif
   auto sr = Reactor::create();
   auto cr = Reactor::create();
   if (!sr.ok() || !cr.ok()) return;
@@ -864,6 +926,9 @@ LSE_TEST(a_queued_transfer_can_be_cancelled_and_a_moving_one_cannot) {
 }
 
 LSE_TEST(a_peer_that_dies_mid_transfer_completes_every_ticket_then_closes) {
+#ifdef _WIN32
+  LSE_SKIP("windows: capability — [test_communication:loopback-backpressure] Windows loopback TCP absorbs a single-call send whole (peer later reads back every byte of a 32 MiB WSASend), so post_send completes transfers that Linux loopback would stall in the socket buffer and the still-moving / still-queued / mid-transfer-death states never exist — #1 — review-by 2027-01-08");
+#endif
   auto sr = Reactor::create();
   auto cr = Reactor::create();
   if (!sr.ok() || !cr.ok()) return;
@@ -1022,8 +1087,10 @@ LSE_TEST(a_transfer_that_misses_its_deadline_is_cancelled) {
   Reactor server = sr.release();
   Reactor client = cr.release();
 
-  auto ln = server.listen(must_parse("unix://@lse-comm-deadline-" +
-                                     std::to_string(::getpid())));
+  const auto deadline_url =
+      pipe_url("lse-comm-deadline-" + std::to_string(::getpid()));
+  const PipeGuard deadline_guard(deadline_url);
+  auto ln = server.listen(must_parse(deadline_url));
   LSE_EXPECT(ln.ok());
   if (!ln.ok()) return;
   auto c = client.connect(must_parse(std::string(ln->endpoint().str())));
@@ -1097,20 +1164,38 @@ LSE_TEST(a_name_is_resolved_before_the_loop_is_entered_not_inside_it) {
 // untouched; failing to look it up would force the caller to write
 // `if (scheme == ...)`, which is the branch this seam exists to remove.
 LSE_TEST(resolving_a_pipe_name_hands_it_back_instead_of_failing) {
-  for (const char* text : {"unix://@lse-resolve-passthrough",
-                           "unix:///run/lse-resolve.sock"}) {
+  const std::string texts[] = {pipe_url("lse-resolve-passthrough"),
+                               "unix:///run/lse-resolve.sock"};
+  for (const std::string& text : texts) {
     const Endpoint ep = must_parse(text);
     auto resolved = resolve(ep, 2000);
     LSE_EXPECT(resolved.ok());
     if (!resolved.ok()) {
-      std::printf("       %s -> %s\n", text,
+      std::printf("       %s -> %s\n", text.c_str(),
                   resolved.status().to_string().c_str());
       continue;
     }
     LSE_EXPECT_EQ(resolved->size(), std::size_t{1});
     LSE_EXPECT((*resolved)[0].str() == ep.str());
-    std::printf("       %s -> %s\n", text, (*resolved)[0].str().c_str());
+    std::printf("       %s -> %s\n", text.c_str(), (*resolved)[0].str().c_str());
   }
+}
+
+// The platform contract for '@' names: the abstract namespace is Linux-only.
+// Windows AF_UNIX must decline them with kUnimplemented (socket.cpp) rather
+// than bind half-way; POSIX must keep accepting them.
+LSE_TEST(abstract_names_follow_the_platform_contract) {
+  auto sr = Reactor::create();
+  LSE_EXPECT(sr.ok());
+  if (!sr.ok()) return;
+  Reactor server = sr.release();
+  auto ln = server.listen(must_parse("unix://@lse-comm-abstract-contract"));
+#ifdef _WIN32
+  LSE_EXPECT(!ln.ok());
+  LSE_EXPECT(ln.status().code() == StatusCode::kUnimplemented);
+#else
+  LSE_EXPECT(ln.ok());
+#endif
 }
 
 // ---------------------------------------------------------------------------
@@ -1389,8 +1474,10 @@ LSE_TEST(a_stalled_offer_with_a_hung_up_peer_still_lets_the_loop_sleep) {
   Reactor server = sr.release();
   Reactor client = cr.release();
 
-  const std::string name = "unix://@lse-comm-hup-" + std::to_string(::getpid()) +
-                           "?offer_ms=30000&deadline_ms=30000";
+  const std::string name =
+      pipe_url("lse-comm-hup-" + std::to_string(::getpid()),
+               "offer_ms=30000&deadline_ms=30000");
+  const PipeGuard hup_guard(name);
   auto ln = server.listen(must_parse(name));
   LSE_EXPECT(ln.ok());
   if (!ln.ok()) return;
@@ -1442,6 +1529,9 @@ LSE_TEST(a_stalled_offer_with_a_hung_up_peer_still_lets_the_loop_sleep) {
 }
 
 LSE_TEST(a_ticket_on_a_dead_channel_reads_as_done) {
+#ifdef _WIN32
+  LSE_SKIP("windows: capability — [test_communication:loopback-backpressure] Windows loopback TCP absorbs a single-call send whole (peer later reads back every byte of a 32 MiB WSASend), so post_send completes transfers that Linux loopback would stall in the socket buffer and the still-moving / still-queued / mid-transfer-death states never exist — #1 — review-by 2027-01-08");
+#endif
   auto sr = Reactor::create();
   auto cr = Reactor::create();
   if (!sr.ok() || !cr.ok()) return;
@@ -1449,7 +1539,8 @@ LSE_TEST(a_ticket_on_a_dead_channel_reads_as_done) {
   Reactor client = cr.release();
 
   const std::string name =
-      "unix://@lse-comm-done-" + std::to_string(::getpid());
+      pipe_url("lse-comm-done-" + std::to_string(::getpid()));
+  const PipeGuard done_guard(name);
   auto ln = server.listen(must_parse(name));
   LSE_EXPECT(ln.ok());
   if (!ln.ok()) return;

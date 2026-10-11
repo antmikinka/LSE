@@ -1607,8 +1607,9 @@ LSE_TEST(split_ring_partial_and_merge_emit_native_loom_at_actual_geometry) {
       std::fprintf(stderr, "%s\n", emitted.status().to_string().c_str());
       return;
     }
-    std::ofstream("/private/tmp/lse-dflash2-split-ring-" + std::to_string(i) +
-                  ".loom")
+    std::ofstream((std::filesystem::temp_directory_path() /
+                   ("lse-dflash2-split-ring-" + std::to_string(i) + ".loom"))
+                      .string())
         << emitted->source;
 #if defined(LSE_HRX_LINKED) && LSE_HAVE_LOOMC
     backend::LoomcCompiler compiler;

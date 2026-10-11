@@ -8,6 +8,12 @@
 #include <string>
 #include <vector>
 
+#ifdef _WIN32
+// POSIX spellings (::setenv/::unsetenv/usleep/mkdtemp/...) for tests that use
+// them without including <unistd.h>. Windows-only; POSIX builds are untouched.
+#include "compat.hpp"
+#endif
+
 namespace lse::test {
 
 struct Registry {

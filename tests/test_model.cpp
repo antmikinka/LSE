@@ -309,19 +309,24 @@ LSE_TEST(the_cache_root_follows_the_huggingface_precedence) {
 // The Python library expanduser+expandvars the value it reads; without this a
 // '~' becomes a literal directory name.
 LSE_TEST(a_cache_path_expands_a_tilde_and_a_variable) {
-  const ScopedEnv home("HOME", "/tmp/lse-fake-home");
+  // ID-8: HOME is a real per-platform temp path, and the expected values are
+  // built from it rather than hardcoding a POSIX literal — expand_path
+  // appends "/hub" verbatim, so the comparison is separator-tolerant.
+  const std::string fake_home =
+      (std::filesystem::temp_directory_path() / "lse-fake-home").string();
+  const ScopedEnv home("HOME", fake_home.c_str());
   const ScopedEnv legacy("HUGGINGFACE_HUB_CACHE", nullptr);
   {
     const ScopedEnv c("HF_HUB_CACHE", "~/hub");
-    LSE_EXPECT(hf_cache_root() == "/tmp/lse-fake-home/hub");
+    LSE_EXPECT(hf_cache_root() == fake_home + "/hub");
   }
   {
     const ScopedEnv c("HF_HUB_CACHE", "$HOME/hub");
-    LSE_EXPECT(hf_cache_root() == "/tmp/lse-fake-home/hub");
+    LSE_EXPECT(hf_cache_root() == fake_home + "/hub");
   }
   {
     const ScopedEnv c("HF_HUB_CACHE", "${HOME}/hub");
-    LSE_EXPECT(hf_cache_root() == "/tmp/lse-fake-home/hub");
+    LSE_EXPECT(hf_cache_root() == fake_home + "/hub");
   }
   {  // An undefined variable is left as written, as expandvars leaves it.
     const ScopedEnv c("HF_HUB_CACHE", "/tmp/$LSE_NO_SUCH_VAR_HERE/hub");

@@ -30,7 +30,9 @@
 #include "lse/server/router.hpp"
 #include "lse/tokenizer/tokenizer.hpp"
 
+#ifndef _WIN32  // cpp-httplib's poll() path is POSIX-only; Windows uses select().
 #define CPPHTTPLIB_USE_POLL
+#endif
 #include "httplib.h"
 
 using namespace lse;

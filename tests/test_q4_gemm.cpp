@@ -150,6 +150,9 @@ LSE_TEST(q4_gemm_emits_for_every_tile_and_width_on_a_described_device) {
           LSE_EXPECT(emitted->source.find("vector.mma") != std::string::npos);
         // Q4G_TEST_COMPILE: also compile each kernel for the description and
         // print what the allocator gave it -- no device involved.
+        // The compile step needs the loomc compiler, which links only with
+        // HRX (upstream guard idiom, cf. test_dflash2).
+#if defined(LSE_HRX_LINKED) && LSE_HAVE_LOOMC
         if (emitted.ok() && std::getenv("Q4G_TEST_COMPILE")) {
           const backend::LoomcCompiler compiler;
           auto compiled = compiler.compile(emitted->source, device.arch);
@@ -168,6 +171,7 @@ LSE_TEST(q4_gemm_emits_for_every_tile_and_width_on_a_described_device) {
           }
           LSE_EXPECT(compiled.ok());
         }
+#endif
       }
     }
   }

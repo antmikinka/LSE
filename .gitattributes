@@ -1,0 +1,7 @@
+# Test fixtures are consumed byte-for-byte by the engine and its tests
+# (chat_template.jinja is parsed into generation prompts; a CRLF checkout on
+# Windows leaves \r inside the asserted "<|im_start|>assistant\n" framing).
+# Never apply core.autocrlf/eol conversion to them. The blobs are LF, so
+# POSIX checkouts are byte-identical to before this file existed; Windows
+# checkouts now get the same LF bytes instead of CRLF.
+tests/fixtures/** -text

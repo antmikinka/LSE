@@ -20,6 +20,7 @@
 
 #include <chrono>
 #include <cmath>
+#include <filesystem>
 #include <functional>
 #include <cstdio>
 #include <cstdlib>
@@ -700,9 +701,13 @@ int trial(std::int64_t m, std::int64_t n, std::int64_t k, int reps) {
 // when the KV pool grows: its variant decision is kept by shape class. Runs
 // with its own empty kernel cache, so the first pass is undecided.
 int trials() {
-  char dir[] = "/tmp/lse-trials-XXXXXX";
-  if (::mkdtemp(dir) == nullptr) return 1;
-  ::setenv("LSE_CACHE_DIR", dir, 1);
+  // ID-C2-7: no fixed-size buffer holds a generated temp path — mkdtemp
+  // rewrites the template in place inside a runtime-sized std::string, and
+  // the directory comes from temp_directory_path(), not a /tmp literal.
+  std::string dir =
+      (std::filesystem::temp_directory_path() / "lse-trials-XXXXXX").string();
+  if (::mkdtemp(dir.data()) == nullptr) return 1;
+  ::setenv("LSE_CACHE_DIR", dir.c_str(), 1);
   auto* scheduler = default_scheduler();
   scheduler->set_mode(Scheduler::Mode::kDeviceFirst);
   std::mt19937 rng(11);

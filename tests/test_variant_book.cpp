@@ -15,7 +15,7 @@ std::string fresh_cache_dir() {
                    ("lse-variant-book-" + std::to_string(::getpid()));
   std::filesystem::remove_all(dir);
   std::filesystem::create_directories(dir);
-  ::setenv("LSE_CACHE_DIR", dir.c_str(), 1);
+  ::setenv("LSE_CACHE_DIR", dir.string().c_str(), 1);  // .string(): fs::path::c_str() is wchar on Windows
   ::unsetenv("LSE_AUTOTUNE");
   return dir.string();
 }
@@ -59,7 +59,7 @@ LSE_TEST(variant_book_lives_in_the_cache_set_after_it_is_made) {
   VariantBook book;
   const auto chosen = std::filesystem::path(first) / "chosen";
   std::filesystem::create_directories(chosen);
-  ::setenv("LSE_CACHE_DIR", chosen.c_str(), 1);
+  ::setenv("LSE_CACHE_DIR", chosen.string().c_str(), 1);
   book.record(7, 1, "0=2.0us 1=1.0us");
   bool beside = false, elsewhere = false;
   for (const auto& e : std::filesystem::directory_iterator(chosen))

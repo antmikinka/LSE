@@ -21,7 +21,9 @@
 
 #include <nlohmann/json.hpp>
 
+#ifndef _WIN32  // cpp-httplib's poll() path is POSIX-only; Windows uses select().
 #define CPPHTTPLIB_USE_POLL
+#endif
 #include "httplib.h"
 
 #include "lse/core/sha256.hpp"
@@ -261,9 +263,11 @@ class FakeCache {
  public:
   explicit FakeCache(const std::string& tag)
       : root_(fs::temp_directory_path() / ("lse-test-hub-" + tag + "-" + std::to_string(::getpid()))),
-        hub_cache_("HF_HUB_CACHE", (root_ / "hub").c_str()),
+        // .string().c_str(): fs::path::c_str() is wchar_t-based on Windows;
+        // ScopedEnv copies the value, so the temporaries are safe here.
+        hub_cache_("HF_HUB_CACHE", (root_ / "hub").string().c_str()),
         legacy_("HUGGINGFACE_HUB_CACHE", nullptr),
-        home_("HF_HOME", root_.c_str()),
+        home_("HF_HOME", root_.string().c_str()),
         offline_("HF_HUB_OFFLINE", nullptr),
         token_("HF_TOKEN", nullptr),
         token2_("HUGGING_FACE_HUB_TOKEN", nullptr),
@@ -642,7 +646,7 @@ LSE_TEST(scan_lists_only_supported_mlx_models_with_every_cached_revision) {
     fs::create_directories((local / p).parent_path());
     std::ofstream(local / p, std::ios::binary) << content;
   }
-  ScopedEnv dirs("LSE_MODEL_DIRS", (cache.root() / "models").c_str());
+  ScopedEnv dirs("LSE_MODEL_DIRS", (cache.root() / "models").string().c_str());
   const hub::Listing with_local = hub::scan();
   LSE_EXPECT_EQ(with_local.models.size(), 3u);
 }

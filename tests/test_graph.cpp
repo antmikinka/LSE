@@ -3152,7 +3152,10 @@ LSE_TEST(a_cold_compile_is_charged_to_compile_and_never_to_emit) {
     return;
   }
 
-  const std::string dir = "/tmp/lse-cold-spans-" + std::to_string(::getpid());
+  const std::string dir =
+      (std::filesystem::temp_directory_path() /
+       ("lse-cold-spans-" + std::to_string(::getpid())))
+          .string();
   std::string saved;
   const bool had = std::getenv("LSE_CACHE_DIR") != nullptr;
   if (had) saved = std::getenv("LSE_CACHE_DIR");

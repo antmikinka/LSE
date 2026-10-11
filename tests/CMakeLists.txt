@@ -5,6 +5,14 @@ function(lse_add_test name)
   add_executable(${name} ${name}.cpp)
   target_link_libraries(${name} PRIVATE lse_core lse_backend_registry ${ARGN})
   target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+  # Windows-only shim dir: satisfies literal `#include <unistd.h>` /
+  # <sys/wait.h> / <dlfcn.h> directives in zero-touch test files with the
+  # tests/compat/ spellings (see tests/compat.hpp). POSIX never adds the
+  # directory, so the real system headers win there.
+  if(WIN32)
+    target_include_directories(${name} PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/compat)
+  endif()
   lse_apply_common_flags(${name})
   # harness.hpp skips this binary's cases listed in tests/KNOWN_FAILURES.md.
   target_compile_definitions(${name} PRIVATE LSE_TEST_BINARY="${name}"
@@ -98,21 +106,16 @@ target_sources(test_loom_concat PRIVATE
   ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_print.cpp
   ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp
   ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_sources.cpp)
-# COMPILE_EXCLUSIONS.md (X): test_loom_cache.cpp includes <unistd.h> for
-# ::getpid/::setenv/::unsetenv, which the UCRT does not provide; WP12 ports it
-# via tests/compat.hpp. Additive guard — no effect on Linux/macOS.
-if(NOT WIN32)
-  lse_add_test(test_loom_cache lse_graph lse_kernels lse_ir)
-  target_sources(test_loom_cache PRIVATE
-    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_emitter.cpp
-    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_print.cpp
-    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp
-    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_sources.cpp)
-  # The launch index test checks the build identity hashes the whole engine tree.
-  target_compile_definitions(test_loom_cache PRIVATE
-    "LSE_SOURCE_ROOT=\"${CMAKE_SOURCE_DIR}\""
-    "LSE_IDENTITY_SOURCES=\"${CMAKE_BINARY_DIR}/generated/lse_build_identity_sources.txt\"")
-endif()
+lse_add_test(test_loom_cache lse_graph lse_kernels lse_ir)
+target_sources(test_loom_cache PRIVATE
+  ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_emitter.cpp
+  ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_print.cpp
+  ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp
+  ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_sources.cpp)
+# The launch index test checks the build identity hashes the whole engine tree.
+target_compile_definitions(test_loom_cache PRIVATE
+  "LSE_SOURCE_ROOT=\"${CMAKE_SOURCE_DIR}\""
+  "LSE_IDENTITY_SOURCES=\"${CMAKE_BINARY_DIR}/generated/lse_build_identity_sources.txt\"")
 lse_add_test(test_quant)
 # Compiler/layout contracts only; this test never opens a GPU.
 lse_add_test(test_quant_prefill lse_graph lse_kernels lse_backends lse_ir)
@@ -168,12 +171,26 @@ find_package(Threads REQUIRED)
 add_executable(test_server_shutdown test_server_shutdown.cpp)
 target_include_directories(test_server_shutdown PRIVATE
   ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/third_party/vendor)
+if(WIN32)
+  # Raw target (own main, not lse_add_test): the same Windows-only shim dir.
+  target_include_directories(test_server_shutdown PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/compat)
+endif()
 target_link_libraries(test_server_shutdown PRIVATE Threads::Threads)
 lse_apply_common_flags(test_server_shutdown)
 add_test(NAME test_server_shutdown COMMAND test_server_shutdown)
 set_tests_properties(test_server_shutdown PROPERTIES TIMEOUT 15)
 
 lse_add_test(test_model lse_model lse_backends)
+# Same CPU-only link gap as test_runtime below: with no HRX backend in the link
+# nothing pulls in lse_kernels, so the self-registered dispatch primitives its
+# forward passes need (gdn.silu_l2norm.v1 and friends) never reach the binary
+# and hidden() reports "no primitive named ...". An HRX-on build gets the
+# archive via lse_backend_hrx; link it explicitly here (lse_force_load makes the
+# WHOLEARCHIVE sticky). Platform-independent gap; guard matches test_runtime's.
+if(NOT TARGET lse_backend_hrx)
+  target_link_libraries(test_model PRIVATE lse_kernels)
+endif()
 # Hugging Face model management against a fake hub cache and a loopback mock
 # of the Hub API (no network, no device).
 if(TARGET lse_hub)
@@ -183,34 +200,44 @@ if(TARGET lse_hub)
 endif()
 lse_add_test(test_gdn_rate lse_ops lse_kernels lse_backends)
 set_tests_properties(test_gdn_rate PROPERTIES ENVIRONMENT "LSE_BACKEND=cpu;LSE_POOL=cpu")
+# --- Cycle-2 P8 additions (11-cycle2-test-plan §7, WP12b) -------------------
+# ID-12 FP-flag canary layer C: proves /clang:-ffp-contract=off is EFFECTIVE in
+# a running binary (a*b+c must not fold into an fma). All platforms, both CI
+# jobs, every gate from C2-WP5 on.
+lse_add_test(test_fp_model)
+# B1 direct coverage of the lse::platform seam (04 §4 case table): every shim
+# API gets >=1 case here; < 5 s — the >2 GiB cases live in test_large_file_io.
+lse_add_test(test_platform_shim)
+# ID-5 numerics fingerprint (T3 vehicle): fixed-seed fixture drives GEMV /
+# RMSNorm / rope / softmax / attention-step through the CPU reference path and
+# prints the HASH-EQ vs TOLERANCE partition + SHA256 + max_rel per kernel.
+# Backend pinned to CPU so the fingerprint never depends on the host GPU.
+lse_add_test(test_numerics_fingerprint lse_ops lse_kernels lse_backends)
+set_tests_properties(test_numerics_fingerprint PROPERTIES
+  ENVIRONMENT "LSE_BACKEND=cpu;LSE_POOL=cpu")
+# ID-1 >2 GiB acceptance on a sparse 4 GiB+1 MiB fixture (04 §3). LARGE_IO:
+# excluded from PR CI (minutes budget), weekly/dispatch + local M3 only.
+lse_add_test(test_large_file_io lse_core lse_model)
+set_tests_properties(test_large_file_io PROPERTIES LABELS "LARGE_IO" TIMEOUT 120)
 lse_add_test(test_prefix_commit lse_model lse_backends)
 set_tests_properties(test_prefix_commit PROPERTIES ENVIRONMENT "LSE_BACKEND=cpu;LSE_POOL=cpu")
 lse_add_test(test_feature_taps lse_model lse_backends)
 lse_add_test(test_hybrid_tokens lse_model lse_kernels lse_backends lse_ir)
 lse_add_test(test_dflash2_convert lse_model lse_backends)
-# COMPILE_EXCLUSIONS.md (X): test_dflash2.cpp includes <unistd.h> for getpid,
-# which the UCRT does not provide; WP12 ports it via tests/compat.hpp. Additive
-# guard — no effect on Linux/macOS. test_feature_taps still needs its runtime
-# environment on every platform, so it is set in both branches.
-if(NOT WIN32)
-  lse_add_test(test_dflash2 lse_model lse_kernels lse_backends lse_ir)
-  if(TARGET lse_runtime)
-    target_link_libraries(test_dflash2 PRIVATE lse_runtime)
-    target_compile_definitions(test_dflash2 PRIVATE LSE_DFLASH2_RUNTIME_TESTS=1)
-  endif()
-  if(NOT TARGET lse_backend_hrx)
-    target_sources(test_dflash2 PRIVATE
-      ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_emitter.cpp
-      ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_print.cpp
-      ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp
-      ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_sources.cpp)
-  endif()
-  set_tests_properties(test_dflash2 test_feature_taps PROPERTIES
-    ENVIRONMENT "LSE_BACKEND=cpu;LSE_POOL=cpu")
-else()
-  set_tests_properties(test_feature_taps PROPERTIES
-    ENVIRONMENT "LSE_BACKEND=cpu;LSE_POOL=cpu")
+lse_add_test(test_dflash2 lse_model lse_kernels lse_backends lse_ir)
+if(TARGET lse_runtime)
+  target_link_libraries(test_dflash2 PRIVATE lse_runtime)
+  target_compile_definitions(test_dflash2 PRIVATE LSE_DFLASH2_RUNTIME_TESTS=1)
 endif()
+if(NOT TARGET lse_backend_hrx)
+  target_sources(test_dflash2 PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_emitter.cpp
+    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_print.cpp
+    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp
+    ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_sources.cpp)
+endif()
+set_tests_properties(test_dflash2 test_feature_taps PROPERTIES
+  ENVIRONMENT "LSE_BACKEND=cpu;LSE_POOL=cpu")
 
 if(LSE_ENABLE_CPU)
   lse_add_test(test_reference lse_model lse_graph lse_backends)
@@ -232,6 +259,13 @@ if(LSE_ENABLE_CPU)
     target_link_libraries(test_runtime PRIVATE lse_kernels)
     target_sources(test_perplexity PRIVATE
       ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp)
+    # test_memory_lifecycle drives a full draft-module session, whose forward
+    # passes need the same self-registered primitives (softmax_top.partial); it
+    # links lse_server/lse_runtime but not lse_kernels, so it hits the identical
+    # not_found trap. Only registered when the tokenizer target exists.
+    if(TARGET lse_tokenizer)
+      target_link_libraries(test_memory_lifecycle PRIVATE lse_kernels)
+    endif()
   endif()
 endif()
 
@@ -377,17 +411,12 @@ if(NOT TARGET lse_backend_hrx)
 endif()
 
 if(TARGET lse_backend_cpu)
-  # COMPILE_EXCLUSIONS.md (X): test_launch_template.cpp:122 calls setenv(),
-  # which the UCRT does not declare; WP12 ports it via tests/compat.hpp.
-  # Additive guard — no effect on Linux/macOS.
-  if(NOT WIN32)
   lse_add_test(test_launch_template lse_graph lse_kernels lse_ir lse_backend_cpu)
   target_sources(test_launch_template PRIVATE
     ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_emitter.cpp
     ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_print.cpp
     ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_types.cpp
     ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_sources.cpp)
-  endif()
   lse_add_test(test_scheduler_epilogue lse_graph lse_kernels lse_ir lse_backend_cpu)
   target_sources(test_scheduler_epilogue PRIVATE
     ${CMAKE_SOURCE_DIR}/src/backends/hrx/loomc/loom_emitter.cpp
@@ -566,7 +595,11 @@ lse_add_test(test_q8_matrix_pack lse_graph lse_kernels lse_backends lse_ir)
 set_tests_properties(test_quant_swiglu test_typed_kernel test_q4_activation_panel test_q4_matrix_panel test_q8_matrix_pack PROPERTIES
   ENVIRONMENT "LSE_BACKEND=cpu;LSE_POOL=cpu")
 if(NOT TARGET lse_backend_hrx)
-  foreach(target test_quant_swiglu test_typed_kernel test_q4_activation_panel test_q4_matrix_panel test_q8_matrix_pack)
+  # test_q4_gemm/test_gdn_rows/test_flash_prefill/test_tree_verify reference the
+  # same loomc/hipc seams (LoomEmitter, LoomcCompiler, loom_sources) and fail to
+  # link without HRX for the identical reason — they belong in this list.
+  foreach(target test_quant_swiglu test_typed_kernel test_q4_activation_panel test_q4_matrix_panel test_q8_matrix_pack
+                 test_q4_gemm test_gdn_rows test_flash_prefill test_tree_verify)
     target_sources(${target} PRIVATE
     ${CMAKE_SOURCE_DIR}/src/backends/hrx/hipc/hip_emitter.cpp
     ${CMAKE_SOURCE_DIR}/src/backends/hrx/hipc/phase_emit.cpp

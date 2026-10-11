@@ -597,7 +597,7 @@ LSE_TEST(c_api_answers_and_refuses) {
   write_qwen(dir.path, false);
   char* out = nullptr;
   char* err = nullptr;
-  LSE_EXPECT_EQ(lse_model_info(dir.path.c_str(), &out, &err), LSE_OK);
+  LSE_EXPECT_EQ(lse_model_info(dir.path.string().c_str(), &out, &err), LSE_OK);
   LSE_EXPECT(out != nullptr && err == nullptr);
   if (out != nullptr) {
     const json info = json::parse(out);
@@ -617,7 +617,7 @@ LSE_TEST(c_api_answers_and_refuses) {
     std::filesystem::copy_file(std::filesystem::path("tests/fixtures/chat_templates/qwen3.8") / file,
                                dir.path / file, std::filesystem::copy_options::overwrite_existing);
   out = nullptr;
-  LSE_EXPECT_EQ(lse_model_info(dir.path.c_str(), &out, &err), LSE_OK);
+  LSE_EXPECT_EQ(lse_model_info(dir.path.string().c_str(), &out, &err), LSE_OK);
   if (out != nullptr) {
     const json info = json::parse(out);
     LSE_EXPECT_EQ(info["generation_defaults"]["top_k"].get<int>(), 20);
@@ -636,7 +636,10 @@ LSE_TEST(c_api_answers_and_refuses) {
 
   lse_config cfg;
   lse_config_init(&cfg);
-  cfg.model = dir.path.c_str();
+  // .string() into a named local: cfg.model must outlive the call below, and
+  // fs::path::c_str() is wchar_t-based on Windows.
+  const std::string model_dir = dir.path.string();
+  cfg.model = model_dir.c_str();
   cfg.kv_len = 2048;
   cfg.kv_cache_dtype = "fp8";
   cfg.dialect = "hip";

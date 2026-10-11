@@ -85,6 +85,9 @@ LSE_TEST(flash_prefill_emits_for_a_described_device) {
       std::fprintf(stderr, "flash emission: %s\n", std::string(emitted.status().message()).c_str());
     LSE_EXPECT(emitted.ok());
     if (!emitted.ok() || !std::getenv("FLASH_TEST_COMPILE")) continue;
+    // The compile step needs the loomc compiler, which links only with HRX
+    // (upstream guard idiom, cf. test_dflash2).
+#if defined(LSE_HRX_LINKED) && LSE_HAVE_LOOMC
     const backend::LoomcCompiler compiler;
     auto compiled = compiler.compile(emitted->source, device.arch);
     if (!compiled.ok())
@@ -96,6 +99,7 @@ LSE_TEST(flash_prefill_emits_for_a_described_device) {
                   r.vector_registers.value_or(0), r.scalar_registers.value_or(0),
                   r.workgroup_segment_bytes.value_or(0), r.vector_spills.value_or(0),
                   r.scalar_spills.value_or(0));
+#endif
   }
 }
 

@@ -269,7 +269,7 @@ struct ArtifactDirectory {
     std::filesystem::remove_all(path);
     std::filesystem::create_directories(path);
     if (const auto* before = std::getenv("LSE_HIP_DUMP")) dump = before;
-    ::setenv("LSE_HIP_DUMP", (path / "dump").c_str(), 1);
+    ::setenv("LSE_HIP_DUMP", (path / "dump").string().c_str(), 1);
   }
   ~ArtifactDirectory() {
     if (dump) ::setenv("LSE_HIP_DUMP", dump->c_str(), 1);
@@ -339,11 +339,15 @@ LSE_TEST(loom_compiled_body_ignores_bound_producer_metadata_but_keeps_edges) {
 
 namespace {
 std::string cache_text(const std::filesystem::path& path) {
-  std::ifstream in(path);
+  // Binary: these artifacts include the engine's binary .launch index, whose
+  // u64/u32 fields can contain 0x1A (the DOS EOF byte) or 0x0D0A. A text-mode
+  // read on Windows truncates at 0x1A and folds CRLF, corrupting the bytes; the
+  // engine itself reads/writes them in binary. POSIX is unaffected (text==bin).
+  std::ifstream in(path, std::ios::binary);
   return {std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>()};
 }
 void cache_write(const std::filesystem::path& path, std::string_view text) {
-  std::ofstream out(path);
+  std::ofstream out(path, std::ios::binary);
   out << text;
 }
 struct CacheFamily {
@@ -388,7 +392,7 @@ LSE_TEST(cache_dump_overlap_preserves_all_cache_ownership_versions_and_user_file
   const auto generated = dir.path / "lse_loom_123.loom";
   cache_write(user, "user source");
   cache_write(generated, "generated source");
-  ::setenv("LSE_HIP_DUMP", dir.path.c_str(), 1);
+  ::setenv("LSE_HIP_DUMP", dir.path.string().c_str(), 1);
   // This is the first purge in this test process, including debug cleanup.
   purge_kernel_artifacts(dir.path.string());
   expect_cache_family(older, false);
@@ -469,7 +473,7 @@ LSE_TEST(compiled_source_warm_alias_verifies_the_entire_disk_source) {
     if (entry.path().extension() != ".source") continue;
     auto altered = source.source;
     altered[altered.size() - 2] = 'x';
-    std::ofstream out(entry.path());
+    std::ofstream out(entry.path(), std::ios::binary);
     out << altered;
   }
   {
@@ -677,7 +681,7 @@ LSE_TEST(cache_release_cleanup_uses_selected_directory_at_each_startup) {
   const auto* before = std::getenv("LSE_CACHE_DIR");
   const std::optional<std::string> saved = before ? std::optional<std::string>(before)
                                                  : std::nullopt;
-  ::setenv("LSE_CACHE_DIR", other.c_str(), 1);
+  ::setenv("LSE_CACHE_DIR", other.string().c_str(), 1);
   ArtifactCompiler compiler;
   ArtifactBackend backend;
   { JitCache cache(backend, compiler, selected.string()); }
