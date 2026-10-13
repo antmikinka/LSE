@@ -7,6 +7,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
+#include <fstream>
+#include <iterator>
 #include <memory>
 #include <optional>
 #include <string>
@@ -40,6 +42,9 @@ using namespace lse;
 struct Options {
   std::string model;
   std::string prompt = "Hello";
+  // Set when the prompt is read from a file. A long context does not fit in
+  // a Windows command line.
+  std::string prompt_file;
   runtime::SamplingParams sampling;
   bool temperature_set = false, top_k_set = false, top_p_set = false;
   bool repetition_penalty_set = false, min_p_set = false, presence_penalty_set = false;
@@ -149,6 +154,8 @@ void usage() {
       "  -b, --batch N          decode N copies of the prompt as one batch,\n"
       "                         reporting aggregate throughput and per-session\n"
       "                         latency (default 1: the single-session path)\n"
+      "      --prompt-file PATH read the prompt from a UTF-8 file instead of\n"
+      "                         the positional prompt\n"
       "  -p, --prompt TEXT      one more sequence for the batch; repeatable,\n"
       "                         and prompts of different lengths put the rows\n"
       "                         at different positions\n"
@@ -226,6 +233,12 @@ bool parse(int argc, char** argv, Options* opt) {
     } else if (a == "-b" || a == "--batch") {
       if (!take_value(argc, argv, i, "--batch", &v)) return false;
       opt->batch = std::atoi(v.c_str());
+    } else if (a == "--prompt-file") {
+      if (!take_value(argc, argv, i, "--prompt-file", &opt->prompt_file)) return false;
+      if (opt->prompt_file.empty()) {
+        std::fputs("lse: --prompt-file needs a nonempty path\n", stderr);
+        return false;
+      }
     } else if (a == "-p" || a == "--prompt") {
       if (!take_value(argc, argv, i, "--prompt", &v)) return false;
       opt->prompts.push_back(v);
@@ -372,11 +385,29 @@ bool parse(int argc, char** argv, Options* opt) {
     return false;
   }
 
+  if (!opt->prompt_file.empty() && !positional.empty()) {
+    std::fputs("lse: --prompt-file replaces the positional prompt\n", stderr);
+    return false;
+  }
   if (!positional.empty()) {
     opt->prompt.clear();
     for (std::size_t i = 0; i < positional.size(); ++i) {
       if (i != 0) opt->prompt += ' ';
       opt->prompt += positional[i];
+    }
+  }
+  if (!opt->prompt_file.empty()) {
+    std::ifstream in(opt->prompt_file, std::ios::binary);
+    if (!in) {
+      std::fprintf(stderr, "lse: cannot read prompt file '%s'\n", opt->prompt_file.c_str());
+      return false;
+    }
+    opt->prompt.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
+    if (!opt->prompt.empty() && opt->prompt.back() == '\n') opt->prompt.pop_back();
+    if (!opt->prompt.empty() && opt->prompt.back() == '\r') opt->prompt.pop_back();
+    if (opt->prompt.empty()) {
+      std::fputs("lse: prompt file is empty\n", stderr);
+      return false;
     }
   }
   return true;
@@ -493,6 +524,20 @@ int list_devices() {
     for (const backend::DeviceDescriptor& d : *found) {
       std::printf("%-6s %s", d.id().c_str(), d.describe().c_str());
       ++devices;
+    }
+    if (auto made = backend::create_backend(name); made.ok()) {
+      std::string dialects;
+      for (const graph::KernelToolchain& tc : (*made)->toolchains()) {
+        if (!dialects.empty()) dialects += ", ";
+        dialects += std::string(to_string(tc.dialect));
+        if (tc.emitter == nullptr) dialects += " (no emitter)";
+        if (tc.compiler == nullptr || !tc.compiler->available()) {
+          dialects += " (no compiler)";
+        }
+      }
+      if (!dialects.empty()) {
+        std::printf("       toolchains: %s\n", dialects.c_str());
+      }
     }
   }
   if (devices == 0) return 1;

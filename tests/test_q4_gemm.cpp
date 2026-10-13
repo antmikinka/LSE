@@ -328,11 +328,12 @@ LSE_TEST(q4_gemm_slices_fill_the_device_without_starving_a_slice) {
 }
 
 // The wide-pass tile is each part's own: gfx1201 keeps 64x64 wave tiles,
-// gfx1151 (whose gfx11 fragments are twice as wide) takes 64x32 ones, and
-// below 768 rows every part takes the same shape-only tiles.
+// gfx1151 and gfx1150 (whose gfx11 fragments are twice as wide) take 64x32
+// ones, and below 768 rows every part takes the same shape-only tiles.
 LSE_TEST(q4_gemm_wide_tile_is_the_parts_own) {
   const auto& r9700 = dispatch::arch::tuning("gfx1201");
   const auto& halo = dispatch::arch::tuning("gfx1151");
+  const auto& i890 = dispatch::arch::tuning("gfx1150");
   const auto& other = dispatch::arch::tuning("gfx1100");
   const auto same = [](const dispatch::Q4GemmTile& a, const dispatch::Q4GemmTile& b) {
     return a.bm == b.bm && a.bn == b.bn && a.wm == b.wm && a.wn == b.wn;
@@ -340,13 +341,16 @@ LSE_TEST(q4_gemm_wide_tile_is_the_parts_own) {
   for (const std::uint64_t m : {768ull, 1024ull, 4096ull}) {
     LSE_EXPECT(same(dispatch::q4_gemm_tile(m, r9700), {256, 128, 4, 2}));
     LSE_EXPECT(same(dispatch::q4_gemm_tile(m, halo), {256, 128, 4, 4}));
+    LSE_EXPECT(same(dispatch::q4_gemm_tile(m, i890), {256, 128, 4, 4}));
     LSE_EXPECT(same(dispatch::q4_gemm_tile(m, other), dispatch::kQ4GemmWideTile));
     LSE_EXPECT(same(dispatch::q4_gemm_tile(m), dispatch::kQ4GemmWideTile));
   }
-  for (const std::uint64_t m : {9ull, 16ull, 64ull, 137ull, 512ull, 767ull})
+  for (const std::uint64_t m : {9ull, 16ull, 64ull, 137ull, 512ull, 767ull}) {
     LSE_EXPECT(same(dispatch::q4_gemm_tile(m, r9700), dispatch::q4_gemm_tile(m, halo)));
-  // Every thread stages the same number of activation pieces on both.
-  for (const auto* t : {&r9700, &halo}) {
+    LSE_EXPECT(same(dispatch::q4_gemm_tile(m, i890), dispatch::q4_gemm_tile(m, halo)));
+  }
+  // Every thread stages the same number of activation pieces on each.
+  for (const auto* t : {&r9700, &halo, &i890}) {
     const auto tile = t->q4_gemm_wide;
     LSE_EXPECT_EQ(tile.bm * (dispatch::kQ4GemmStepK / 8u) % (tile.wm * tile.wn * 32u), 0u);
   }

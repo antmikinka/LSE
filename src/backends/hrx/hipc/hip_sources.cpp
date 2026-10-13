@@ -14,7 +14,7 @@ namespace lse::backend {
 
 namespace {
 
-constexpr std::array<graph::PrimitiveSource, 76> kHipSources{{
+constexpr std::array<graph::PrimitiveSource, 79> kHipSources{{
     {"add", "$0 + $1"},
     {"sub", "$0 - $1"},
     {"mul", "$0 * $1"},
@@ -174,6 +174,20 @@ constexpr std::array<graph::PrimitiveSource, 76> kHipSources{{
     {"value.bf8.1", "__builtin_amdgcn_cvt_f32_bf8($0, 1)"},
     {"value.bf8.2", "__builtin_amdgcn_cvt_f32_bf8($0, 2)"},
     {"value.bf8.3", "__builtin_amdgcn_cvt_f32_bf8($0, 3)"},
+
+    // Eight f32 activations as eight f16 lanes, ordered k0,k4,k1,k5,k2,k6,k3,k7.
+    // That is the order q4x8.f16 produces, so a matrix operand's K matches.
+    // $0 and $1 are the two aligned float4 loads (k0..k3, then k4..k7).
+    {"cvt8i.f16.f32",
+     "__builtin_convertvector(__builtin_shufflevector((float __attribute__((ext_vector_type(4))))($0), (float __attribute__((ext_vector_type(4))))($1), 0, 4, 1, 5, 2, 6, 3, 7), _Float16 __attribute__((ext_vector_type(8))))"},
+    // One word of eight 4-bit codes as eight f16 weights, scale * code + bias.
+    // 0x000F000F keeps nibble j and nibble j+4; 0x64006400 makes each half
+    // 1024 + code, and adding -1024 is exact in f16. Lane order as above.
+    {"q4x8.f16",
+     "({ unsigned _w = (unsigned)($0); unsigned _m = 983055u; unsigned _e = 1677747200u; unsigned __attribute__((ext_vector_type(4))) _p = {(_w & _m) | _e, ((_w >> 4) & _m) | _e, ((_w >> 8) & _m) | _e, ((_w >> 12) & _m) | _e}; _Float16 __attribute__((ext_vector_type(8))) _h = __builtin_bit_cast(_Float16 __attribute__((ext_vector_type(8))), _p); (_h + (_Float16)-1024.0f) * (_Float16)($1) + (_Float16)($2); })"},
+    // Two words of four 8-bit codes, same lane order and the same 1024 bias.
+    {"q8x8.f16",
+     "({ unsigned _a = (unsigned)($0); unsigned _b = (unsigned)($1); unsigned _e = 1677747200u; unsigned __attribute__((ext_vector_type(4))) _p = {(_a & 255u) | ((_b & 255u) << 16) | _e, ((_a >> 8) & 255u) | (((_b >> 8) & 255u) << 16) | _e, ((_a >> 16) & 255u) | (((_b >> 16) & 255u) << 16) | _e, ((_a >> 24) & 255u) | (((_b >> 24) & 255u) << 16) | _e}; _Float16 __attribute__((ext_vector_type(8))) _h = __builtin_bit_cast(_Float16 __attribute__((ext_vector_type(8))), _p); (_h + (_Float16)-1024.0f) * (_Float16)($2) + (_Float16)($3); })"},
 
     {"thread.local_id", "threadIdx.x"},
     {"thread.workgroup_id.x", "blockIdx.x"},

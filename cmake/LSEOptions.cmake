@@ -14,11 +14,9 @@ option(LSE_ASAN           "Build with AddressSanitizer"     OFF)
 option(LSE_WITH_COMGR     "Link amd_comgr when ROCm provides it" ON)
 
 if(WIN32 AND LSE_ENABLE_HRX)
-  # The HRX backend needs the ROCm/HSA runtime, which has no Windows port.
-  # Force it OFF so a Windows configure never chases a backend that cannot
-  # link; the Phase-3 compile-only spike re-enables it behind its own guard.
-  set(LSE_ENABLE_HRX OFF)
-  message(STATUS "HRX backend: not supported on Windows in Phase 1 (forced OFF)")
+  # Windows HRX links the tracked libhrx (hrx.dll). That library loads the
+  # existing hsa-runtime64.dll. Kernel dispatch stays unimplemented there.
+  message(STATUS "HRX backend: Windows libhrx (hrx.dll + hsa-runtime64.dll)")
 endif()
 
 # gfx1151 = Radeon 8060S (Strix Halo, this machine)
@@ -120,11 +118,17 @@ if(LSE_ENABLE_HRX)
     HINTS "${LSE_HRX_ROOT}/include"
           # The install component nests headers under include/hrx/.
           "${LSE_HRX_ROOT}/include/hrx"
+          # Tracked Windows library. Headers live with the source, the import
+          # library with the build, so LSE_HRX_ROOT is not required.
+          "${CMAKE_CURRENT_SOURCE_DIR}/libhrx/include"
           "${CMAKE_CURRENT_SOURCE_DIR}/reference/hrx-system/build/hrx-install/include/hrx"
           "${CMAKE_CURRENT_SOURCE_DIR}/reference/hrx-system/libhrx/include")
   find_library(LSE_HRX_LIBRARY
     NAMES hrx
     HINTS "${LSE_HRX_ROOT}/lib"
+          "${CMAKE_CURRENT_SOURCE_DIR}/build-libhrx"
+          "${CMAKE_CURRENT_SOURCE_DIR}/build-libhrx/Release"
+          "${CMAKE_CURRENT_SOURCE_DIR}/build-libhrx/RelWithDebInfo"
           "${CMAKE_CURRENT_SOURCE_DIR}/reference/hrx-system/build/hrx-install/lib")
   if(LSE_HRX_INCLUDE_DIR AND LSE_HRX_LIBRARY)
     set(LSE_HAVE_HRX ON)

@@ -7,6 +7,7 @@
 #include <limits>
 #include <utility>
 #include <string>
+#include <string_view>
 #include <thread>
 #include <vector>
 
@@ -507,11 +508,14 @@ LSE_TEST(default_backend_prefers_the_gpu_and_falls_back_to_cpu) {
   LSE_EXPECT(be.ok());
   if (!be.ok()) return;
 
-  // hrx wins when it can actually be constructed — the build may not have it,
-  // and it declines at runtime when no device answers. Either way the CPU
-  // backend is the fallback, never the preference.
-  auto gpu = create_backend("hrx");
-  LSE_EXPECT((*be)->name() == (gpu.ok() ? "hrx" : "cpu"));
+  // hrx wins when this build has it. hipwin is the Windows GPU backend and
+  // wins where hrx was not compiled. The CPU backend is the fallback, never
+  // the preference. Construction is the question here: a device that declines
+  // at init is still the one the default order tries first.
+  std::string_view expect = "cpu";
+  if (create_backend("hrx").ok()) expect = "hrx";
+  else if (create_backend("hipwin").ok()) expect = "hipwin";
+  LSE_EXPECT((*be)->name() == expect);
 }
 
 LSE_TEST_MAIN()

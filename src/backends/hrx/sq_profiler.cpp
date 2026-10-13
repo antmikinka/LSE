@@ -36,11 +36,18 @@
 #include <string>
 #include <vector>
 
+#if defined(_WIN32)
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#else
 #include <dlfcn.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#endif
 
 #include "lse/backends/hrx/hrx_backend.hpp"
 
@@ -64,8 +71,21 @@ struct iree_allocator_t {
 // iree_allocator_system() = {nullptr, iree_allocator_system_ctl}
 static inline iree_allocator_t system_allocator() {
   iree_allocator_t allocator{};
+#if defined(_WIN32)
+  void* found = nullptr;
+  if (HMODULE exe = GetModuleHandleW(nullptr)) {
+    found = reinterpret_cast<void*>(GetProcAddress(exe, "iree_allocator_system_ctl"));
+  }
+  if (found == nullptr) {
+    if (HMODULE hrx = GetModuleHandleA("hrx.dll")) {
+      found = reinterpret_cast<void*>(GetProcAddress(hrx, "iree_allocator_system_ctl"));
+    }
+  }
+  auto ctl = reinterpret_cast<iree_allocator_ctl_fn_t*>(found);
+#else
   auto ctl = reinterpret_cast<iree_allocator_ctl_fn_t*>(
       dlsym(RTLD_DEFAULT, "iree_allocator_system_ctl"));
+#endif
   allocator.self = nullptr;
   allocator.ctl = ctl ? *ctl : nullptr;
   return allocator;
@@ -211,7 +231,11 @@ using hrx_retain_device_fn = void (*)(void* device);
 using hrx_release_device_fn = void (*)(void* device);
 using hrx_get_hal_device_fn = iree_status_t (*)(void* device, void** out);
 
+#if defined(_WIN32)
+constexpr char kDefaultLibrary[] = "hrx.dll";
+#else
 constexpr char kDefaultLibrary[] = "@rpath/libhrx.0.1.0.dylib";
+#endif
 constexpr std::uint64_t kDataCounterSamples = 1ull << 4;
 constexpr std::uint64_t kDataDispatchEvents = 1ull << 3;
 constexpr char kCounterSetName[] = "lse-sq-busy";
@@ -400,13 +424,36 @@ struct SqProfiler::Impl {
     if (sink && sink_release) sink_release(sink);
     if (file_handle && file_handle_release) file_handle_release(file_handle);
     if (hrx_device && hrx_device_release) hrx_device_release(hrx_device);
-    if (!profile_path.empty()) ::unlink(profile_path.c_str());
-    if (library) dlclose(library);
+    if (!profile_path.empty()) {
+#if defined(_WIN32)
+      std::remove(profile_path.c_str());
+#else
+      ::unlink(profile_path.c_str());
+#endif
+    }
+    if (library) {
+#if defined(_WIN32)
+      FreeLibrary(static_cast<HMODULE>(library));
+#else
+      dlclose(library);
+#endif
+    }
   }
 
   bool resolve(const std::string& library_path) {
     const char* path =
         library_path.empty() ? kDefaultLibrary : library_path.c_str();
+#if defined(_WIN32)
+    library = LoadLibraryA(path);
+    if (!library) {
+      status_text = "LoadLibrary failed: " + std::to_string(GetLastError());
+      return false;
+    }
+    auto sym = [&](const char* name) {
+      return reinterpret_cast<void*>(
+          GetProcAddress(static_cast<HMODULE>(library), name));
+    };
+#else
     library = dlopen(path, RTLD_NOW | RTLD_LOCAL);
     if (!library) {
       status_text = std::string("dlopen failed: ") + dlerror();
@@ -415,6 +462,7 @@ struct SqProfiler::Impl {
     auto sym = [&](const char* name) {
       return reinterpret_cast<void*>(dlsym(library, name));
     };
+#endif
     file_handle_create = reinterpret_cast<file_handle_create_fn>(
         sym("iree_io_file_handle_create"));
     file_handle_release =
@@ -458,12 +506,39 @@ struct SqProfiler::Impl {
     }
     hal_device = static_cast<iree_hal_device_t*>(hal);
 
+#if defined(_WIN32)
+    wchar_t temp_root[MAX_PATH];
+    if (GetTempPathW(MAX_PATH, temp_root) == 0) {
+      status_text = "GetTempPath failed";
+      return false;
+    }
+    wchar_t temp_dir[MAX_PATH];
+    if (GetTempFileNameW(temp_root, L"lsq", 0, temp_dir) == 0) {
+      status_text = "GetTempFileName failed";
+      return false;
+    }
+    DeleteFileW(temp_dir);
+    if (!CreateDirectoryW(temp_dir, nullptr)) {
+      status_text = "CreateDirectory failed";
+      return false;
+    }
+    char utf8[MAX_PATH * 3] = {};
+    const int converted = WideCharToMultiByte(
+        CP_UTF8, 0, temp_dir, -1, utf8, static_cast<int>(sizeof(utf8)), nullptr,
+        nullptr);
+    if (converted <= 0) {
+      status_text = "temp path conversion failed";
+      return false;
+    }
+    profile_path = std::string(utf8) + "\\profile.irpf";
+#else
     char dir_template[] = "/tmp/lse-sqprof-XXXXXX";
     if (::mkdtemp(dir_template) == nullptr) {
       status_text = "mkdtemp failed";
       return false;
     }
     profile_path = std::string(dir_template) + "/profile.irpf";
+#endif
 
     iree_string_view_t path_view = {profile_path.data(),
                                     iree_host_size_t(profile_path.size())};
@@ -515,6 +590,24 @@ struct SqProfiler::Impl {
     out_busy = 0;
     out_ref = 0;
     out_sample_count = 0;
+#if defined(_WIN32)
+    FILE* file = std::fopen(profile_path.c_str(), "rb");
+    if (file == nullptr) return false;
+    if (_fseeki64(file, static_cast<long long>(last_drained_bytes), SEEK_SET) != 0) {
+      std::fclose(file);
+      return false;
+    }
+    std::vector<std::uint8_t> bytes;
+    std::vector<std::uint8_t> buffer(64 * 1024);
+    for (;;) {
+      const std::size_t n = std::fread(buffer.data(), 1, buffer.size(), file);
+      if (n == 0) break;
+      bytes.insert(bytes.end(), buffer.data(), buffer.data() + n);
+    }
+    const bool bad = std::ferror(file) != 0;
+    std::fclose(file);
+    if (bad) return false;
+#else
     int fd = ::open(profile_path.c_str(), O_RDONLY);
     if (fd < 0) return false;
     struct stat statbuf {};
@@ -532,6 +625,7 @@ struct SqProfiler::Impl {
     }
     ::close(fd);
     if (n < 0) return false;
+#endif
     SqProfileWindow window;
     std::size_t consumed = 0;
     if (!parse_sq_profile_bytes(bytes.data(), bytes.size(),

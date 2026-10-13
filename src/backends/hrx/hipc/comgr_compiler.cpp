@@ -3,8 +3,12 @@
 #include "lse/backends/hrx/code_object.hpp"
 
 #include <cstdlib>
+#if defined(_WIN32)
+#include <windows.h>
+#else
 #include <dlfcn.h>
 #include <sys/stat.h>
+#endif
 
 #include <string>
 #include <vector>
@@ -80,6 +84,11 @@ std::string collect_logs(amd_comgr_data_set_t set) {
   return out;
 }
 
+// A path with spaces (the Windows ROCm install) is a generated header rather
+// than a /D flag: the command line would split on the space.
+#if defined(LSE_HIPWIN_COMGR_PATHS)
+#include "hipwin_comgr_paths.h"
+#endif
 #ifndef LSE_ROCM_INCLUDE_DIR
 #define LSE_ROCM_INCLUDE_DIR ""
 #endif
@@ -98,8 +107,16 @@ std::string clang_resource_dir() {
 }
 
 // <root>/include -> <root>, which is what --rocm-path expects.
+// The Windows install spells the separator as '\', and rfind("/include")
+// would leave the include directory in place.
 std::string rocm_root(const std::string& include_dir) {
-  const std::size_t pos = include_dir.rfind("/include");
+  const std::size_t slash = include_dir.rfind("/include");
+  const std::size_t back = include_dir.rfind("\\include");
+  std::size_t pos = std::string::npos;
+  if (slash != std::string::npos) pos = slash;
+  if (back != std::string::npos && (pos == std::string::npos || back > pos)) {
+    pos = back;
+  }
   return pos == std::string::npos ? include_dir : include_dir.substr(0, pos);
 }
 
@@ -298,11 +315,53 @@ bool ComgrCompiler::available() const {
 namespace {
 // path:size:mtime — enough to notice a package upgrade that keeps the name.
 std::string file_identity(const std::string& path) {
+#if defined(_WIN32)
+  if (path.empty()) return path + ":missing";
+  const int chars =
+      MultiByteToWideChar(CP_UTF8, 0, path.c_str(), -1, nullptr, 0);
+  if (chars <= 1) return path + ":missing";
+  std::wstring wide(static_cast<std::size_t>(chars - 1), L'\0');
+  MultiByteToWideChar(CP_UTF8, 0, path.c_str(), -1, wide.data(), chars);
+  WIN32_FILE_ATTRIBUTE_DATA info{};
+  if (!GetFileAttributesExW(wide.c_str(), GetFileExInfoStandard, &info)) {
+    return path + ":missing";
+  }
+  const unsigned long long size =
+      (static_cast<unsigned long long>(info.nFileSizeHigh) << 32) |
+      static_cast<unsigned long long>(info.nFileSizeLow);
+  ULARGE_INTEGER written{};
+  written.LowPart = info.ftLastWriteTime.dwLowDateTime;
+  written.HighPart = info.ftLastWriteTime.dwHighDateTime;
+  return path + ":" + std::to_string(size) + ":" +
+         std::to_string(static_cast<unsigned long long>(written.QuadPart));
+#else
   struct stat st{};
   if (::stat(path.c_str(), &st) != 0) return path + ":missing";
   return path + ":" + std::to_string(static_cast<long long>(st.st_size)) +
          ":" + std::to_string(static_cast<long long>(st.st_mtime));
+#endif
 }
+
+#if defined(_WIN32)
+std::string module_path_utf8(HMODULE module) {
+  std::wstring wide(1024, L'\0');
+  DWORD n = GetModuleFileNameW(module, wide.data(),
+                               static_cast<DWORD>(wide.size()));
+  if (n == wide.size()) {
+    wide.assign(32768, L'\0');
+    n = GetModuleFileNameW(module, wide.data(), static_cast<DWORD>(wide.size()));
+  }
+  if (n == 0 || n >= wide.size()) return {};
+  wide.resize(n);
+  const int chars = WideCharToMultiByte(CP_UTF8, 0, wide.c_str(), -1, nullptr,
+                                        0, nullptr, nullptr);
+  if (chars <= 1) return {};
+  std::string out(static_cast<std::size_t>(chars - 1), '\0');
+  WideCharToMultiByte(CP_UTF8, 0, wide.c_str(), -1, out.data(), chars, nullptr,
+                      nullptr);
+  return out;
+}
+#endif
 }  // namespace
 
 std::string ComgrCompiler::identity() const {
@@ -321,11 +380,25 @@ std::string ComgrCompiler::identity() const {
   // while every fresh compile failed. The loaded library itself and the
   // device-library bitcode it will read are what actually changed, so their
   // identities (path, size, mtime) are part of the key.
+#if defined(_WIN32)
+  HMODULE module = nullptr;
+  if (GetModuleHandleExW(
+          GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+              GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+          reinterpret_cast<LPCWSTR>(
+              reinterpret_cast<const void*>(&amd_comgr_get_version)),
+          &module) != 0 &&
+      module != nullptr) {
+    const std::string where = module_path_utf8(module);
+    if (!where.empty()) id += " lib=" + file_identity(where);
+  }
+#else
   Dl_info where{};
   if (dladdr(reinterpret_cast<void*>(&amd_comgr_get_version), &where) != 0 &&
       where.dli_fname != nullptr) {
     id += " lib=" + file_identity(where.dli_fname);
   }
+#endif
   id += " ocml=" + file_identity(rocm_root(rocm_include_dir()) +
                                  "/amdgcn/bitcode/ocml.bc");
   for (const std::string& opt : frontend_options()) id += ' ' + opt;

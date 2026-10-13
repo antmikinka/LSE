@@ -252,6 +252,7 @@ class HrxDeviceProbe final : public probe::IDeviceProbe {
   void note(const Status& s) {
     if (!declined_.empty()) declined_ += "; ";
     declined_ += s.message();
+    std::fprintf(stderr, "[probe] declined: %s\n", s.message().c_str());
   }
 
   Result<KernelHandle> compiled(std::string_view entry,

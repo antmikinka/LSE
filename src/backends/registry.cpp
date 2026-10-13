@@ -481,7 +481,7 @@ std::vector<std::string> default_backend_order() {
   Registry& r = registry();
   std::lock_guard lock(r.mu);
   std::vector<std::string> out;
-  for (std::string_view known : {"hrx", "cpu"}) {
+  for (std::string_view known : {"hrx", "hipwin", "cpu"}) {
     if (r.factories.count(std::string(known)) != 0) out.emplace_back(known);
   }
   // Anything registered that this order does not know about still gets a turn,

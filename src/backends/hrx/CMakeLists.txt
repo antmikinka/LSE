@@ -32,20 +32,67 @@ target_link_libraries(lse_backend_hrx PUBLIC ${CMAKE_DL_LIBS} lse_core lse_backe
 target_include_directories(lse_backend_hrx SYSTEM PUBLIC ${LSE_HRX_INCLUDE_DIR})
 target_include_directories(lse_backend_hrx PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+# The root discovery looks for a Linux ROCm tree. On Windows the compiler
+# is the ROCm 7.1 amd_comgr hipwin already uses, not a System32 copy. One
+# definition of these objects has to serve both backends, so this target
+# compiles them with that compiler found.
+if(WIN32 AND NOT LSE_HAVE_COMGR)
+  set(_lse_hip_root "$ENV{HIP_PATH}")
+  if(NOT _lse_hip_root)
+    set(_lse_hip_root "C:/Program Files/AMD/ROCm/7.1")
+  endif()
+  file(TO_CMAKE_PATH "${_lse_hip_root}" _lse_hip_root)
+  find_library(LSE_WIN_HRX_COMGR NAMES amd_comgr0701 amd_comgr_3
+    HINTS "${_lse_hip_root}/lib"
+    NO_DEFAULT_PATH)
+  find_path(LSE_WIN_HRX_COMGR_INCLUDE NAMES amd_comgr/amd_comgr.h
+    HINTS "${_lse_hip_root}/include"
+    NO_DEFAULT_PATH)
+  set(_lse_win_clang "${_lse_hip_root}/lib/clang/21/include")
+  if(NOT EXISTS "${_lse_win_clang}")
+    file(GLOB _lse_win_clang_dirs LIST_DIRECTORIES true
+         "${_lse_hip_root}/lib/clang/*/include")
+    if(_lse_win_clang_dirs)
+      list(GET _lse_win_clang_dirs 0 _lse_win_clang)
+    endif()
+  endif()
+  if(LSE_WIN_HRX_COMGR AND LSE_WIN_HRX_COMGR_INCLUDE AND EXISTS "${_lse_win_clang}")
+    # A /D path splits on the space in "Program Files". The header is the
+    # same channel hipwin uses.
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/hipwin_comgr_paths.h"
+"#pragma once
+#define LSE_ROCM_INCLUDE_DIR \"${_lse_hip_root}/include\"
+#define LSE_CLANG_RESOURCE_DIR \"${_lse_win_clang}\"
+")
+    set(LSE_HAVE_COMGR ON)
+    set(LSE_HAVE_COMGR ON PARENT_SCOPE)
+    set(LSE_COMGR_LIBRARY "${LSE_WIN_HRX_COMGR}")
+    set(LSE_COMGR_INCLUDE_DIR "${LSE_WIN_HRX_COMGR_INCLUDE}")
+    set(LSE_HIP_INCLUDE_DIR "${_lse_hip_root}/include")
+    set(_lse_clang_res_dir "${_lse_win_clang}")
+    target_include_directories(lse_backend_hrx PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+    target_compile_definitions(lse_backend_hrx PRIVATE LSE_HIPWIN_COMGR_PATHS=1)
+    message(STATUS "  clang resource  : ${_lse_win_clang}")
+  endif()
+endif()
+
 if(LSE_HAVE_COMGR)
   target_compile_definitions(lse_backend_hrx PUBLIC LSE_HAVE_COMGR=1)
   # comgr does not know where the HIP headers live; the discovered include dir
   # is baked in and can be overridden at runtime with LSE_ROCM_INCLUDE.
   # comgr's bundled clang does not resolve its own resource headers here, so
   # the resource dir is discovered and passed explicitly.
-  file(GLOB _lse_clang_res LIST_DIRECTORIES true
-       "${LSE_ROCM_PATH}/core-*/lib/llvm/lib/clang/*/include"
-       "${LSE_ROCM_PATH}/lib/llvm/lib/clang/*/include")
-  list(GET _lse_clang_res 0 _lse_clang_res_dir)
-  target_compile_definitions(lse_backend_hrx PRIVATE
-    LSE_ROCM_INCLUDE_DIR="${LSE_HIP_INCLUDE_DIR}"
-    LSE_CLANG_RESOURCE_DIR="${_lse_clang_res_dir}")
-  message(STATUS "  clang resource  : ${_lse_clang_res_dir}")
+  if(NOT WIN32)
+    file(GLOB _lse_clang_res LIST_DIRECTORIES true
+         "${LSE_ROCM_PATH}/core-*/lib/llvm/lib/clang/*/include"
+         "${LSE_ROCM_PATH}/lib/llvm/lib/clang/*/include")
+    list(GET _lse_clang_res 0 _lse_clang_res_dir)
+    # A Windows path with spaces is the generated header above, not a /D flag.
+    target_compile_definitions(lse_backend_hrx PRIVATE
+      LSE_ROCM_INCLUDE_DIR="${LSE_HIP_INCLUDE_DIR}"
+      LSE_CLANG_RESOURCE_DIR="${_lse_clang_res_dir}")
+    message(STATUS "  clang resource  : ${_lse_clang_res_dir}")
+  endif()
   target_include_directories(lse_backend_hrx SYSTEM PUBLIC ${LSE_COMGR_INCLUDE_DIR})
   target_link_libraries(lse_backend_hrx PUBLIC ${LSE_COMGR_LIBRARY})
 else()
@@ -92,4 +139,25 @@ lse_apply_common_flags(lse_backend_hrx)
 option(LSE_HSA_POWER "Link the HSA runtime's device power calls (static runtimes)" OFF)
 if(LSE_HSA_POWER)
   target_compile_definitions(lse_backend_hrx PRIVATE LSE_HSA_POWER=1)
+endif()
+
+# One engine-compiled kernel through HrxBackend. This is the load and launch
+# path a generate uses, not the hand-written libhrx smoke.
+if(WIN32 AND LSE_HRX_LIBRARY AND LSE_HAVE_COMGR)
+  add_executable(hrx-compile-smoke hrx_compile_smoke.cpp)
+  target_link_libraries(hrx-compile-smoke PRIVATE lse_backend_hrx)
+  lse_apply_common_flags(hrx-compile-smoke)
+  get_filename_component(_lse_hrx_dll_dir "${LSE_HRX_LIBRARY}" DIRECTORY)
+  set(_lse_hrx_comgr_dll "C:/Program Files/AMD/ROCm/7.1/bin/amd_comgr_3.dll")
+  add_custom_command(TARGET hrx-compile-smoke POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${_lse_hrx_dll_dir}/hrx.dll"
+            "$<TARGET_FILE_DIR:hrx-compile-smoke>/hrx.dll"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_BINARY_DIR}/src/backends/hipwin/hsa-runtime64.dll"
+            "$<TARGET_FILE_DIR:hrx-compile-smoke>/hsa-runtime64.dll"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${_lse_hrx_comgr_dll}"
+            "$<TARGET_FILE_DIR:hrx-compile-smoke>/amd_comgr_3.dll"
+    VERBATIM)
 endif()

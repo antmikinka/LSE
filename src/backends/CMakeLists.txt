@@ -18,8 +18,18 @@ endif()
 
 if(LSE_ENABLE_HRX AND LSE_HRX_INCLUDE_DIR)
   add_subdirectory(hrx)
+  if(LSE_HAVE_COMGR)
+    set(LSE_HAVE_COMGR ${LSE_HAVE_COMGR} PARENT_SCOPE)
+  endif()
 else()
   message(STATUS "HRX backend: skipped (set -DLSE_HRX_ROOT=<install> to enable)")
+endif()
+
+# Native Windows GPU path. hipwin speaks the HIP runtime and is the measured
+# kernel path. hsa-runtime64.dll is the HSA subset libhrx loads. Linking
+# libhrx is what turns the HRX backend on; hipwin does not.
+if(WIN32)
+  add_subdirectory(hipwin)
 endif()
 
 # The backends this build ships. A backend registers itself from a TU nothing
@@ -33,4 +43,7 @@ if(TARGET lse_backend_cpu)
 endif()
 if(TARGET lse_backend_hrx)
   target_link_libraries(lse_backends INTERFACE lse_backend_hrx)
+endif()
+if(TARGET lse_backend_hipwin)
+  target_link_libraries(lse_backends INTERFACE lse_backend_hipwin)
 endif()

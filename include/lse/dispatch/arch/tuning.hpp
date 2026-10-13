@@ -14,15 +14,17 @@
 #include <utility>
 
 #include "lse/dispatch/arch/generic.hpp"
+#include "lse/dispatch/arch/gfx1150.hpp"
 #include "lse/dispatch/arch/gfx1151.hpp"
 #include "lse/dispatch/arch/gfx1201.hpp"
 #include "lse/dispatch/arch/tuning_types.hpp"
 
 namespace lse::dispatch::arch {
 
-inline constexpr std::array<const Tuning*, 2> kTunings{
+inline constexpr std::array<const Tuning*, 3> kTunings{
     &gfx1201::kTuning,
     &gfx1151::kTuning,
+    &gfx1150::kTuning,
 };
 
 [[nodiscard]] constexpr const Tuning& tuning(std::string_view arch) noexcept {

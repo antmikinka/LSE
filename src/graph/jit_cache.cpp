@@ -1163,6 +1163,63 @@ struct JitCache::Impl {
     }
     return OkStatus();
   }
+
+  // On this Windows HIP stack hipModuleLoadData returns hipErrorLaunchFailure
+  // for every image once a model kernel has launched, including an image this
+  // process already loaded. Make the cached objects resident before that
+  // window. The filename number is the slot key for these objects: the cache
+  // has no .alias files. A later get_or_compile then hits memory and does not
+  // load again.
+  std::mutex preload_mu;
+  std::vector<unsigned char> disk_preloaded;
+
+  void preload_disk_objects(backend::IBackend& be, std::size_t table, Dialect dialect,
+                            const std::string& arch, const std::string& cache_dir) {
+    std::lock_guard lock(preload_mu);
+    if (disk_preloaded.size() < memory.size()) disk_preloaded.resize(memory.size());
+    if (table >= disk_preloaded.size() || disk_preloaded[table]) return;
+    disk_preloaded[table] = 1;
+#if !defined(_WIN32)
+    (void)be; (void)dialect; (void)arch; (void)cache_dir;
+    return;
+#else
+    if (be.name() != "hrx" || dialect != Dialect::kHip || arch.empty() || cache_dir.empty())
+      return;
+    const std::string version(kernel_cache_version());
+    const std::string prefix = "lse-" + version + "-";
+    int seen = 0;
+    int loaded = 0;
+    std::error_code ec;
+    for (fs::directory_iterator it(cache_dir, ec), end; !ec && it != end; ++it) {
+      if (it->path().extension() != ".co" || !complete_file(it->path())) continue;
+      const std::string stem = it->path().stem().string();
+      const auto dot = stem.rfind('.');
+      if (dot == std::string::npos) continue;
+      std::uint64_t file_hash = 0;
+      if (!unsigned_number(std::string_view(stem).substr(dot + 1), &file_hash)) continue;
+      const std::string family = stem.substr(0, dot);
+      if (!versioned_stem(family, version) || family.size() <= prefix.size()) continue;
+      std::uint64_t key = 0;
+      if (!unsigned_number(std::string_view(family).substr(prefix.size()), &key)) continue;
+      DiskMeta meta;
+      if (!read_meta(fs::path(cache_dir) / (family + ".meta"), &meta) ||
+          meta.engine_version != version || meta.arch != arch ||
+          meta.source_hash != file_hash || meta.entry.empty()) continue;
+      if (memory[table].find(key) != memory[table].end()) continue;
+      ++seen;
+      const std::vector<std::byte> code = read_file(it->path());
+      if (code.empty()) continue;
+      auto handle = be.load_executable(meta.entry, code);
+      if (!handle.ok()) continue;
+      auto slot = std::make_shared<const Slot>(Slot{
+          handle.release(), meta.source_hash, arch, 0, 0, meta.resources, meta.census});
+      memory[table].insert_or_assign(key, Alias{std::move(slot), {}});
+      ++loaded;
+    }
+    (void)loaded;
+    (void)seen;
+#endif
+  }
 };
 
 JitCache::JitCache(backend::IDeviceSet& devices, std::string cache_dir)
@@ -1336,6 +1393,8 @@ Result<backend::KernelHandle> JitCache::get_or_compile(
       }
     }
   };
+
+  impl_->preload_disk_objects(be, table, emitted.dialect, arch, cache_dir_);
 
   if (const auto it = slots.find(key); it != slots.end()) {
     const Impl::Slot& slot = *it->second.slot;

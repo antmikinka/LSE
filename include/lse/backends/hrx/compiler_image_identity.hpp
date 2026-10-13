@@ -7,13 +7,61 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
-#include <dlfcn.h>
 #include <fcntl.h>
 #include <filesystem>
 #include <optional>
 #include <string>
 #include <sys/stat.h>
+#if defined(_WIN32)
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <io.h>
+#include <process.h>
+#include <windows.h>
+#ifndef O_CLOEXEC
+#define O_CLOEXEC 0
+#endif
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+#ifndef S_ISREG
+#define S_ISREG(mode) (((mode) & _S_IFMT) == _S_IFREG)
+#endif
+// The test tree satisfies <dlfcn.h> from tests/compat. The engine include
+// path does not, and this header is compiled into lse_backend_hrx once loomc
+// is found. dli_sname stays null: callers ask for the image, not a symbol.
+struct Dl_info {
+  const char* dli_fname;
+  void* dli_fbase;
+  const char* dli_sname;
+  void* dli_saddr;
+};
+inline int dladdr(const void* addr, Dl_info* info) {
+  if (addr == nullptr || info == nullptr) return 0;
+  HMODULE mod = nullptr;
+  if (!::GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+                                GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                            reinterpret_cast<LPCWSTR>(addr), &mod) ||
+      mod == nullptr)
+    return 0;
+  static thread_local wchar_t wpath[32768];
+  static thread_local char path[32768 * 3];
+  const DWORD n = ::GetModuleFileNameW(mod, wpath, 32768);
+  if (n == 0 || n >= 32768) return 0;
+  if (::WideCharToMultiByte(CP_UTF8, 0, wpath, -1, path, sizeof path, nullptr,
+                            nullptr) == 0)
+    return 0;
+  info->dli_fname = path;
+  info->dli_fbase = static_cast<void*>(mod);
+  info->dli_sname = nullptr;
+  info->dli_saddr = nullptr;
+  return 1;
+}
+#else
+#include <dlfcn.h>
 #include <unistd.h>
+#endif
 #if defined(__APPLE__)
 #include <mach-o/loader.h>
 #endif
@@ -82,7 +130,12 @@ inline bool same_compiler_file(const struct stat &a, const struct stat &b) {
 inline std::optional<std::string> compiler_file_identity(const char *path) {
   if (!path || !*path)
     return std::nullopt;
+#if defined(_WIN32)
+  // Text mode would rewrite CRLF bytes and change the content hash.
+  const int fd = ::open(path, O_RDONLY | O_BINARY);
+#else
   const int fd = ::open(path, O_RDONLY | O_CLOEXEC);
+#endif
   if (fd < 0)
     return std::nullopt;
   struct Close {

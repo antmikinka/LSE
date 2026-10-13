@@ -21,7 +21,10 @@
 #include <utility>
 #include <vector>
 
-#if LSE_HAVE_COMGR
+// The ELF walk needs <elf.h>, which Windows does not ship. An empty census is
+// the answer this reader already gives when it has no disassembler: the
+// compile and the launch do not read it.
+#if LSE_HAVE_COMGR && !defined(_WIN32)
 
 #include <elf.h>
 

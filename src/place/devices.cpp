@@ -4,6 +4,9 @@
 #include <dlfcn.h>
 #include <sys/resource.h>
 #endif
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #if defined(__APPLE__)
 #include <TargetConditionals.h>
 #include <mach-o/dyld.h>
@@ -579,11 +582,26 @@ bool hsa_runtime_is_new_enough(void* handle) {
 #endif
 
 void preload_gpu_runtime() {
-#if (defined(__APPLE__) && TARGET_OS_IOS) || defined(_WIN32)
+#if defined(__APPLE__) && TARGET_OS_IOS
   // iOS: the HSA runtime is linked into the app — there is nothing to find or
   // load, and an iOS app may not load one from anywhere else.
-  // Windows: there is no HSA runtime to preload — the AMD Windows stack loads
-  // its own DLLs, and none of the search paths below exist.
+  return;
+#elif defined(_WIN32)
+  // hsa-runtime64.dll is the Windows HSA subset, built beside the executable.
+  // hipwin speaks HIP itself, so a missing DLL is not fatal: a process that
+  // never asks for HSA still comes up.
+  wchar_t path[32768];
+  const DWORD n = ::GetModuleFileNameW(nullptr, path, 32768);
+  if (n == 0 || n >= 32768) return;
+  wchar_t* leaf = path + n;
+  while (leaf > path && leaf[-1] != L'\\' && leaf[-1] != L'/') --leaf;
+  if (leaf == path) return;
+  static constexpr wchar_t kDll[] = L"hsa-runtime64.dll";
+  constexpr std::size_t kDllChars = sizeof(kDll) / sizeof(wchar_t);
+  const std::size_t room = 32768u - static_cast<std::size_t>(leaf - path);
+  if (room < kDllChars) return;
+  for (std::size_t i = 0; i < kDllChars; ++i) leaf[i] = kDll[i];
+  (void)::LoadLibraryW(path);
   return;
 #else
   namespace fs = std::filesystem;

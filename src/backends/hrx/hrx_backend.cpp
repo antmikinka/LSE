@@ -3,8 +3,10 @@
 #include "sq_profiler.hpp"
 #include "lse/backends/hrx/copy_route.hpp"
 
+#if !defined(_WIN32)
 #include <dlfcn.h>
 #include <unistd.h>
+#endif
 #if defined(__APPLE__)
 #include <TargetConditionals.h>
 #endif
@@ -254,7 +256,9 @@ class HsaRuntime {
     (void)load_if_missing;
     const auto symbol = [](const char* name) { return linked_hsa_symbol(name); };
 #else
-#if defined(__APPLE__)
+#if defined(_WIN32)
+    constexpr const char* soname = "hsa-runtime64.dll";
+#elif defined(__APPLE__)
     constexpr const char* soname = "libhsa-runtime64.dylib";
 #else
     constexpr const char* soname = "libhsa-runtime64.so.1";
@@ -271,7 +275,11 @@ class HsaRuntime {
     lib_ = detail::open_loaded_library(soname, "hsa_init");
 #endif
     if (lib_ == nullptr && load_if_missing) {
+#if defined(_WIN32)
+      lib_ = detail::open_library(soname);
+#else
       lib_ = dlopen(soname, RTLD_LAZY);
+#endif
     }
 #if defined(__APPLE__)
     // The soname dlopen uses the process DYLD search path, which a driver
@@ -285,7 +293,13 @@ class HsaRuntime {
     }
 #endif
     if (lib_ == nullptr) return;
+#if defined(_WIN32)
+    const auto symbol = [this](const char* name) {
+      return detail::library_symbol(lib_, name);
+    };
+#else
     const auto symbol = [this](const char* name) { return dlsym(lib_, name); };
+#endif
 #endif
     init_ = reinterpret_cast<InitFn>(symbol("hsa_init"));
     iterate_ = reinterpret_cast<IterateFn>(symbol("hsa_iterate_agents"));
@@ -447,7 +461,13 @@ class HsaRuntime {
     if (shared_signal_ready_ && signal_destroy_ != nullptr) {
       signal_destroy_(shared_signal_);
     }
-    if (lib_ != nullptr) dlclose(lib_);
+    if (lib_ != nullptr) {
+#if defined(_WIN32)
+      detail::close_library(lib_);
+#else
+      dlclose(lib_);
+#endif
+    }
   }
   HsaRuntime(const HsaRuntime&) = delete;
   HsaRuntime& operator=(const HsaRuntime&) = delete;
@@ -1339,8 +1359,15 @@ namespace {
 // it registers memory no other allocation shares.
 bool host_range_is_whole_pages(const void* ptr, std::size_t bytes) noexcept {
   static const std::size_t page = [] {
+#if defined(_WIN32)
+    SYSTEM_INFO info{};
+    GetSystemInfo(&info);
+    return info.dwPageSize != 0 ? static_cast<std::size_t>(info.dwPageSize)
+                                : std::size_t{4096};
+#else
     const long size = ::sysconf(_SC_PAGESIZE);
     return size > 0 ? static_cast<std::size_t>(size) : std::size_t{4096};
+#endif
   }();
   const auto address = reinterpret_cast<std::uintptr_t>(ptr);
   return bytes != 0 && address % page == 0 && bytes % page == 0;

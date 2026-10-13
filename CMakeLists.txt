@@ -507,6 +507,47 @@ if(TARGET lse_tokenizer AND NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
     target_link_libraries(lse PRIVATE lse_kernels)
     target_link_libraries(lse-server PRIVATE lse_kernels)
   endif()
+
+  # The Windows HSA DLL is loaded by name from beside the executable.
+  if(WIN32 AND TARGET hsa-runtime64)
+    foreach(_lse_hipwin_exe lse lse-server)
+      add_custom_command(TARGET ${_lse_hipwin_exe} POST_BUILD
+        COMMAND ${CMAKE_COMMAND}
+          -Dsrc=$<TARGET_FILE:hsa-runtime64>
+          -Ddst=$<TARGET_FILE_DIR:${_lse_hipwin_exe}>/$<TARGET_FILE_NAME:hsa-runtime64>
+          -P "${CMAKE_BINARY_DIR}/src/backends/hipwin/copy-hsa-dll.cmake")
+      if(LSE_HIPWIN_COMGR_DLL AND EXISTS "${LSE_HIPWIN_COMGR_DLL}")
+        add_custom_command(TARGET ${_lse_hipwin_exe} POST_BUILD
+          COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${LSE_HIPWIN_COMGR_DLL}"
+            "$<TARGET_FILE_DIR:${_lse_hipwin_exe}>/amd_comgr_3.dll")
+      endif()
+      # hrx.dll is loaded by name from beside the executable, and libhrx then
+      # loads hsa-runtime64.dll from that same directory.
+      if(LSE_HRX_LIBRARY)
+        get_filename_component(_lse_hrx_dir "${LSE_HRX_LIBRARY}" DIRECTORY)
+        if(EXISTS "${_lse_hrx_dir}/hrx.dll")
+          add_custom_command(TARGET ${_lse_hipwin_exe} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+              "${_lse_hrx_dir}/hrx.dll"
+              "$<TARGET_FILE_DIR:${_lse_hipwin_exe}>/hrx.dll")
+        endif()
+      endif()
+      # loomc.dll is the shared compiler. The import library lives in lib/;
+      # the DLL installs in the sibling bin/ and must sit beside the executable.
+      if(LSE_HAVE_LOOMC AND LSE_LOOMC_LIBRARY)
+        get_filename_component(_lse_loomc_libdir "${LSE_LOOMC_LIBRARY}" DIRECTORY)
+        get_filename_component(_lse_loomc_prefix "${_lse_loomc_libdir}" DIRECTORY)
+        set(_lse_loomc_dll "${_lse_loomc_prefix}/bin/loomc.dll")
+        if(EXISTS "${_lse_loomc_dll}")
+          add_custom_command(TARGET ${_lse_hipwin_exe} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+              "${_lse_loomc_dll}"
+              "$<TARGET_FILE_DIR:${_lse_hipwin_exe}>/loomc.dll")
+        endif()
+      endif()
+    endforeach()
+  endif()
 endif()
 
 # ---------------------------------------------------------------------------

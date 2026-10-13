@@ -9,18 +9,33 @@ the local M3 full-suite protocol is green (main run 97/97 with LARGE_IO
 excluded, >2 GiB fixture 1/1, fingerprint pair 2/2), and CI run 5 of
 `.github/workflows/windows.yml` is green on **both** jobs (`windows` +
 `linux-parity`) at the same SHA (`5b16e94`). A supplementary large-io hosted
-proof was dispatched at the acceptance SHA; result pending. The CPU reference
-backend is the only backend: **the HRX/HIP GPU backend is gated OFF on
-Windows** (no ROCm runtime port exists yet).
+proof was dispatched at the acceptance SHA; result pending. That acceptance
+predates the HRX link. On 2026-10-12 the Windows `lse` links HRX and hipwin.
+HRX enumerates the GPU through the in-tree `hsa-runtime64.dll`. Kernel
+dispatch through HRX loads an AMDGPU code object and launches it on the one
+host submission path. `hrx.dll` does not import `amdhip64`. On 2026-10-12
+`hrx-win-smoke` loaded a gfx1150 `lse_vadd` image and the 1024-float result
+matched. `hrx-compile-smoke` then compiled that kernel with the HRX comgr
+toolchain, loaded it through `HrxBackend`, and the 1048576-float result
+matched (`code_bytes=5000`, `census=0`, `smoke_exit=0`). One warm Qwen3.8-27B
+4-bit generate through HRX has been measured: a 256-token HumanEval/0 prompt
+padded with the token " the", 256 generated tokens, MTP off, CPU fallback off.
+The engine printed prefill 28.05 tok/s and decode 2.71 tok/s (device groups
+non-zero, host=0, fallbacks=0, compile 0.000 s). A warm 512-token run printed
+prefill 19.72 tok/s and decode 2.54 tok/s under the same rules. A warm
+1024-token run printed prefill 13.29 tok/s and decode 2.20 tok/s. A warm
+2048-token run printed prefill 9.16 tok/s and decode 1.72 tok/s. A
+4096-token run with `--kv-len 4352` printed prefill 5.51 tok/s and decode
+1.18 tok/s (compile 1.879 s). 32K has not been measured.
 
 This guide is self-contained. Program history, plans, reviews and gate evidence
 live in [`windows-enablement/`](../windows-enablement/) (see
-[Roadmap](#roadmap-and-further-reading) at the end). `README.md` is
-deliberately not modified on this branch. The `BUILD_FROM_SOURCE.md` §Windows
-snippet builds the binaries-only configuration and is correct for that, but
-its "`-DLSE_BUILD_TESTS=OFF` is required for now" note is **stale** — the
-tests-ON full build is the normal path since cycle 2 (§3–§4 below). Where
-either disagrees with this file, **this file is correct**.
+[Roadmap](#roadmap-and-further-reading) at the end). `README.md` records the
+same 256-token HRX rates in the 890M HRX row. `BUILD_FROM_SOURCE.md` §Windows is
+the short binaries-only recipe: build `libhrx` first, then `lse` with
+`-DLSE_BUILD_TESTS=OFF` into `build-win-notests`. The tests-ON build in §3 is
+the normal path, and it is the tree that printed the 2026-10-12 device
+listing. Where the two disagree, **this file is correct**.
 
 Verified on: Windows x64 (10.0.26100), branch `feature/windows-enablement`
 (fork `antmikinka/LSE`, base upstream `Geramy/LSE` **v0.6.1** `90d66ab`,
@@ -43,6 +58,7 @@ work; the LLVM major and the MSVC STL/UCRT presence are what matter):
 | Rust (MSVC ABI) | rustc/cargo **1.93.1**, target `x86_64-pc-windows-msvc` | [rustup.rs](https://rustup.rs/), then `rustup target add x86_64-pc-windows-msvc` |
 | Git | any recent | needed at configure time: `cmake/LSERust.cmake` clones the pinned `fastokens` tokenizer into `reference/fastokens` |
 | Python 3 | optional | only for helper scripts (`scripts/*.py`), not for the build |
+| AMD ROCm | **7.1** at `C:\Program Files\AMD\ROCm\7.1` | Required for the measured HRX enumeration and for hipwin. The in-tree `hsa-runtime64.dll` links `amdhip64`. At run time, prepend `bin` to `PATH` so `amdhip64_7.dll` loads. If this SDK is absent, hipwin and that DLL are skipped. |
 
 Verify your toolchain (Git Bash or PowerShell):
 
@@ -92,11 +108,17 @@ Build Tools installs: substitute `BuildTools` for `Community` in the paths.
 ## 3. Configure and build
 
 The **normal path is the full tests-ON build** — the same configuration CI
-runs (§7). Every test source compiles (X = 0), so plain `all` links the
-engine, the CLI, the server and the whole test tree. From the repo root, in an
-MSVC shell (§2):
+runs (§7). Build tracked `libhrx` first. Configure links
+`build-libhrx/hrx.lib` only when that import library already exists. Every
+test source compiles (X = 0), so plain `all` links the engine, the CLI, the
+server and the whole test tree. From the repo root, in an MSVC shell (§2):
 
 ```bash
+cmake -S libhrx -B build-libhrx -G Ninja \
+  -DCMAKE_CXX_COMPILER=clang-cl \
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake --build build-libhrx --target hrx
+
 cmake -S . -B build-win -G Ninja \
   -DCMAKE_CXX_COMPILER=clang-cl \
   -DCMAKE_BUILD_TYPE=RelWithDebInfo \
@@ -106,7 +128,8 @@ cmake --build build-win        # no --target: the full 'all' build must exit 0
 ```
 
 Binaries-only variant (engine + CLI + server, no tests — faster; this is what
-`BUILD_FROM_SOURCE.md` §Windows documents):
+`BUILD_FROM_SOURCE.md` §Windows documents). It reuses the same
+`build-libhrx/hrx.lib` and does not touch the tests-ON `build-win` tree:
 
 ```bash
 cmake -S . -B build-win-notests -G Ninja \
@@ -124,15 +147,19 @@ spelled explicitly above so the two trees can coexist. Identical in PowerShell
 Notes:
 
 * `-DCMAKE_CXX_COMPILER=clang-cl` relies on clang-cl being on `PATH`; pass the
-  full path if it is not — for the pinned official LLVM (§1),
-  `"C:/Program Files/LLVM/bin/clang-cl.exe"`. CMake finds the
-  `lld-link` sitting next to clang-cl automatically (cache: `CMAKE_LINKER`).
+  full path if it is not. The winget pin lands at
+  `"C:/Program Files/LLVM/bin/clang-cl.exe"`. The measured host build used
+  LLVM 21.1.8 `clang-cl`. ROCm's `clang-cl` is not this pin. CMake finds the
+  `lld-link` sitting next to clang-cl automatically
+  (cache: `CMAKE_LINKER`).
 * Do **not** pass `-DCMAKE_C_COMPILER`; the project is `LANGUAGES CXX` only and
   CMake will warn "Manually-specified variables were not used".
-* `LSE_ENABLE_HRX` is **forced OFF on Windows automatically**
-  (`cmake/LSEOptions.cmake:16-22`); you do not need to pass
-  `-DLSE_ENABLE_HRX=OFF`. The cache may still show `ON` — the summary block is
-  authoritative.
+* `LSE_ENABLE_HRX` stays **ON** (`cmake/LSEOptions.cmake`). The link finds
+  `libhrx/include` and `build-libhrx/hrx.lib`. Build that library before
+  configuring the engine (see [`BUILD_FROM_SOURCE.md`](../BUILD_FROM_SOURCE.md)
+  §Windows). A cache entry of `LSE_HRX_LIBRARY-NOTFOUND` from an older
+  configure is kept until you delete it and reconfigure. The summary block is
+  authoritative: `HRX backend : ON` and `HRX linked : ON`.
 * First configure clones `reference/fastokens` at the pinned SHA
   (`cmake/LSERust.cmake:10-13`) and builds `third_party/fastokens-ffi` with
   cargo `--target x86_64-pc-windows-msvc`.
@@ -142,25 +169,42 @@ Expected configure summary, tests-ON (full transcript:
 the tests-OFF transcript is
 [`logs/m2a-configure.txt`](../logs/m2a-configure.txt)):
 
+Printed by the 2026-10-12 `build-win` configure (clang-cl 21.1.8, libhrx
+already built, ROCm 7.1 present). `HIP available` stays OFF because that
+probe looks for a Linux ROCm tree. `comgr (JIT) : ON` is the ROCm 7.1
+`amd_comgr` shared with hipwin. `HSA runtime` NOTFOUND is the Linux
+`libhsa-runtime64.so.1` search; Windows loads the `hsa-runtime64.dll` this
+build produces. `GPU targets` does not include gfx1150. Without
+`build-libhrx/hrx.lib`, `HRX linked` is OFF. Without the ROCm comgr,
+`comgr (JIT)` is OFF. `loomc (JIT) : ON 0.1.0` is the
+installed `loomc.lib` from pin `631c0b785`; `lse --devices` then lists
+`hrx:0` toolchains as `loom, hip`. The published tok/s used `--dialect hip`.
+
 ```
--- HRX backend: not supported on Windows in Phase 1 (forced OFF)
+-- HRX backend: Windows libhrx (hrx.dll + hsa-runtime64.dll)
+--   clang resource  : C:/Program Files/AMD/ROCm/7.1/lib/clang/21/include
+-- hipwin: C:/Program Files/AMD/ROCm/7.1/lib/amdhip64.lib
+-- hipwin compiler: C:/Program Files/AMD/ROCm/7.1/lib/amd_comgr0701.lib
 -- fastokens_ffi native deps: legacy_stdio_definitions.lib;advapi32.lib;cfgmgr32.lib;kernel32.lib;user32.lib;ws2_32.lib;bcrypt.lib;advapi32.lib;kernel32.lib;ntdll.lib;userenv.lib;ws2_32.lib;dbghelp.lib
 -- Lemon Seed Engine 0.6.1
 --   build type      : RelWithDebInfo
---   host compiler   : Clang 21.0.0
+--   host compiler   : Clang 21.1.8
 --   host std        : C++26
 --   device std      : C++20
---   HRX backend     : OFF
+--   HRX backend     : ON
 --   HIP available   : OFF
---   comgr (JIT)     : OFF
---   loomc (JIT)     : OFF
+--   comgr (JIT)     : ON
+--   loomc (JIT)     : ON 0.1.0
+--   HRX linked      : ON
+--   HSA runtime     : LSE_ROCM_RUNTIME_DIR-NOTFOUND
+--   GPU targets     : gfx1151;gfx1201;gfx942
 --   tests           : ON
 ```
 
-(The `host compiler` line shows whichever clang-cl configured the tree — the
-transcript predates the 21.1.8 pin; CI configures with 21.1.8. The
-`native deps` line must contain `ntdll.lib` — see
-[Troubleshooting](#8-troubleshooting) "could not query rustc".)
+Older transcripts in `windows-enablement/logs/` still show the Phase-1 line
+`HRX backend: not supported on Windows in Phase 1 (forced OFF)` and
+`HRX backend : OFF`. The `native deps` line must contain `ntdll.lib` — see
+[Troubleshooting](#8-troubleshooting) "could not query rustc".
 
 Benign configure output you will see (not errors):
 
@@ -298,8 +342,27 @@ Honest scope note: M2a verified the executables **build, link and run their
 help/models paths**; **M2b (accepted, cycle 2) verified end-to-end
 generation** on the CPU reference backend via the SC4 sentinel (`lse.exe`
 prompt + `lse-server.exe` HTTP round-trip; evidence
-`windows-enablement/logs/`, `logs/m2b-*`). Inference runs on the **CPU
-reference backend only** — there is no GPU acceleration on Windows yet.
+`windows-enablement/logs/`, `logs/m2b-*`).
+
+GPU, measured 2026-10-12 on the Radeon 890M (gfx1150) with ROCm 7.1 `bin` on
+`PATH`. `build-win/lse.exe --devices` printed `hrx:0 gfx1150 (Node 1)
+[gfx1150]`, 16 CU, 1024 threads/wg, wavefront 32, free 69185 MiB, uuid
+`0000019900000000`, pci `0000:c7:00.0`. Total memory and queue count read
+unknown. The same run printed `hipwin:0` for that GPU. `lse.exe` imports
+`hrx.dll`. Executable load and kernel dispatch go through that HSA DLL.
+`hrx-win-smoke` launched `lse_vadd` on this GPU and the 1024-float result
+matched. `hrx-compile-smoke` compiled the same source with comgr through
+`HrxBackend` (`toolchains=2`, arch `gfx1150`, `code_bytes=5000`) and the
+1048576-float result matched. That device line is not a kernel launch. One
+warm 256-token Qwen3.8-27B 4-bit generate through HRX printed prefill 28.05
+tok/s and decode 2.71 tok/s (host groups 0, fallbacks 0, compile 0.000 s). A
+warm 512-token run printed prefill 19.72 tok/s and decode 2.54 tok/s. A warm
+1024-token run printed prefill 13.29 tok/s and decode 2.20 tok/s. A warm
+2048-token run printed prefill 9.16 tok/s and decode 1.72 tok/s. A
+4096-token run with `--kv-len 4352` printed prefill 5.51 tok/s and decode
+1.18 tok/s (compile 1.879 s). 32K has not been measured. Default order tries
+hrx, then hipwin, then cpu. Toolchains on the HRX device were `hip` and
+`loom (no compiler)`.
 
 ## 6. Current limitations
 
@@ -309,7 +372,7 @@ are `windows-enablement/06-implementation-log.md` §4 (cycle 1) and
 
 | Area | Limitation | Reference |
 |---|---|---|
-| GPU | HRX/HIP/amd_comgr/loomc backends **OFF**; CPU backend only; no kernel JIT | `cmake/LSEOptions.cmake:16-22` |
+| GPU | HRX links and enumerates (`hrx.dll` loads in-tree `hsa-runtime64.dll` and does not import `amdhip64`). On the 890M, `hrx:0 gfx1150 (Node 1)`. Dispatch loads an AMDGPU code object and launches it; `lse_vadd` matched on 1024 floats through `hrx-win-smoke` and on 1048576 floats through `hrx-compile-smoke` (comgr, `HrxBackend`). Warm Qwen3.8-27B 4-bit generates measured 28.05/2.71 tok/s at 256 tokens, 19.72/2.54 tok/s at 512 tokens, 13.29/2.20 tok/s at 1024 tokens, 9.16/1.72 tok/s at 2048 tokens (compile 0.000 s), and 5.51/1.18 tok/s at 4096 tokens with `--kv-len 4352` (compile 1.879 s). Host groups were 0 and fallbacks were 0. 32K is not measured. hipwin enumerates the same GPU and uses ROCm 7.1 comgr. loomc 0.1.0 is on: `hrx:0` toolchains are `loom, hip`. Default `LSE_GPU_TARGETS` is `gfx1151;gfx1201;gfx942` (no gfx1150). | `cmake/LSEOptions.cmake`, `libhrx/`, `src/backends/hrx/`, `src/backends/hipwin/` |
 | Poller | WSAPoll has **millisecond** timeout granularity (epoll: nanoseconds); timeouts are rounded up. `Poller::fd()` returns the wake socket (WSAPoll has no waitable fd) | `src/communication/poller_winsock.cpp` header |
 | Heap stats | `heap_stats()` returns **zeros** (no `mallinfo2` in the UCRT); `malloc_trim` is a no-op. API JSON keys are unchanged | `src/api/lse.cpp`, 06-log §4.4 |
 | >2 GB checkpoint I/O | Implemented per directive ID-1: positioned reads via `ReadFile` + `OVERLAPPED` with 64-bit offsets (never the 32-bit `_pread`), memory mapping via `_wsopen_s(_SH_DENYNO)` + `CreateFileMappingW` + `MapViewOfFile` with a process-wide handle registry | `src/core/platform_win.cpp` |
@@ -387,7 +450,8 @@ flag from the boolean (GitHub expressions cannot yield an empty string —
 commands: pin LLVM **21.1.8** (`winget install --id LLVM.LLVM --version
 21.1.8 --exact`, §1) → MSVC environment (`ilammy/msvc-dev-cmd`, x64) → stable
 Rust (MSVC target) → configure with the same flags as §3 plus fail-fast
-guards (HRX-OFF line; `native deps` must contain `ntdll`) → FP-canary layers
+guards (the workflow still greps `HRX backend.*OFF`, which a current
+configure does not print; `native deps` must contain `ntdll`) → FP-canary layers
 A/B asserted on `build.ninja` → tests-ON `all` build → W census must equal
 `windows-enablement/logs/ci-expected-w.txt` (98) → strict main ctest with
 count assertion (W − 1 when LARGE_IO is excluded) → the fingerprint pair

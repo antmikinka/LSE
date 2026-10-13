@@ -18,7 +18,15 @@
 #include <atomic>
 #include <cstdio>
 #include <cstdlib>
+#if defined(_WIN32)
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <malloc.h>
+#include <windows.h>
+#else
 #include <sys/mman.h>
+#endif
 #if defined(__APPLE__)
 #include <TargetConditionals.h>
 #include <malloc/malloc.h>
@@ -58,6 +66,8 @@ std::uint64_t allocation_size(void* p) {
   return p != nullptr ? malloc_size(p) : 0;
 #elif defined(__linux__)
   return p != nullptr ? malloc_usable_size(p) : 0;
+#elif defined(_WIN32)
+  return p != nullptr ? static_cast<std::uint64_t>(_msize(p)) : 0;
 #else
   (void)p;
   return 0;
@@ -75,6 +85,11 @@ std::uint64_t available_memory() {
     if (line.rfind("MemAvailable:", 0) == 0)
       return std::strtoull(line.c_str() + 13, nullptr, 10) * 1024;
   return 0;
+#elif defined(_WIN32)
+  MEMORYSTATUSEX status{};
+  status.dwLength = sizeof(status);
+  if (!::GlobalMemoryStatusEx(&status)) return 0;
+  return static_cast<std::uint64_t>(status.ullAvailPhys);
 #else
   return 0;
 #endif
@@ -86,6 +101,15 @@ std::uint64_t largest_reservable() {
   std::uint64_t lo = 0, hi = std::uint64_t{1} << 40;
   while (hi - lo > (std::uint64_t{16} << 20)) {
     const std::uint64_t mid = lo + (hi - lo) / 2;
+#if defined(_WIN32)
+    void* p = ::VirtualAlloc(nullptr, static_cast<SIZE_T>(mid), MEM_RESERVE, PAGE_NOACCESS);
+    if (p != nullptr) {
+      ::VirtualFree(p, 0, MEM_RELEASE);
+      lo = mid;
+    } else {
+      hi = mid;
+    }
+#else
     void* p = ::mmap(nullptr, mid, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
     if (p != MAP_FAILED) {
       ::munmap(p, mid);
@@ -93,6 +117,7 @@ std::uint64_t largest_reservable() {
     } else {
       hi = mid;
     }
+#endif
   }
   return lo;
 }
